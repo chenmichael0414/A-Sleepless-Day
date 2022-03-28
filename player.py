@@ -37,7 +37,9 @@ class Player:
 
     def tick(self):
         self.draw()
-        self.move()
+
+        if not self.screen.frozen:
+            self.move()
 
     def load_sprite(self):
         # extract the image from the spritesheet
@@ -52,7 +54,7 @@ class Player:
         self.sprite = pygame.Surface(rect.size).convert_alpha()
         self.sprite.blit(self.sheet, (0, 0), rect)
 
-        # upscale the spritesheet
+        # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))
 
     def draw(self):
@@ -106,5 +108,5 @@ class Player:
         if self.x > self.screen.SCREEN_WIDTH / 2: return True
         if self.x < self.screen.SCREEN_WIDTH / 2 - self.screen.BACKGROUND_SIZE: return True
 
-        if self.y > self.screen.SCREEN_HEIGHT / 2 - moveFactor: return True
+        if self.y > self.screen.SCREEN_HEIGHT / 2: return True
         if self.y < self.screen.SCREEN_HEIGHT / 2 - self.screen.BACKGROUND_SIZE + moveFactor: return True
