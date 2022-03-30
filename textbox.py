@@ -10,10 +10,10 @@ class Textbox:
         self.TEXTBOX_HEIGHT = 120
         
         pygame.font.init()
-        self.font = pygame.font.Font('./retro.ttf', 25)
-        self.textRate = 3
+        self.font = pygame.font.Font('./fonts/retro.ttf', 25)
+        self.textRate = 2
 
-        self.arrowSheet  = pygame.image.load('./next.png').convert()
+        self.arrowSheet  = pygame.image.load('./img/next.png').convert()
         self.arrowSprite = None
         self.arrowScale  = 2
 

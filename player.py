@@ -4,13 +4,12 @@ class Player:
     def __init__(self, screen):
         self.screen = screen
 
-        self.sheet = pygame.image.load('./albert.png').convert()
+        self.sheet = pygame.image.load('./img/albert.png').convert()
         self.sprite = None
         self.size   = (15, 20)    # actual size of the pixel art
         self.offset = (8, 7)    # offset for selecting each sprite from the spritesheet
 
-        self.x = self.screen.BACKGROUND_SIZE / -2
-        self.y = self.screen.BACKGROUND_SIZE / -2
+        self.resetPosition()
 
         # keys used for movement and their directions (x, y)
         self.moveKeys = {
@@ -34,6 +33,14 @@ class Player:
 
         self.currentFrame  = 0 # current frame of animation
         self.animationRate = 10 # after how many frames do we switch costumes
+
+    def resetPosition(self, pos=None):
+        if pos:
+            self.x = pos[0]
+            self.y = pos[1]
+        else:
+            self.x = self.screen.BACKGROUND_SIZE / -2
+            self.y = self.screen.BACKGROUND_SIZE / -2
 
     def tick(self):
         self.draw()
