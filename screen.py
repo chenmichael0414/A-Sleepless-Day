@@ -1,6 +1,10 @@
+from tkinter import SCROLL
 import pygame
 
 class Screen:
+    SCROLL = 0
+    FIXED  = 1
+
     def __init__(self, width=800, height=600, fps=60):
         self.PIXEL_SIZE       = 32
         self.PLAYER_SCALE     = 2
@@ -15,6 +19,8 @@ class Screen:
         self.fps = fps
         self.frame = 0
 
+        self.cameraMode = Screen.SCROLL
+
         self.frozen = False
 
         self.loading   = True
@@ -24,11 +30,13 @@ class Screen:
         self.rooms = {
             'MAIN': {
                 'path': 'default.jpeg',
-                'pos': None
+                'pos': None,
+                'mode': Screen.FIXED
             },
             'TEST': {
                 'path': 'test.jpeg',
-                'pos': (40, 40)
+                'pos': (40, 40),
+                'mode': Screen.SCROLL
             }
         }
 
@@ -44,8 +52,10 @@ class Screen:
         self.bg      = pygame.image.load('./img/backgrounds/{}'.format(self.rooms[room]['path']))
         self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_SIZE, self.BACKGROUND_SIZE))
 
+        self.cameraMode = self.rooms[room]['mode']
+
         if player:
-            player.resetPosition(self.rooms[room]['pos'])
+            player.resetPosition(self.rooms[room]['pos'] if self.cameraMode == Screen.SCROLL else None)
 
     def load(self):
         self.loading   = True
@@ -59,7 +69,12 @@ class Screen:
             self.loading = False
 
         if not self.loading:
-            self.display.blit(self.bg, (x, y))
+            if self.cameraMode == Screen.SCROLL:
+                self.display.blit(self.bg, (x, y))
+            elif self.cameraMode == Screen.FIXED:
+                self.display.blit(self.bg, (self.BACKGROUND_SIZE / -2, self.BACKGROUND_SIZE / -2))
+
+            
 
         self.clock.tick(self.fps)
         self.frame += 1

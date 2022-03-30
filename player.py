@@ -1,4 +1,5 @@
 import pygame
+from screen import Screen
 
 class Player:
     def __init__(self, screen):
@@ -8,8 +9,6 @@ class Player:
         self.sprite = None
         self.size   = (15, 20)    # actual size of the pixel art
         self.offset = (8, 7)    # offset for selecting each sprite from the spritesheet
-
-        self.resetPosition()
 
         # keys used for movement and their directions (x, y)
         self.moveKeys = {
@@ -34,13 +33,23 @@ class Player:
         self.currentFrame  = 0 # current frame of animation
         self.animationRate = 10 # after how many frames do we switch costumes
 
+        self.resetPosition()
+
     def resetPosition(self, pos=None):
         if pos:
             self.x = pos[0]
             self.y = pos[1]
         else:
-            self.x = self.screen.BACKGROUND_SIZE / -2
-            self.y = self.screen.BACKGROUND_SIZE / -2
+            if self.screen.cameraMode == Screen.SCROLL:
+                self.x = self.screen.BACKGROUND_SIZE / -2
+                self.y = self.screen.BACKGROUND_SIZE / -2
+            elif self.screen.cameraMode == Screen.FIXED:
+                self.load_sprite()
+                w, h = self.sprite.get_size()
+
+                self.x = self.screen.SCREEN_WIDTH  / 2 - w / 2
+                self.y = self.screen.SCREEN_HEIGHT / 2 - h / 2
+
 
     def tick(self):
         self.draw()
@@ -68,7 +77,10 @@ class Player:
         self.load_sprite()
         w, h = self.sprite.get_size()
 
-        self.screen.display.blit(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
+        if self.screen.cameraMode == Screen.SCROLL:
+            self.screen.display.blit(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
+        elif self.screen.cameraMode == Screen.FIXED:
+            self.screen.display.blit(self.sprite, (self.x, self.y))
 
     def move(self):
         pressed = pygame.key.get_pressed()
@@ -84,17 +96,23 @@ class Player:
 
                 # if we are currently on a frame in which we should move
                 if self.screen.frame % self.animationRate == 0:
+                    # if we are in fixed screen, reverse all movement
+                    if self.screen.cameraMode == Screen.SCROLL:
+                        cameraDir = 1
+                    elif self.screen.cameraMode == Screen.FIXED:
+                        cameraDir = -1
+
                     # multiply the move factor by the direction
-                    self.x += moveFactor * dir[0]
-                    self.y += moveFactor * dir[1]
+                    self.x += moveFactor * dir[0] * cameraDir
+                    self.y += moveFactor * dir[1] * cameraDir
 
                     #spriteRect = self.sprite.get_ + self.size
 
                     # if the player would go out of the background, just undo the movement
                     # since this is all done before a render, it basically looks like the player is stuck at the wall
                     if self.collision(moveFactor):
-                        self.x -= moveFactor * dir[0]
-                        self.y -= moveFactor * dir[1]
+                        self.x -= moveFactor * dir[0] * cameraDir
+                        self.y -= moveFactor * dir[1] * cameraDir
                     
 
                     self.currentFrame += 1
@@ -112,8 +130,16 @@ class Player:
 
     def collision(self, moveFactor):
         #if self.x > self.startX: return True
-        if self.x > self.screen.SCREEN_WIDTH / 2: return True
-        if self.x < self.screen.SCREEN_WIDTH / 2 - self.screen.BACKGROUND_SIZE: return True
+        if self.screen.cameraMode == Screen.SCROLL:
+            if self.x > self.screen.SCREEN_WIDTH / 2: return True
+            if self.x < self.screen.SCREEN_WIDTH / 2 - self.screen.BACKGROUND_SIZE: return True
 
-        if self.y > self.screen.SCREEN_HEIGHT / 2: return True
-        if self.y < self.screen.SCREEN_HEIGHT / 2 - self.screen.BACKGROUND_SIZE + moveFactor: return True
+            if self.y > self.screen.SCREEN_HEIGHT / 2: return True
+            if self.y < self.screen.SCREEN_HEIGHT / 2 - self.screen.BACKGROUND_SIZE + moveFactor: return True
+
+        if self.screen.cameraMode == Screen.FIXED:
+            if self.x > self.screen.SCREEN_WIDTH - moveFactor: return True
+            if self.x < -moveFactor: return True
+
+            if self.y > self.screen.SCREEN_HEIGHT - moveFactor * 2: return True
+            if self.y < -moveFactor: return True
