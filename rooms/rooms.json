@@ -1,0 +1,12 @@
+{
+    "MAIN": {
+        "path": "default.jpeg",
+        "pos": null,
+        "mode": "FIXED"
+    },
+    "TEST": {
+        "path": "test.jpeg",
+        "pos": [40, 40],
+        "mode": "SCROLL"
+    }
+}

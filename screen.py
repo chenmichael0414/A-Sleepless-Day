@@ -1,10 +1,7 @@
-from tkinter import SCROLL
 import pygame
+import json
 
 class Screen:
-    SCROLL = 0
-    FIXED  = 1
-
     def __init__(self, width=800, height=600, fps=60):
         self.PIXEL_SIZE       = 32
         self.PLAYER_SCALE     = 2
@@ -19,7 +16,7 @@ class Screen:
         self.fps = fps
         self.frame = 0
 
-        self.cameraMode = Screen.SCROLL
+        self.cameraMode = "SCROLL"
 
         self.frozen = False
 
@@ -27,35 +24,29 @@ class Screen:
         self.loadTime  = 20
         self.loadFrame = self.loadTime  # the frame in which we started the loading screen
 
-        self.rooms = {
-            'MAIN': {
-                'path': 'default.jpeg',
-                'pos': None,
-                'mode': Screen.FIXED
-            },
-            'TEST': {
-                'path': 'test.jpeg',
-                'pos': (40, 40),
-                'mode': Screen.SCROLL
-            }
-        }
+        self.rooms = json.load(open('./rooms/rooms.json'))
 
         self.setRoom('MAIN')
 
-    def setRoom(self, room, player=None):
+    def setRoom(self, room, player=None, item=None):
         if not room in self.rooms or self.frozen:
             return
 
         self.load()
 
         self.current = room
-        self.bg      = pygame.image.load('./img/backgrounds/{}'.format(self.rooms[room]['path']))
+        self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path']))
         self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_SIZE, self.BACKGROUND_SIZE))
 
         self.cameraMode = self.rooms[room]['mode']
 
         if player:
-            player.resetPosition(self.rooms[room]['pos'] if self.cameraMode == Screen.SCROLL else None)
+            player.resetPosition(self.rooms[room]['pos'] if self.cameraMode == "SCROLL" else None)
+
+        if item:
+            for i in item.active:
+                i['x'] = i['startX']
+                i['y'] = i['startY']
 
     def load(self):
         self.loading   = True
@@ -69,9 +60,9 @@ class Screen:
             self.loading = False
 
         if not self.loading:
-            if self.cameraMode == Screen.SCROLL:
+            if self.cameraMode == "SCROLL":
                 self.display.blit(self.bg, (x, y))
-            elif self.cameraMode == Screen.FIXED:
+            elif self.cameraMode == "FIXED":
                 self.display.blit(self.bg, (self.BACKGROUND_SIZE / -2, self.BACKGROUND_SIZE / -2))
 
             

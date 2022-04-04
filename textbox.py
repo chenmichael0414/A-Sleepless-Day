@@ -13,7 +13,7 @@ class Textbox:
         self.font = pygame.font.Font('./fonts/retro.ttf', 25)
         self.textRate = 2
 
-        self.arrowSheet  = pygame.image.load('./img/next.png').convert()
+        self.arrowSheet  = pygame.image.load('./sprites/next.png').convert()
         self.arrowSprite = None
         self.arrowScale  = 2
 
@@ -63,6 +63,16 @@ class Textbox:
 
     def draw(self, text=['press enter to progress...', 'test 2'], textRate=None):
         self.target = text
+
+        if textRate: 
+            self.textRate = textRate
+
+        self.clean(frozen=True, isActive=True)
+
+    # same as draw, but if another text event is currently happening, this will simply be added to the end
+    def drawAppend(self, text, textRate=None):
+        for line in text:
+            self.target.append(line)
 
         if textRate: 
             self.textRate = textRate

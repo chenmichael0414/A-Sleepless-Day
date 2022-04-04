@@ -4,13 +4,18 @@ import sys
 from player import Player
 from screen import Screen
 from textbox import Textbox
+from item import Item
 
 if __name__ == '__main__':
     pygame.init()
 
-    screen = Screen()
-    player = Player(screen)
+    screen  = Screen()
     textbox = Textbox(screen)
+    item    = Item(screen, textbox)
+    player  = Player(screen, item)
+
+    item.addItem('block')
+    item.addItem('block', x=200, y=200)
 
     while True:
         for event in pygame.event.get():
@@ -21,6 +26,7 @@ if __name__ == '__main__':
 
         if not screen.loading:
             player.tick()
+            item.tick()
             textbox.tick()
 
         if pygame.key.get_pressed()[pygame.K_a]: 
@@ -30,9 +36,9 @@ if __name__ == '__main__':
             ])
 
         if pygame.key.get_pressed()[pygame.K_b]: 
-            screen.setRoom('TEST', player)
+            screen.setRoom('TEST', player, item)
 
         if pygame.key.get_pressed()[pygame.K_c]: 
-            screen.setRoom('MAIN', player)
+            screen.setRoom('MAIN', player, item)
 
         pygame.display.update()
