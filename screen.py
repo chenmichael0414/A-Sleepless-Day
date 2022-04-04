@@ -5,8 +5,10 @@ class Screen:
     def __init__(self, width=800, height=600, fps=60):
         self.PIXEL_SIZE       = 32
         self.PLAYER_SCALE     = 2
-        self.BACKGROUND_SCALE = 15
-        self.BACKGROUND_SIZE  = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
+        self.BACKGROUND_SCALE = 6
+
+        self.BACKGROUND_HEIGHT = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
+        self.BACKGROUND_WIDTH  = self.BACKGROUND_HEIGHT * 4 / 3
 
         self.SCREEN_WIDTH  = width
         self.SCREEN_HEIGHT = height
@@ -36,7 +38,7 @@ class Screen:
 
         self.current = room
         self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path']))
-        self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_SIZE, self.BACKGROUND_SIZE))
+        self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
         self.cameraMode = self.rooms[room]['mode']
 
@@ -63,12 +65,7 @@ class Screen:
             if self.cameraMode == "SCROLL":
                 self.display.blit(self.bg, (x, y))
             elif self.cameraMode == "FIXED":
-                self.display.blit(self.bg, (self.BACKGROUND_SIZE / -2, self.BACKGROUND_SIZE / -2))
-
-            
+                self.display.blit(self.bg, (0, 0))
 
         self.clock.tick(self.fps)
         self.frame += 1
-
-
-    

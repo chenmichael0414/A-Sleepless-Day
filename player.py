@@ -71,7 +71,7 @@ class Player:
                 if not item['triggered']:
                     collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
                     collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
-                    
+
                     if collision1 or collision2:
                         self.item.runEvent(item)
 
@@ -152,10 +152,10 @@ class Player:
         #if self.x > self.startX: return True
         if self.screen.cameraMode == "SCROLL":
             if self.x > self.screen.SCREEN_WIDTH / 2: return True
-            if self.x < self.screen.SCREEN_WIDTH / 2 - self.screen.BACKGROUND_SIZE: return True
+            if self.x < self.screen.SCREEN_WIDTH / 2 - self.screen.BACKGROUND_WIDTH: return True
 
             if self.y > self.screen.SCREEN_HEIGHT / 2: return True
-            if self.y < self.screen.SCREEN_HEIGHT / 2 - self.screen.BACKGROUND_SIZE + moveFactor: return True
+            if self.y < self.screen.SCREEN_HEIGHT / 2 - self.screen.BACKGROUND_HEIGHT: return True
 
         if self.screen.cameraMode == "FIXED":
             if self.x > self.screen.SCREEN_WIDTH - moveFactor: return True

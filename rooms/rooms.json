@@ -1,12 +1,12 @@
 {
     "MAIN": {
-        "path": "default.jpeg",
+        "path": "chem.png",
         "pos": null,
         "mode": "FIXED"
     },
     "TEST": {
-        "path": "test.jpeg",
-        "pos": [40, 40],
+        "path": "chem.png",
+        "pos": [0, -200],
         "mode": "SCROLL"
     }
 }
