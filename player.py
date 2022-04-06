@@ -6,7 +6,7 @@ class Player:
         self.screen = screen
         self.item = item
 
-        self.sheet = pygame.image.load('./sprites/albert.png').convert()
+        self.sheet = pygame.image.load('./sprites/albert.png').convert_alpha()
         self.sprite = None
         self.size   = (15, 20)    # actual size of the pixel art
         self.offset = (8, 7)      # offset for selecting each sprite from the spritesheet
@@ -85,7 +85,7 @@ class Player:
         newCoords = tuple(map(sum, zip(currentSprite, self.offset))) # adds the tuples together
         rect = pygame.Rect(newCoords + self.size)
 
-        self.sprite = pygame.Surface(rect.size).convert_alpha()
+        self.sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.sprite.blit(self.sheet, (0, 0), rect)
 
         # upscale the sprite
