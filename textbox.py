@@ -108,13 +108,12 @@ class Textbox:
         )
         
         # Black border
-        for i in range(4):
-            pygame.draw.rect(
-                self.screen.display, 
-                (0, 0, 0), # black
-                (0 - i, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT - i, self.screen.SCREEN_WIDTH, TEXTBOX_HEIGHT), 
-                1
-            )
+        pygame.draw.rect(
+            self.screen.display, 
+            (0, 0, 0), # black
+            (0, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT, self.screen.SCREEN_WIDTH, TEXTBOX_HEIGHT), 
+            3
+        )
         
         # Writing the text
         message = self.target[self.currentText]
@@ -141,7 +140,7 @@ class Textbox:
         # Render each row
         for (i, row) in enumerate(self.current):
             textsurface = self.font.render(row, False, (0, 0, 0))
-            self.screen.display.blit(textsurface, (8, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT + (height * i)))
+            self.screen.display.blit(textsurface, (8, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT + 3 + (height * i)))
 
         # If we have written all characters out, display the next arrow
         if self.totalProgress >= len(message):

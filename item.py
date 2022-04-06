@@ -2,13 +2,16 @@ import pygame
 import json
 
 class Item:
-    def __init__(self, screen, textbox):
-        self.screen  = screen
-        self.textbox = textbox
+    def __init__(self, screen, textbox, inventory):
+        self.screen    = screen
+        self.textbox   = textbox
+        self.inventory = inventory
 
         self.imagePaths = json.load(open('./items/items.json'))
 
         self.scale = 2
+
+        self.triggerKey = pygame.K_SPACE
 
         self.active = []
 
@@ -19,17 +22,15 @@ class Item:
             'startY': y,
             'x': x,
             'y': y,
-            'sprite': None,
+            'sprite': self.loadSprite(name),
             'event': lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']),
             'triggered': False
         })
 
     # basically makes it so we only have to load image sprites once
-    def loadSprite(self, item):
-        img = pygame.image.load('./items/{}'.format(self.imagePaths[item['name']])).convert_alpha()
+    def loadSprite(self, name):
+        img = pygame.image.load('./items/{}'.format(self.imagePaths[name])).convert_alpha()
         img = pygame.transform.scale(img, (self.scale * self.screen.PIXEL_SIZE, self.scale * self.screen.PIXEL_SIZE))
-
-        item['sprite'] = img
 
         return img
 
@@ -42,8 +43,7 @@ class Item:
                     # display it on the screen if it hasn't been picked up
 
                     if not item['triggered']:
-                        img = item['sprite'] or self.loadSprite(item)
-                        self.screen.display.blit(img, (item['x'], item['y']))
+                        self.screen.display.blit(item['sprite'], (item['x'], item['y']))
 
     # basically makes it so each item stays in a fixed position as the camera scrolls
     def updatePositions(self, dx, dy):
@@ -52,6 +52,7 @@ class Item:
             item['y'] += dy
 
     def runEvent(self, item):
+        self.inventory.addToInventory(item)
         item['event']()
         
         self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
