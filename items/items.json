@@ -1,3 +1,9 @@
 {
-    "block": "block.png"
+    "block": "block.png",
+    "carrots": "carrots.png",
+    "chips": "chips.png",
+    "fishGun": "fishGun.png",
+    "hat": "hat.png",
+    "speaker": "speaker.png",
+    "sunglasses": "sunglasses.png"
 }
