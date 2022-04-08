@@ -11,7 +11,7 @@ class Textbox:
         
         pygame.font.init()
         self.font = pygame.font.Font('./fonts/retro.ttf', 25)
-        self.textRate = 2
+        self.textRate = 1   # larger is slower, can only be integer
 
         self.arrowSheet  = pygame.image.load('./sprites/next.png').convert_alpha()
         self.arrowSprite = None
@@ -88,7 +88,7 @@ class Textbox:
             self.screen.PIXEL_SIZE
         )
 
-        self.arrowSprite = pygame.Surface(rect.size).convert_alpha()
+        self.arrowSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.arrowSprite.blit(self.arrowSheet, (0, 0), rect)
 
         # upscale the sprite
