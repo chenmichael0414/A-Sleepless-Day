@@ -4,15 +4,21 @@ import json
 class Screen:
     def __init__(self, width=800, height=600, fps=60):
         self.PIXEL_SIZE       = 32
-        self.PLAYER_SCALE     = 2
-        self.BACKGROUND_SCALE = 6
+        self.PLAYER_SCALE     = 2.5
+        self.BACKGROUND_SCALE = 1.25
 
-        self.BACKGROUND_HEIGHT = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
-        self.BACKGROUND_WIDTH  = self.BACKGROUND_HEIGHT * 4 / 3
+        # self.BACKGROUND_HEIGHT = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
+        # self.BACKGROUND_WIDTH  = self.BACKGROUND_HEIGHT * 4 / 3
 
-        self.SCREEN_WIDTH  = width
-        self.SCREEN_HEIGHT = height
-        self.display = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        # self.SCREEN_WIDTH  = width
+        # self.SCREEN_HEIGHT = height
+        # self.display = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.display = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+        self.SCREEN_WIDTH, self.SCREEN_HEIGHT = self.display.get_size()
+
+        self.BACKGROUND_WIDTH  = self.SCREEN_WIDTH  * self.BACKGROUND_SCALE
+        self.BACKGROUND_HEIGHT = self.SCREEN_HEIGHT * self.BACKGROUND_SCALE
 
         self.clock = pygame.time.Clock()
         self.fps = fps
@@ -65,7 +71,7 @@ class Screen:
             if self.cameraMode == "SCROLL":
                 self.display.blit(self.bg, (x, y))
             elif self.cameraMode == "FIXED":
-                self.display.blit(self.bg, (0, 0))
+                self.display.blit(self.bg, (self.rooms[self.current]['pos'][0], self.rooms[self.current]['pos'][1]))
 
-        self.clock.tick(self.fps)
+        self.clock.tick_busy_loop(self.fps)
         self.frame += 1
