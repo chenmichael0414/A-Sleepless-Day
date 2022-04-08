@@ -13,22 +13,22 @@ class Player:
 
         # keys used for movement and their directions (x, y)
         self.moveKeys = {
-            pygame.K_LEFT: (1, 0),
-            pygame.K_RIGHT: (-1, 0),
-            pygame.K_UP: (0, 1),
-            pygame.K_DOWN: (0, -1)
+            pygame.K_a: (1, 0),
+            pygame.K_d: (-1, 0),
+            pygame.K_w: (0, 1),
+            pygame.K_s: (0, -1)
         }
-        self.currentKey = pygame.K_DOWN
+        self.currentKey = pygame.K_a
 
         self.pixel_size = screen.PIXEL_SIZE
         self.scale = screen.PLAYER_SCALE
 
         # coordinates of the spritesheet (for animations)
         self.coords = {
-            pygame.K_DOWN: 0,
-            pygame.K_LEFT: 1,
-            pygame.K_RIGHT: 2,
-            pygame.K_UP: 3
+            pygame.K_s: 0,
+            pygame.K_a: 1,
+            pygame.K_d: 2,
+            pygame.K_w: 3
         }
 
         self.currentFrame  = 0 # current frame of animation
@@ -62,6 +62,8 @@ class Player:
             scrollRect = pygame.Rect(self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2, w, h)
             fixedRect  = pygame.Rect(self.x, self.y, w, h)
 
+            # checks for item collisions
+            # if we are touching an item and press the space key, pick it up and trigger the event
             for item in self.item.active:
                 if item['sprite'] is None:
                     return
@@ -71,8 +73,8 @@ class Player:
                 if not item['triggered']:
                     collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
                     collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
-
-                    if collision1 or collision2:
+        
+                    if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
                         self.item.runEvent(item)
 
     def load_sprite(self):
