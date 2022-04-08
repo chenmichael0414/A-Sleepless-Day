@@ -88,7 +88,7 @@ class Textbox:
             self.screen.PIXEL_SIZE
         )
 
-        self.arrowSprite = pygame.Surface(rect.size).convert_alpha()
+        self.arrowSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.arrowSprite.blit(self.arrowSheet, (0, 0), rect)
 
         # upscale the sprite
