@@ -87,7 +87,7 @@ class Player:
         newCoords = tuple(map(sum, zip(currentSprite, self.offset))) # adds the tuples together
         rect = pygame.Rect(newCoords + self.size)
 
-        self.sprite = pygame.Surface(rect.size).convert_alpha()
+        self.sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.sprite.blit(self.sheet, (0, 0), rect)
 
         # upscale the sprite
