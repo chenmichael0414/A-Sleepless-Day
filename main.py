@@ -20,13 +20,9 @@ if __name__ == '__main__':
     item      = Item(screen, textbox, inventory)
     player    = Player(screen, item)
 
-    block1 = item.addItem('block')
-    block2 = item.addItem('block', x=200, y=200,)
-
-    for i in range(5):
-        inventory.addToInventory(item.active[0])
-
     Key.addKey(inventory.displayKey)
+
+    screen.setRoom('CHEM', player, item)
 
     while True:
         for event in pygame.event.get():
@@ -53,10 +49,8 @@ if __name__ == '__main__':
                 'wow, see? you\'re already learning! you\'re amazing <3'
             ])
 
-        if pygame.key.get_pressed()[pygame.K_x]: 
-            screen.setRoom('TEST', player, item)
-
-        if pygame.key.get_pressed()[pygame.K_c]: 
-            screen.setRoom('MAIN', player, item)
+        if pygame.key.get_pressed()[pygame.K_c]:
+            item.clearItems() 
+            screen.setRoom('CHEM', player, item)
 
         pygame.display.update()

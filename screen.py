@@ -1,5 +1,6 @@
 import pygame
 import json
+import sceneItems
 
 class Screen:
     def __init__(self, width=800, height=600, fps=60):
@@ -34,7 +35,7 @@ class Screen:
 
         self.rooms = json.load(open('./rooms/rooms.json'))
 
-        self.setRoom('MAIN')
+        self.setRoom('CHEM')
 
     def setRoom(self, room, player=None, item=None, load=True):
         if not room in self.rooms or self.frozen:
@@ -50,11 +51,8 @@ class Screen:
 
         if player:
             player.resetPosition(self.rooms[room]['pos'] if self.cameraMode == "SCROLL" else None)
-
         if item:
-            for i in item.active:
-                i['x'] = i['startX']
-                i['y'] = i['startY']
+            sceneItems.addSceneItems(room, item)
 
     def load(self):
         self.loading   = True

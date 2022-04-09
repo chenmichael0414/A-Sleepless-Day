@@ -1,5 +1,6 @@
 import pygame
 import json
+import sceneItems
 
 class Item:
     def __init__(self, screen, textbox, inventory):
@@ -30,6 +31,7 @@ class Item:
 
     def removeItem(self, loc):
         self.active.pop(loc)
+        sceneItems.itemRemove(loc)
 
     def clearItems(self):
         self.active = []
@@ -61,8 +63,6 @@ class Item:
         item['event']()
         
         self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
-
+        sceneItems.itemRemove(item['loc'])
         self.active.pop(item['loc'])
         print(self.active)
-
-    

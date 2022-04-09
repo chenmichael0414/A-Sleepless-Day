@@ -1,5 +1,5 @@
 {
-    "MAIN": {
+    "CHEM": {
         "path": "chem.png",
         "pos": [0, -150],
         "mode": "FIXED"

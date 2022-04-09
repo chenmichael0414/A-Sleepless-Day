@@ -42,8 +42,8 @@ class Player:
             self.y = pos[1]
         else:
             if self.screen.cameraMode == "SCROLL":
-                self.x = self.screen.BACKGROUND_SIZE / -2
-                self.y = self.screen.BACKGROUND_SIZE / -2
+                self.x = self.screen.BACKGROUND_WIDTH / -2
+                self.y = self.screen.BACKGROUND_HEIGHT / -2
             elif self.screen.cameraMode == "FIXED":
                 self.load_sprite()
                 w, h = self.sprite.get_size()
@@ -74,7 +74,10 @@ class Player:
                 collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
     
                 if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
+                    print(self.item.active)
+                    print(item["loc"])
                     self.item.runEvent(item)
+                    print(self.item.active)
 
     def load_sprite(self):
         # extract the image from the spritesheet
