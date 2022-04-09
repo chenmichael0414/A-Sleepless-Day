@@ -20,8 +20,8 @@ if __name__ == '__main__':
     item      = Item(screen, textbox, inventory)
     player    = Player(screen, item)
 
-    item.addItem('block')
-    item.addItem('block', x=200, y=200)
+    block1 = item.addItem('block')
+    block2 = item.addItem('block', x=200, y=200,)
 
     for i in range(5):
         inventory.addToInventory(item.active[0])
@@ -43,8 +43,8 @@ if __name__ == '__main__':
             
             Key.tick()
 
-        if not started and pygame.key.get_pressed()[pygame.K_SPACE]:
-            cutscene(screen)
+        if not started and pygame.key.get_pressed()[pygame.K_TAB]:
+            cutscene(screen, textbox, player, item)
             started = True
 
         if pygame.key.get_pressed()[pygame.K_z]: 

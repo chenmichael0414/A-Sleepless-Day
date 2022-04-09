@@ -24,8 +24,15 @@ class Item:
             'y': y,
             'sprite': self.loadSprite(name),
             'event': lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']),
-            'triggered': False
         })
+        self.active[len(self.active)-1]['loc'] = (len(self.active))-1
+        return (len(self.active))-1
+
+    def removeItem(self, loc):
+        self.active.pop(loc)
+
+    def clearItems(self):
+        self.active = []
 
     # basically makes it so we only have to load image sprites once
     def loadSprite(self, name):
@@ -40,10 +47,8 @@ class Item:
                 if item['y'] >= 0 and item['y'] <= self.screen.SCREEN_HEIGHT:
                     # load the image based on the corresponding path from the json file
                     # scale the image down
-                    # display it on the screen if it hasn't been picked up
-
-                    if not item['triggered']:
-                        self.screen.display.blit(item['sprite'], (item['x'], item['y']))
+                    # display it on the screen
+                    self.screen.display.blit(item['sprite'], (item['x'], item['y']))
 
     # basically makes it so each item stays in a fixed position as the camera scrolls
     def updatePositions(self, dx, dy):
@@ -57,7 +62,7 @@ class Item:
         
         self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
 
-        item['triggered'] = True
-
+        self.active.pop(item['loc'])
+        print(self.active)
 
     

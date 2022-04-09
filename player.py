@@ -32,7 +32,7 @@ class Player:
         }
 
         self.currentFrame  = 0 # current frame of animation
-        self.animationRate = 10 # after how many frames do we switch costumes
+        self.animationRate = 6 # after how many frames do we switch costumes
 
         self.resetPosition()
 
@@ -70,12 +70,11 @@ class Player:
 
                 itemRect = pygame.Rect((item['x'], item['y']) + item['sprite'].get_size())
 
-                if not item['triggered']:
-                    collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
-                    collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
-        
-                    if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
-                        self.item.runEvent(item)
+                collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
+                collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
+    
+                if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
+                    self.item.runEvent(item)
 
     def load_sprite(self):
         # extract the image from the spritesheet
@@ -105,7 +104,7 @@ class Player:
     def move(self):
         pressed = pygame.key.get_pressed()
 
-        moveFactor = self.size[0] * 2 # multiply the actual width of the sprite by a factor
+        moveFactor = self.size[0] * 3 # multiply the actual width of the sprite by a factor
 
         isMoving = False
 

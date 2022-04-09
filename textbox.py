@@ -97,7 +97,7 @@ class Textbox:
     def tick(self):
         # if there is nothing to write, just return
         if not self.isActive:
-            return
+            return 0
 
         # Main white box
         pygame.draw.rect(
@@ -162,3 +162,5 @@ class Textbox:
                     self.clean(frozen=True, isActive=True, currentText=self.currentText)
                 else:
                     self.clean()
+
+        return 1

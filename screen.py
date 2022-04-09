@@ -36,11 +36,11 @@ class Screen:
 
         self.setRoom('MAIN')
 
-    def setRoom(self, room, player=None, item=None):
+    def setRoom(self, room, player=None, item=None, load=True):
         if not room in self.rooms or self.frozen:
             return
-
-        self.load()
+        if load:
+            self.load()
 
         self.current = room
         self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path']))

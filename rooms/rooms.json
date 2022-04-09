@@ -8,5 +8,28 @@
         "path": "chem.png",
         "pos": [0, -200],
         "mode": "SCROLL"
+    },
+    "SUNRISE1": {
+        "path": "sunrise1.png",
+        "mode": "FIXED",
+        "pos": [-200, -200]
+    },
+
+    "SUNRISE2": {
+        "path": "sunrise2.png",
+        "mode": "FIXED",
+        "pos": [-200, -200]
+    },
+
+    "SUNRISE3": {
+        "path": "sunrise3.png",
+        "mode": "FIXED",
+        "pos": [-200, -200]
+    },
+
+    "BEDROOM": {
+        "path": "bedroom.png",
+        "mode": "FIXED",
+        "pos": [-200, -200]
     }
 }
