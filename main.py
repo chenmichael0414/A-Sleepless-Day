@@ -25,12 +25,15 @@ if __name__ == '__main__':
 
     Key.addKey(inventory.displayKey)
 
+    screen.setRoom('MAIN', player, item)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
 
         screen.tick(player.x, player.y)
+        print(player.x, player.y)
 
         if not screen.loading:
             player.tick()

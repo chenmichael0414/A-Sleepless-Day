@@ -11,7 +11,7 @@ class Textbox:
         
         pygame.font.init()
         self.font = pygame.font.Font('./fonts/retro.ttf', 25)
-        self.textRate = 1   # larger is slower, can only be integer
+        self.textRate = 2   # larger is slower, can only be integer
 
         self.arrowSheet  = pygame.image.load('./sprites/next.png').convert_alpha()
         self.arrowSprite = None
@@ -39,6 +39,8 @@ class Textbox:
         self.arrowSprite = None
 
         self.currentArrowFrame = 0
+
+        # print(self.screen.frozen)
 
     def parse(self, text):
         # Return the indicies in which we need to go to a new line
@@ -100,16 +102,13 @@ class Textbox:
             return
 
         # Main white box
-        pygame.draw.rect(
-            self.screen.display, 
+        self.screen.drawRect(
             (255, 255, 255), # white
-            (0, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT, self.screen.SCREEN_WIDTH, TEXTBOX_HEIGHT),
-            0
+            (0, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT, self.screen.SCREEN_WIDTH, TEXTBOX_HEIGHT)
         )
         
         # Black border
-        pygame.draw.rect(
-            self.screen.display, 
+        self.screen.drawRect(
             (0, 0, 0), # black
             (0, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT, self.screen.SCREEN_WIDTH, TEXTBOX_HEIGHT), 
             3
@@ -140,14 +139,14 @@ class Textbox:
         # Render each row
         for (i, row) in enumerate(self.current):
             textsurface = self.font.render(row, False, (0, 0, 0))
-            self.screen.display.blit(textsurface, (8, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT + 3 + (height * i)))
+            self.screen.drawSprite(textsurface, (8, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT + 3 + (height * i)))
 
         # If we have written all characters out, display the next arrow
         if self.totalProgress >= len(message):
             self.getArrow() # updates self.arrowSprite
 
             # self.next = self.font.render('v', False, (0, 0, 0))
-            self.screen.display.blit(
+            self.screen.drawSprite(
                 self.arrowSprite, 
                 (
                     self.screen.SCREEN_WIDTH - self.arrowSprite.get_width(), 

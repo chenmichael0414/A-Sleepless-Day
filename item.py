@@ -18,10 +18,10 @@ class Item:
     def addItem(self, name, x=50, y=50):
         self.active.append({
             'name': name,
-            'startX': x,
-            'startY': y,
-            'x': x,
-            'y': y,
+            'startX': x + self.screen.OFFSET_X,
+            'startY': y + self.screen.OFFSET_Y,
+            'x': x + self.screen.OFFSET_X,
+            'y': y + self.screen.OFFSET_Y,
             'sprite': self.loadSprite(name),
             'event': lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']),
             'triggered': False
@@ -36,14 +36,12 @@ class Item:
 
     def tick(self):
         for item in self.active:
-            if item['x'] >= 0 and item['x'] <= self.screen.SCREEN_WIDTH:
-                if item['y'] >= 0 and item['y'] <= self.screen.SCREEN_HEIGHT:
-                    # load the image based on the corresponding path from the json file
-                    # scale the image down
-                    # display it on the screen if it hasn't been picked up
+            # load the image based on the corresponding path from the json file
+            # scale the image down
+            # display it on the screen if it hasn't been picked up
 
-                    if not item['triggered']:
-                        self.screen.display.blit(item['sprite'], (item['x'], item['y']))
+            if not item['triggered']:
+                self.screen.drawSprite(item['sprite'], (item['x'], item['y']))
 
     # basically makes it so each item stays in a fixed position as the camera scrolls
     def updatePositions(self, dx, dy):
