@@ -2,8 +2,11 @@
     "block": "block.png",
     "carrots": "carrots.png",
     "chips": "chips.png",
+    "coffee": "coffee.png",
     "fishGun": "fishGun.png",
     "hat": "hat.png",
+    "pie": "pie.png",
     "speaker": "speaker.png",
-    "sunglasses": "sunglasses.png"
+    "sunglasses": "sunglasses.png",
+    "volleyball": "volleyball.png"
 }
