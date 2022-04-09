@@ -42,8 +42,8 @@ class Player:
             self.y = pos[1]
         else:
             if self.screen.cameraMode == "SCROLL":
-                self.x = self.screen.BACKGROUND_SIZE / -2
-                self.y = self.screen.BACKGROUND_SIZE / -2
+                self.x = (self.screen.ACTUAL_WIDTH - self.screen.BACKGROUND_WIDTH)   / -2
+                self.y = (self.screen.ACTUAL_HEIGHT - self.screen.BACKGROUND_HEIGHT) / -2
             elif self.screen.cameraMode == "FIXED":
                 self.load_sprite()
                 w, h = self.sprite.get_size()
@@ -98,9 +98,9 @@ class Player:
         w, h = self.sprite.get_size()
 
         if self.screen.cameraMode == "SCROLL":
-            self.screen.display.blit(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
+            self.screen.drawSprite(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
         elif self.screen.cameraMode == "FIXED":
-            self.screen.display.blit(self.sprite, (self.x, self.y))
+            self.screen.drawSprite(self.sprite, (self.x, self.y))
 
     def move(self):
         pressed = pygame.key.get_pressed()
@@ -141,25 +141,20 @@ class Player:
 
                 break # so we can't move diagonally
         
-        # basically fake border checks
-        # instead of checking for border collisions, we just overrwite them before we re-render the screen
-        # TODO: this!
-
-        
         # if we are not moving, make sure the character is still
         if not isMoving:
             self.currentFrame = 0
 
     def collision(self, moveFactor):
-        #if self.x > self.startX: return True
         if self.screen.cameraMode == "SCROLL":
-            if self.x > self.screen.SCREEN_WIDTH / 2: return True
-            if self.x < self.screen.SCREEN_WIDTH / 2 - self.screen.BACKGROUND_WIDTH: return True
+            if self.x > self.screen.BACKGROUND_WIDTH / 2:  return True
+            if self.x < self.screen.BACKGROUND_WIDTH / -2: return True
 
-            if self.y > self.screen.SCREEN_HEIGHT / 2: return True
-            if self.y < self.screen.SCREEN_HEIGHT / 2 - self.screen.BACKGROUND_HEIGHT: return True
+            if self.y > self.screen.BACKGROUND_HEIGHT / 2 + moveFactor:  return True
+            if self.y < self.screen.BACKGROUND_HEIGHT / -2: return True
 
         if self.screen.cameraMode == "FIXED":
+            # should technically be width of player / 2 instead but doesnt make much of a difference
             if self.x > self.screen.SCREEN_WIDTH - moveFactor: return True
             if self.x < -moveFactor: return True
 

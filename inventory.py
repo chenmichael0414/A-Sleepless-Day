@@ -24,6 +24,7 @@ class Inventory:
         self.items.append(item)
 
     def tick(self):
+        # TODO: fix this so freezing still works
         if Key.isToggled(self.displayKey):
             self.screen.frozen = True
             self.display()
@@ -32,8 +33,7 @@ class Inventory:
         
     def display(self):
         # Main white box
-        pygame.draw.rect(
-            self.screen.display, 
+        self.screen.drawRect(
             (255, 255, 255), # white
             self.dimensions,
             0
@@ -41,8 +41,7 @@ class Inventory:
 
         # Black border
         for i in range(4):
-            pygame.draw.rect(
-                self.screen.display, 
+            self.screen.drawRect(
                 (0, 0, 0), # black
                 (
                     self.dimensions[0] - i,
@@ -62,8 +61,7 @@ class Inventory:
 
         for i in range(self.boxGrid[1]):
             for j in range(self.boxGrid[0]):
-                pygame.draw.rect(
-                    self.screen.display, 
+                self.screen.drawRect(
                     (0, 0, 0), # black
                     (
                         self.dimensions[0] + self.padding + (columnSize / 2) + (columnSize * j) - (self.boxSize / 2),
@@ -80,7 +78,7 @@ class Inventory:
         for item in self.items:
             w, h = item['sprite'].get_size()
 
-            self.screen.display.blit(item['sprite'], (
+            self.screen.drawSprite(item['sprite'], (
                 self.dimensions[0] + self.padding + (columnSize / 2) + (columnSize * j) - (w / 2),
                 self.dimensions[1] + self.padding + (rowSize / 2)    + (rowSize * i)    - (h / 2)
             ))

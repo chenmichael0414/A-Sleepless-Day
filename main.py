@@ -7,9 +7,12 @@ from textbox import Textbox
 from item import Item
 from inventory import Inventory
 from key import Key
+from intro import cutscene
 
 if __name__ == '__main__':
     pygame.init()
+
+    started = False
 
     screen    = Screen()
     textbox   = Textbox(screen)
@@ -25,12 +28,15 @@ if __name__ == '__main__':
 
     Key.addKey(inventory.displayKey)
 
+    screen.setRoom('MAIN', player, item)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
 
         screen.tick(player.x, player.y)
+        print(player.x, player.y)
 
         if not screen.loading:
             player.tick()
@@ -39,6 +45,10 @@ if __name__ == '__main__':
             inventory.tick()
             
             Key.tick()
+
+        if not started and pygame.key.get_pressed()[pygame.K_SPACE]:
+            cutscene(screen)
+            started = True
 
         if pygame.key.get_pressed()[pygame.K_z]: 
             textbox.draw([
