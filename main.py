@@ -36,15 +36,18 @@ if __name__ == '__main__':
                 sys.exit()
 
         screen.tick(player.x, player.y)
-        print(player.x, player.y)
 
         if not screen.loading:
             player.tick()
             item.tick()
             textbox.tick()
             inventory.tick()
-            
             Key.tick()
+
+        if textbox.isActive or inventory.isActive:
+            screen.frozen = True
+        else:
+            screen.frozen = False
 
         if not started and pygame.key.get_pressed()[pygame.K_SPACE]:
             cutscene(screen)

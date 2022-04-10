@@ -25,14 +25,12 @@ class Textbox:
         self.clean()
 
     # sets current text to blank and prepares for new text
-    def clean(self, frozen=False, isActive=False, currentText=0):
+    def clean(self, isActive=False, currentText=0):
         self.current       = ['']           # current text being written
         self.currentI      = 0              # current index of character that should be written
         self.currentRow    = 0              # current row of text that we are writing (think of currentI as current column)
         self.totalProgress = 0              # how many characters we have written
         self.currentText   = currentText    # which textbox in the array we are currently writing to
-
-        self.screen.frozen = frozen
 
         self.isActive = isActive
 
@@ -69,7 +67,7 @@ class Textbox:
         if textRate: 
             self.textRate = textRate
 
-        self.clean(frozen=True, isActive=True)
+        self.clean(isActive=True)
 
     # same as draw, but if another text event is currently happening, this will simply be added to the end
     def drawAppend(self, text, textRate=None):
@@ -79,7 +77,7 @@ class Textbox:
         if textRate: 
             self.textRate = textRate
 
-        self.clean(frozen=True, isActive=True)
+        self.clean(isActive=True)
 
     def getArrow(self):
         # extract the current arrow sprite
@@ -158,6 +156,6 @@ class Textbox:
                 # If there is another textbox to write
                 if self.currentText < len(self.target) - 1:
                     self.currentText += 1
-                    self.clean(frozen=True, isActive=True, currentText=self.currentText)
+                    self.clean(isActive=True, currentText=self.currentText)
                 else:
                     self.clean()

@@ -18,18 +18,19 @@ class Inventory:
         self.boxGrid = (4, 4)
         self.padding = 10
 
+        self.isActive = False
+
         self.items = []
 
     def addToInventory(self, item):
         self.items.append(item)
 
     def tick(self):
-        # TODO: fix this so freezing still works
         if Key.isToggled(self.displayKey):
-            self.screen.frozen = True
+            self.isActive = True
             self.display()
         else:
-            self.screen.frozen = False    
+            self.isActive = False
         
     def display(self):
         # Main white box
