@@ -162,5 +162,4 @@ class Textbox:
                     self.clean(frozen=True, isActive=True, currentText=self.currentText)
                 else:
                     self.clean()
-
         return 1

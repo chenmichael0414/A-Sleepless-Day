@@ -1,5 +1,6 @@
 import pygame
 from screen import Screen
+import math
 
 class Player:
     def __init__(self, screen, item):
@@ -33,6 +34,7 @@ class Player:
 
         self.currentFrame  = 0 # current frame of animation
         self.animationRate = 6 # after how many frames do we switch costumes
+        self.cutscene = False
 
         self.resetPosition()
 
@@ -52,11 +54,13 @@ class Player:
                 self.y = self.screen.SCREEN_HEIGHT / 2 - h / 2
 
 
-    def tick(self):
+    def tick(self, drawingNumber=None):
+        self.currentFrame = drawingNumber
         self.draw()
 
         if not self.screen.frozen:
-            self.move()
+            if not self.cutscene:
+                self.move()
 
             w, h = self.sprite.get_size()
             scrollRect = pygame.Rect(self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2, w, h)
@@ -90,7 +94,9 @@ class Player:
         rect = pygame.Rect(newCoords + self.size)
 
         self.sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+
         self.sprite.blit(self.sheet, (0, 0), rect)
+        print(self.currentFrame)
 
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))
