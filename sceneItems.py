@@ -3,7 +3,7 @@ from item import Item
 
 currScene = "CHEM"
 items = {
-    "CHEM": [['block'],['block', 200, 200], ['arrow', 300, 100, True]]
+    "CHEM": [['block'],['block', 200, 200]]
 }
 
 def addSceneItems(scene, item):
