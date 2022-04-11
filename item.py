@@ -27,8 +27,6 @@ class Item:
             'arrow': arrow,
             'event': lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']),
         })
-        self.active[len(self.active)-1]['loc'] = (len(self.active))-1
-        return (len(self.active))-1
 
     def removeItem(self, loc):
         self.active.pop(loc)
@@ -56,9 +54,7 @@ class Item:
 
     def runEvent(self, item):
         item['event']()
-        if not item.arrow:
-            self.inventory.addToInventory(item)
-            self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
-            sceneItems.itemRemove(item['loc'])
-            self.active.pop(item['loc'])
-            print(self.active)
+        
+        self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
+        sceneItems.itemRemove(self.active.index(item))
+        self.active.remove(item)

@@ -36,6 +36,8 @@ class Screen:
 
         self.battling = False
 
+        self.cutscene = False
+
         self.loading   = True
         self.loadTime  = 20
         self.loadFrame = self.loadTime  # the frame in which we started the loading screen

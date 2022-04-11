@@ -20,6 +20,8 @@ class Textbox:
         self.arrowRate         = 8
         self.currentArrowFrame = 0
 
+        self.endCutscene = False
+
         self.progressButton = pygame.K_RETURN
 
         self.clean()
@@ -61,11 +63,13 @@ class Textbox:
 
         return res
 
-    def draw(self, text=['press enter to progress...', 'test 2'], textRate=None):
+    def draw(self, text=['press enter to progress...', 'test 2'], textRate=None, endCutscene=False):
         self.target = text
 
         if textRate: 
             self.textRate = textRate
+
+        self.endCutscene = endCutscene
 
         self.clean(isActive=True)
 
@@ -97,7 +101,7 @@ class Textbox:
     def tick(self):
         # if there is nothing to write, just return
         if not self.isActive:
-            return 0
+            return
 
         # Main white box
         self.screen.drawRect(
@@ -158,6 +162,8 @@ class Textbox:
                     self.currentText += 1
                     self.clean(isActive=True, currentText=self.currentText)
                 else:
+                    if self.endCutscene:
+                        self.endCutscene     = False
+                        self.screen.cutscene = False
+                        
                     self.clean()
-                    return 0 
-        return 1
