@@ -11,12 +11,12 @@ def cutscene(screen, textbox, player, item):
     item.tick()
     # sunrise to bedroom
     backgrounds = ['SUNRISE1', 'SUNRISE2', 'SUNRISE3', 'BEDROOM']
-    player.resetPosition(pos=[-200, -200])
+    player.resetPosition(pos=[-400, -400])
     for i in range(len(backgrounds)):
         screen.setRoom(backgrounds[i], load=(True if i == 0 else False))
         if i == 3:
             player.resetPosition(pos=[screen.SCREEN_WIDTH*4/5, screen.SCREEN_HEIGHT*63/100])
-            sprite = 8
+            sprite = 4
             player.tick(drawingNumber = sprite)
         screen.tick(player.x, player.y)
         pygame.display.update()
@@ -30,9 +30,12 @@ def cutscene(screen, textbox, player, item):
                 '*Yawn*. I finally finished my post-lab. Time for me to hit the hay.'
             ])
     
-    last = pygame.time.get_ticks()
-    while pygame.time.get_ticks() < last + 3000:
+    sprite = 8
+
+    textTick = 1
+    while textTick != 0:
         screen.tick(player.x, player.y)
+        textTick = textbox.tick()
         player.tick(drawingNumber = sprite)
         pygame.display.update()
 

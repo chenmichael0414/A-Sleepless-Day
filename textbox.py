@@ -159,4 +159,5 @@ class Textbox:
                     self.clean(isActive=True, currentText=self.currentText)
                 else:
                     self.clean()
+                    return 0 
         return 1
