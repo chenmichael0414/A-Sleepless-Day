@@ -30,4 +30,8 @@ def cutscene(screen, textbox, player, item):
                 '*Yawn*. I finally finished my post-lab. Time for me to hit the hay.'
             ])
     
-    print(player.cutscene)
+    last = pygame.time.get_ticks()
+    while pygame.time.get_ticks() < last + 3000:
+        screen.tick(player.x, player.y)
+        player.tick(drawingNumber = sprite)
+        pygame.display.update()

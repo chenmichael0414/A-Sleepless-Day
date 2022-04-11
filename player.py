@@ -55,8 +55,11 @@ class Player:
 
 
     def tick(self, drawingNumber=None):
-        self.currentFrame = drawingNumber
-        self.draw()
+        if drawingNumber != None:
+            self.currentFrame = drawingNumber
+            self.draw(drawingNumber)
+        else:
+            self.draw()
 
         if not self.screen.frozen:
             if not self.cutscene:
@@ -83,12 +86,12 @@ class Player:
                     self.item.runEvent(item)
                     print(self.item.active)
 
-    def load_sprite(self):
+    def load_sprite(self, drawingNumber = None):
         # extract the image from the spritesheet
         # cycles through the self.coords array for different animations
         # this is calculated through modulating with the animation rate
         # extracts current sprite coords from object
-        currentSprite = (self.pixel_size * (self.currentFrame % 4), self.pixel_size * self.coords[self.currentKey])
+        currentSprite = (self.pixel_size * (self.currentFrame % 4), self.pixel_size * (int(drawingNumber/4) if drawingNumber != None else self.coords[self.currentKey]))
 
         newCoords = tuple(map(sum, zip(currentSprite, self.offset))) # adds the tuples together
         rect = pygame.Rect(newCoords + self.size)
@@ -101,8 +104,11 @@ class Player:
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))
 
-    def draw(self):
-        self.load_sprite()
+    def draw(self, drawingNumber=None):
+        if drawingNumber != None:
+            self.load_sprite(drawingNumber)
+        else:
+            self.load_sprite()
         w, h = self.sprite.get_size()
 
         if self.screen.cameraMode == "SCROLL":
