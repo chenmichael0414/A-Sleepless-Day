@@ -1,6 +1,5 @@
 import pygame
 import json
-import sceneItems
 
 class Item:
     def __init__(self, screen, textbox, inventory):
@@ -16,7 +15,7 @@ class Item:
 
         self.active = []
 
-    def addItem(self, name, x=50, y=50, arrow=False):
+    def addItem(self, name, x=50, y=50, arrow=False, event=None):
         self.active.append({
             'name': name,
             'startX': x + self.screen.OFFSET_X,
@@ -25,7 +24,7 @@ class Item:
             'y': y + self.screen.OFFSET_Y,
             'sprite': self.loadSprite(name),
             'arrow': arrow,
-            'event': lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']),
+            'event': (lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']) if event == None else event),
         })
 
     def removeItem(self, loc):
@@ -54,7 +53,9 @@ class Item:
 
     def runEvent(self, item):
         item['event']()
-        
-        self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
-        sceneItems.itemRemove(self.active.index(item))
-        self.active.remove(item)
+        print(item['arrow'])
+        if not item['arrow']:
+            self.inventory.addToInventory(item)
+            self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
+            self.screen.itemRemove(self.active.index(item))
+            self.active.remove(item)

@@ -1,6 +1,5 @@
 import pygame
 import json
-import sceneItems
 
 class Screen:
     def __init__(self, width=800, height=600, fps=60):
@@ -46,6 +45,25 @@ class Screen:
 
         self.setRoom('CHEM')
 
+        self.currScene = "CHEM"
+        self.items = {
+            "CHEM": [['block'],['block', 200, 200], ['arrow', 300, 100, True, lambda: self.setRoom('TEST')]]
+        }
+
+    def addSceneItems(self, scene, item):
+        for i in self.items[scene]:
+            if len(i) ==  1:
+                item.addItem(i[0])
+            elif len(i) == 3:
+                item.addItem(i[0], x=i[1], y=i[2])
+            else:
+                item.addItem(i[0], i[1], i[2], i[3], i[4])
+
+        self.currScene = scene
+
+    def itemRemove(self, i):
+        self.items[currScene].pop(i)
+
     def setRoom(self, room, player=None, item=None, load=True):
         if not room in self.rooms or self.frozen:
             return
@@ -71,7 +89,7 @@ class Screen:
                     i['y'] = i['startY']
 
         if item:
-            sceneItems.addSceneItems(room, item)
+            self.addSceneItems(room, item)
 
     def load(self):
         self.loading   = True
