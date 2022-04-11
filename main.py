@@ -6,6 +6,7 @@ from screen import Screen
 from textbox import Textbox
 from item import Item
 from inventory import Inventory
+from battle import Battle
 from key import Key
 from intro import cutscene
 
@@ -18,6 +19,7 @@ if __name__ == '__main__':
     textbox   = Textbox(screen)
     inventory = Inventory(screen)
     item      = Item(screen, textbox, inventory)
+    battle    = Battle(screen)
     player    = Player(screen, item)
 
     item.addItem('block')
@@ -27,6 +29,7 @@ if __name__ == '__main__':
         inventory.addToInventory(item.active[0])
 
     Key.addKey(inventory.displayKey)
+    Key.addKey(pygame.K_b)
 
     screen.setRoom('MAIN', player, item)
 
@@ -36,8 +39,9 @@ if __name__ == '__main__':
                 sys.exit()
 
         screen.tick(player.x, player.y)
+        battle.tick()
 
-        if not screen.loading:
+        if not screen.loading and not screen.battling:
             player.tick()
             item.tick()
             textbox.tick()

@@ -33,6 +33,8 @@ class Screen:
 
         self.frozen = False
 
+        self.battling = False
+
         self.loading   = True
         self.loadTime  = 20
         self.loadFrame = self.loadTime  # the frame in which we started the loading screen
@@ -122,7 +124,8 @@ class Screen:
         if self.frame - self.loadFrame >= self.loadTime:    # if it has been 50 or more frames since we started the loading screen
             self.loading = False
 
-        if not self.loading:
+        # Draw the background
+        if not self.loading and not self.battling:
             if self.cameraMode == "SCROLL":
                 self.display.blit(self.bg, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
             elif self.cameraMode == "FIXED":
