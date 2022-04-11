@@ -66,6 +66,9 @@ class Screen:
                     i['x'] = i['startX'] 
                     i['y'] = i['startY']
 
+        if item:
+            sceneItems.addSceneItems(room, item)
+
     def load(self):
         self.loading   = True
         self.loadFrame = self.frame

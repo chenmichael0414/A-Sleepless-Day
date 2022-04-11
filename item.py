@@ -45,12 +45,7 @@ class Item:
 
     def tick(self):
         for item in self.active:
-            # load the image based on the corresponding path from the json file
-            # scale the image down
-            # display it on the screen if it hasn't been picked up
-
-            if not item['triggered']:
-                self.screen.drawSprite(item['sprite'], (item['x'], item['y']))
+            self.screen.drawSprite(item['sprite'], (item['x'], item['y']))
 
     # basically makes it so each item stays in a fixed position as the camera scrolls
     def updatePositions(self, dx, dy):

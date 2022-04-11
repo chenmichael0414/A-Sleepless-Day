@@ -43,7 +43,7 @@ if __name__ == '__main__':
         else:
             screen.frozen = False
 
-        if not started and pygame.key.get_pressed()[pygame.K_SPACE]:
+        if not started and pygame.key.get_pressed()[pygame.K_TAB]:
             cutscene(screen, textbox, player, item)
             started = True
 
