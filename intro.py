@@ -35,3 +35,5 @@ def cutscene(screen, textbox, player, item):
         screen.tick(player.x, player.y)
         player.tick(drawingNumber = sprite)
         pygame.display.update()
+
+    player.cutscene = False
