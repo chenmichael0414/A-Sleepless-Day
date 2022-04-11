@@ -13,6 +13,8 @@ from intro import cutscene
 if __name__ == '__main__':
     pygame.init()
 
+    pygame.mouse.set_visible(False)
+
     started = False
 
     screen    = Screen()
@@ -41,11 +43,9 @@ if __name__ == '__main__':
             textbox.tick()
             inventory.tick()
             Key.tick()
-
-        if textbox.isActive or inventory.isActive:
-            screen.frozen = True
-        else:
-            screen.frozen = False
+            
+        # Freeze the screen if a textbox is open or if the inventory is open
+        screen.frozen = textbox.isActive or inventory.isActive
 
         if not started and pygame.key.get_pressed()[pygame.K_TAB]:
             cutscene(screen, textbox, player, item)

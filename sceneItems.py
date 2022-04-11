@@ -14,5 +14,5 @@ def addSceneItems(scene, item):
             item.addItem(i[0], x=i[1], y=i[2])
     currScene = scene
 
-def itemRemove(loc):
-    items[currScene].pop(loc)
+def itemRemove(i):
+    items[currScene].pop(i)

@@ -34,7 +34,6 @@ class Player:
 
         self.currentFrame  = 0 # current frame of animation
         self.animationRate = 6 # after how many frames do we switch costumes
-        self.cutscene = False
 
         self.resetPosition()
 
@@ -62,7 +61,7 @@ class Player:
             self.draw()
 
         if not self.screen.frozen:
-            if not self.cutscene:
+            if not self.screen.cutscene:
                 self.move()
 
             w, h = self.sprite.get_size()
@@ -81,10 +80,7 @@ class Player:
                 collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
     
                 if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
-                    print(self.item.active)
-                    print(item["loc"])
                     self.item.runEvent(item)
-                    print(self.item.active)
 
     def load_sprite(self, drawingNumber = None):
         # extract the image from the spritesheet
@@ -99,7 +95,7 @@ class Player:
         self.sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
 
         self.sprite.blit(self.sheet, (0, 0), rect)
-        print(self.currentFrame)
+        # print(self.currentFrame)
 
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))

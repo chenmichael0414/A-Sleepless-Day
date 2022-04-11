@@ -4,7 +4,7 @@ import player
 from item import Item
 
 def cutscene(screen, textbox, player, item):
-    player.cutscene = True
+    screen.cutscene = True
     sprite = 0
     # clear items
     item.clearItems()
@@ -17,26 +17,17 @@ def cutscene(screen, textbox, player, item):
         if i == 3:
             player.resetPosition(pos=[screen.SCREEN_WIDTH*4/5, screen.SCREEN_HEIGHT*63/100])
             sprite = 4
-            player.tick(drawingNumber = sprite)
+            player.tick(drawingNumber=sprite)
         screen.tick(player.x, player.y)
         pygame.display.update()
         last = pygame.time.get_ticks()
         while pygame.time.get_ticks() <= last + 1000:
             screen.tick(player.x, player.y)
-            player.tick(drawingNumber = sprite)
+            player.tick(drawingNumber=sprite)
             pygame.display.update()
 
     textbox.draw([
-                '*Yawn*. I finally finished my post-lab. Time for me to hit the hay.'
-            ])
+        '*Yawn*. I finally finished my post-lab. Time for me to hit the hay.'
+    ], endCutscene=True)
     
     sprite = 8
-
-    textTick = 1
-    while textTick != 0:
-        screen.tick(player.x, player.y)
-        textTick = textbox.tick()
-        player.tick(drawingNumber = sprite)
-        pygame.display.update()
-
-    player.cutscene = False
