@@ -16,7 +16,7 @@ class Item:
 
         self.active = []
 
-    def addItem(self, name, x=50, y=50):
+    def addItem(self, name, x=50, y=50, arrow=False):
         self.active.append({
             'name': name,
             'startX': x + self.screen.OFFSET_X,
@@ -24,6 +24,7 @@ class Item:
             'x': x + self.screen.OFFSET_X,
             'y': y + self.screen.OFFSET_Y,
             'sprite': self.loadSprite(name),
+            'arrow': arrow,
             'event': lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']),
         })
         self.active[len(self.active)-1]['loc'] = (len(self.active))-1
@@ -54,10 +55,10 @@ class Item:
             item['y'] += dy
 
     def runEvent(self, item):
-        self.inventory.addToInventory(item)
         item['event']()
-        
-        self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
-        sceneItems.itemRemove(item['loc'])
-        self.active.pop(item['loc'])
-        print(self.active)
+        if not item.arrow:
+            self.inventory.addToInventory(item)
+            self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
+            sceneItems.itemRemove(item['loc'])
+            self.active.pop(item['loc'])
+            print(self.active)
