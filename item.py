@@ -1,5 +1,6 @@
 import pygame
 import json
+import sceneItems
 
 class Item:
     def __init__(self, screen, textbox, inventory):
@@ -24,8 +25,16 @@ class Item:
             'y': y + self.screen.OFFSET_Y,
             'sprite': self.loadSprite(name),
             'event': lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']),
-            'triggered': False
         })
+        self.active[len(self.active)-1]['loc'] = (len(self.active))-1
+        return (len(self.active))-1
+
+    def removeItem(self, loc):
+        self.active.pop(loc)
+        sceneItems.itemRemove(loc)
+
+    def clearItems(self):
+        self.active = []
 
     # basically makes it so we only have to load image sprites once
     def loadSprite(self, name):
@@ -54,8 +63,6 @@ class Item:
         item['event']()
         
         self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
-
-        item['triggered'] = True
-
-
-    
+        sceneItems.itemRemove(item['loc'])
+        self.active.pop(item['loc'])
+        print(self.active)
