@@ -1,5 +1,6 @@
 import pygame
 from screen import Screen
+import math
 
 class Player:
     def __init__(self, screen, item):
@@ -32,7 +33,8 @@ class Player:
         }
 
         self.currentFrame  = 0 # current frame of animation
-        self.animationRate = 10 # after how many frames do we switch costumes
+        self.animationRate = 6 # after how many frames do we switch costumes
+        self.cutscene = False
 
         self.resetPosition()
 
@@ -52,11 +54,16 @@ class Player:
                 self.y = self.screen.SCREEN_HEIGHT / 2 - h / 2
 
 
-    def tick(self):
-        self.draw()
+    def tick(self, drawingNumber=None):
+        if drawingNumber != None:
+            self.currentFrame = drawingNumber
+            self.draw(drawingNumber)
+        else:
+            self.draw()
 
         if not self.screen.frozen:
-            self.move()
+            if not self.cutscene:
+                self.move()
 
             w, h = self.sprite.get_size()
             scrollRect = pygame.Rect(self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2, w, h)
@@ -70,31 +77,38 @@ class Player:
 
                 itemRect = pygame.Rect((item['x'], item['y']) + item['sprite'].get_size())
 
-                if not item['triggered']:
-                    collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
-                    collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
-        
-                    if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
-                        self.item.runEvent(item)
+                collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
+                collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
+    
+                if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
+                    print(self.item.active)
+                    print(item["loc"])
+                    self.item.runEvent(item)
+                    print(self.item.active)
 
-    def load_sprite(self):
+    def load_sprite(self, drawingNumber = None):
         # extract the image from the spritesheet
         # cycles through the self.coords array for different animations
         # this is calculated through modulating with the animation rate
         # extracts current sprite coords from object
-        currentSprite = (self.pixel_size * (self.currentFrame % 4), self.pixel_size * self.coords[self.currentKey])
+        currentSprite = (self.pixel_size * (self.currentFrame % 4), self.pixel_size * (int(drawingNumber/4) if drawingNumber != None else self.coords[self.currentKey]))
 
         newCoords = tuple(map(sum, zip(currentSprite, self.offset))) # adds the tuples together
         rect = pygame.Rect(newCoords + self.size)
 
         self.sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+
         self.sprite.blit(self.sheet, (0, 0), rect)
+        print(self.currentFrame)
 
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))
 
-    def draw(self):
-        self.load_sprite()
+    def draw(self, drawingNumber=None):
+        if drawingNumber != None:
+            self.load_sprite(drawingNumber)
+        else:
+            self.load_sprite()
         w, h = self.sprite.get_size()
 
         if self.screen.cameraMode == "SCROLL":
@@ -105,7 +119,7 @@ class Player:
     def move(self):
         pressed = pygame.key.get_pressed()
 
-        moveFactor = self.size[0] * 2 # multiply the actual width of the sprite by a factor
+        moveFactor = self.size[0] * 3 # multiply the actual width of the sprite by a factor
 
         isMoving = False
 
