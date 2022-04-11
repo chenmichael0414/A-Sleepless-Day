@@ -1,5 +1,6 @@
 import pygame
 import json
+import sceneItems
 
 class Screen:
     def __init__(self, width=800, height=600, fps=60):
@@ -33,17 +34,21 @@ class Screen:
 
         self.frozen = False
 
+        self.battling = False
+
         self.loading   = True
         self.loadTime  = 20
         self.loadFrame = self.loadTime  # the frame in which we started the loading screen
 
         self.rooms = json.load(open('./rooms/rooms.json'))
 
-    def setRoom(self, room, player=None, item=None):
+        self.setRoom('CHEM')
+
+    def setRoom(self, room, player=None, item=None, load=True):
         if not room in self.rooms or self.frozen:
             return
-
-        self.load()
+        if load:
+            self.load()
 
         self.current = room
         self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path']))
@@ -62,6 +67,9 @@ class Screen:
                 elif self.cameraMode == "FIXED":
                     i['x'] = i['startX'] 
                     i['y'] = i['startY']
+
+        if item:
+            sceneItems.addSceneItems(room, item)
 
     def load(self):
         self.loading   = True
@@ -122,7 +130,8 @@ class Screen:
         if self.frame - self.loadFrame >= self.loadTime:    # if it has been 50 or more frames since we started the loading screen
             self.loading = False
 
-        if not self.loading:
+        # Draw the background
+        if not self.loading and not self.battling:
             if self.cameraMode == "SCROLL":
                 self.display.blit(self.bg, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
             elif self.cameraMode == "FIXED":

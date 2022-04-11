@@ -26,6 +26,7 @@ class Inventory:
         self.items.append(item)
 
     def tick(self):
+        # TODO: make so u cant open inventory if text is playing
         if Key.isToggled(self.displayKey):
             self.isActive = True
             self.display()

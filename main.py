@@ -6,6 +6,7 @@ from screen import Screen
 from textbox import Textbox
 from item import Item
 from inventory import Inventory
+from battle import Battle
 from key import Key
 from intro import cutscene
 
@@ -18,17 +19,13 @@ if __name__ == '__main__':
     textbox   = Textbox(screen)
     inventory = Inventory(screen)
     item      = Item(screen, textbox, inventory)
+    battle    = Battle(screen)
     player    = Player(screen, item)
 
-    item.addItem('block')
-    item.addItem('block', x=200, y=200)
-
-    for i in range(5):
-        inventory.addToInventory(item.active[0])
-
     Key.addKey(inventory.displayKey)
+    Key.addKey(pygame.K_b)
 
-    screen.setRoom('MAIN', player, item)
+    screen.setRoom('CHEM', player, item)
 
     while True:
         for event in pygame.event.get():
@@ -36,8 +33,9 @@ if __name__ == '__main__':
                 sys.exit()
 
         screen.tick(player.x, player.y)
+        battle.tick()
 
-        if not screen.loading:
+        if not screen.loading and not screen.battling:
             player.tick()
             item.tick()
             textbox.tick()
@@ -49,8 +47,8 @@ if __name__ == '__main__':
         else:
             screen.frozen = False
 
-        if not started and pygame.key.get_pressed()[pygame.K_SPACE]:
-            cutscene(screen)
+        if not started and pygame.key.get_pressed()[pygame.K_TAB]:
+            cutscene(screen, textbox, player, item)
             started = True
 
         if pygame.key.get_pressed()[pygame.K_z]: 
@@ -59,10 +57,8 @@ if __name__ == '__main__':
                 'wow, see? you\'re already learning! you\'re amazing <3'
             ])
 
-        if pygame.key.get_pressed()[pygame.K_x]: 
-            screen.setRoom('TEST', player, item)
-
-        if pygame.key.get_pressed()[pygame.K_c]: 
-            screen.setRoom('MAIN', player, item)
+        if pygame.key.get_pressed()[pygame.K_c]:
+            item.clearItems() 
+            screen.setRoom('CHEM', player, item)
 
         pygame.display.update()
