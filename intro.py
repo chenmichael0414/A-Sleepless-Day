@@ -5,7 +5,7 @@ from item import Item
 
 def cutscene(screen, textbox, player, item):
     screen.cutscene = True
-    sprite = 0
+    sprite = 4
     # clear items
     item.clearItems()
     item.tick()
@@ -26,8 +26,15 @@ def cutscene(screen, textbox, player, item):
             player.tick(drawingNumber=sprite)
             pygame.display.update()
 
+    screen.cutscene = True
     textbox.draw([
         '*Yawn*. I finally finished my post-lab. Time for me to hit the hay.'
     ], endCutscene=True)
     
     sprite = 8
+
+    while screen.cutscene:
+        screen.tick(player.x, player.y)
+        textbox.tick()
+        player.tick(drawingNumber=sprite)
+        pygame.display.update()

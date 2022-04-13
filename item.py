@@ -29,7 +29,7 @@ class Item:
 
     def removeItem(self, loc):
         self.active.pop(loc)
-        sceneItems.itemRemove(loc)
+        screen.itemRemove(loc)
 
     def clearItems(self):
         self.active = []

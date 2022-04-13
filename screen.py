@@ -62,7 +62,7 @@ class Screen:
         self.currScene = scene
 
     def itemRemove(self, i):
-        self.items[currScene].pop(i)
+        self.items[self.currScene].pop(i)
 
     def setRoom(self, room, player=None, item=None, load=True):
         if not room in self.rooms or self.frozen:

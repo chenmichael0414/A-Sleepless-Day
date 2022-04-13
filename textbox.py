@@ -101,7 +101,7 @@ class Textbox:
     def tick(self):
         # if there is nothing to write, just return
         if not self.isActive:
-            return
+            return 1
 
         # Main white box
         self.screen.drawRect(
