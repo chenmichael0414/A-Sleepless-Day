@@ -1,25 +1,44 @@
 import pygame
+import math
+import random
 from key import Key
 
 class Battle:
     def __init__(self, screen):
         self.screen = screen
 
+        self.mode = "GRAVITY"
+        
         self.boxWidth  = 400
         self.boxHeight = 350
         self.boxLine  = 3    # box line width
 
+        # Player data
         self.playerX = 0
         self.playerY = 0
+
+        self.playerSize = 18
+
+        self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth) / 2 + self.boxLine + self.playerX
+        self.PLAYER_OFFSET_Y = self.screen.SCREEN_HEIGHT - self.boxLine - self.playerSize
 
         self.playerMoveVel    = 3
         self.playerYVel       = 0
         self.playerYAccel     = .4
         self.playerJumpHeight = 8
 
-        self.mode = "GRAVITY"
-
-        self.playerSize = 18
+        # Enemy data
+        # This enemy just exists so the enemy loop runs at least once
+        # (if enemy array is empty, it won't run)
+        self.enemies = [
+            {
+                'x': self.screen.SCREEN_WIDTH + 1,
+                'y': 0,
+                'angle': 1.5,
+                'speed': 4,
+                'size': 18
+            }
+        ]
 
     def tick(self):
         if pygame.key.get_pressed()[pygame.K_b]:
@@ -44,11 +63,18 @@ class Battle:
         )
 
         # Player
+        self.playerEngine()
+
+        # Enemies
+        self.enemiesEngine()
+
+    def playerEngine(self):
+        # Player
         self.screen.drawRect(
             (255, 0, 0), # red
             (
-                (self.screen.SCREEN_WIDTH - self.boxWidth) / 2 + self.playerX + self.boxLine, 
-                self.screen.SCREEN_HEIGHT - self.boxLine - self.playerSize - self.playerY, 
+                self.PLAYER_OFFSET_X + self.playerX, 
+                self.PLAYER_OFFSET_Y - self.playerY, 
                 self.playerSize, 
                 self.playerSize
             ),
@@ -91,3 +117,74 @@ class Battle:
         if self.playerY < bottomBound:
             self.playerY    = bottomBound
             self.playerYVel = 0
+
+    def enemiesEngine(self):
+        for enemy in self.enemies:
+            self.screen.drawRect(
+                (0, 0, 255), # blue
+                (
+                    enemy['x'], 
+                    enemy['y'], 
+                    enemy['size'], 
+                    enemy['size']
+                ),
+            )
+
+            # self.enemyAttack1(enemy)
+            self.enemyAttack2(enemy)
+
+            if enemy['x'] > self.screen.SCREEN_WIDTH or enemy['y'] > self.screen.SCREEN_HEIGHT:
+                self.enemies.remove(enemy)
+
+            playerRect = pygame.Rect(self.PLAYER_OFFSET_X + self.playerX, self.PLAYER_OFFSET_Y - self.playerY, self.playerSize, self.playerSize)
+            enemyRect  = pygame.Rect(enemy['x'], enemy['y'], enemy['size'], enemy['size'])
+
+            if pygame.Rect.colliderect(playerRect, enemyRect):
+                self.reset()
+
+    def enemyAttack1(self, enemy):
+        xSpeed = enemy['speed'] * math.cos(enemy['angle'])
+        ySpeed = enemy['speed'] * math.sin(enemy['angle'])
+
+        enemy['x'] += xSpeed
+        enemy['y'] += ySpeed
+
+        while len(self.enemies) < 7:
+            # Angle is kinda random but at the same time pointing towards the center of the player box
+            self.enemies.append({
+                'x': random.randint(0, 400),
+                'y': 0,
+                'angle': math.atan2(self.screen.SCREEN_WIDTH / 2, self.screen.SCREEN_HEIGHT / 2) + random.uniform(-.25, .75),
+                'speed': random.randint(4, 8),
+                'size': 18
+            })
+
+    def enemyAttack2(self, enemy):
+        enemy['x'] += enemy['speed']
+        enemy['y'] += math.sin(enemy['x'] / 20) * 3
+
+        while len(self.enemies) < 5:
+            # Angle is kinda random but at the same time pointing towards the center of the player box
+            self.enemies.append({
+                'x': 0,
+                'y': random.randint(self.screen.SCREEN_HEIGHT - 51, self.screen.SCREEN_HEIGHT - 1),
+                'angle': 0,
+                'speed': random.randint(2, 4),
+                'size': 18
+            })
+
+    def reset(self):
+        self.playerX = 0
+        self.playerY = 0
+
+        self.enemies = [
+            {
+                'x': self.screen.SCREEN_WIDTH + 1,
+                'y': 0,
+                'angle': 1.5,
+                'speed': 4,
+                'size': 18
+            }
+        ]
+
+        
