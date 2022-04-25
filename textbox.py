@@ -22,6 +22,11 @@ class Textbox:
 
         self.endCutscene = False
 
+        self.isActive = False
+
+        self.finishedTexts = []
+        self.finishedFlag  = None
+
         self.progressButton = pygame.K_RETURN
 
         self.clean()
@@ -63,13 +68,17 @@ class Textbox:
 
         return res
 
-    def draw(self, text=['press enter to progress...', 'test 2'], textRate=None, endCutscene=False):
+    def draw(self, text, textRate=None, endCutscene=False, flag=None):
+        if self.isActive:
+            return
+
         self.target = text
 
         if textRate: 
             self.textRate = textRate
 
-        self.endCutscene = endCutscene
+        self.endCutscene  = endCutscene
+        self.finishedFlag = flag
 
         self.clean(isActive=True)
 
@@ -82,6 +91,17 @@ class Textbox:
             self.textRate = textRate
 
         self.clean(isActive=True)
+
+    def isFinished(self, flag):
+        return flag in self.finishedTexts
+
+    def drawIfIncomplete(self, text, flag):
+        if not self.isFinished(flag):
+            self.draw(text, flag=flag)
+
+            return True
+
+        return False
 
     def getArrow(self):
         # extract the current arrow sprite
@@ -165,5 +185,9 @@ class Textbox:
                     if self.endCutscene:
                         self.endCutscene     = False
                         self.screen.cutscene = False
+
+                    if self.finishedFlag is not None:
+                        self.finishedTexts.append(self.finishedFlag)
+                        self.finishedFlag = None
                         
                     self.clean()

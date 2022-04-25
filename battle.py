@@ -2,10 +2,12 @@ import pygame
 import math
 import random
 from key import Key
+from boss_battles.monkey import Monkey 
 
 class Battle:
-    def __init__(self, screen):
-        self.screen = screen
+    def __init__(self, screen, textbox):
+        self.screen  = screen
+        self.textbox = textbox
 
         self.mode = "GRAVITY"
         
@@ -19,8 +21,8 @@ class Battle:
 
         self.playerSize = 18
 
-        self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth) / 2 + self.boxLine + self.playerX
-        self.PLAYER_OFFSET_Y = self.screen.SCREEN_HEIGHT - self.boxLine - self.playerSize
+        self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth)   / 2 + self.boxLine + self.playerX
+        self.PLAYER_OFFSET_Y = (self.screen.SCREEN_HEIGHT + self.boxHeight) / 2 - self.boxLine - self.playerSize
 
         self.playerMoveVel    = 3
         self.playerYVel       = 0
@@ -40,6 +42,12 @@ class Battle:
             }
         ]
 
+        self.bosses = {
+            'MONKEY': Monkey(screen, self, textbox)
+        }
+        self.currentBoss = 'MONKEY'
+
+
     def tick(self):
         if pygame.key.get_pressed()[pygame.K_b]:
             self.screen.battling = True
@@ -55,7 +63,7 @@ class Battle:
             (255, 255, 255), # white
             (
                 (self.screen.SCREEN_WIDTH - self.boxWidth) / 2, 
-                self.screen.SCREEN_HEIGHT - self.boxHeight, 
+                (self.screen.SCREEN_HEIGHT - self.boxHeight) / 2, 
                 self.boxWidth, 
                 self.boxHeight
             ),
@@ -119,6 +127,11 @@ class Battle:
             self.playerYVel = 0
 
     def enemiesEngine(self):
+        self.screen.cutscene = True
+        self.bosses[self.currentBoss].tick() 
+
+
+        '''
         for enemy in self.enemies:
             self.screen.drawRect(
                 (0, 0, 255), # blue
@@ -141,6 +154,8 @@ class Battle:
 
             if pygame.Rect.colliderect(playerRect, enemyRect):
                 self.reset()
+        '''
+        
 
     def enemyAttack1(self, enemy):
         xSpeed = enemy['speed'] * math.cos(enemy['angle'])

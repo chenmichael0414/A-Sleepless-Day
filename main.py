@@ -21,7 +21,7 @@ if __name__ == '__main__':
     textbox   = Textbox(screen)
     inventory = Inventory(screen)
     item      = Item(screen, textbox, inventory)
-    battle    = Battle(screen)
+    battle    = Battle(screen, textbox)
     player    = Player(screen, item)
 
     Key.addKey(inventory.displayKey)
@@ -37,12 +37,14 @@ if __name__ == '__main__':
         screen.tick(player.x, player.y)
         battle.tick()
 
-        if not screen.loading and not screen.battling:
-            player.tick()
-            item.tick()
+        if not screen.loading:
             textbox.tick()
-            inventory.tick()
-            Key.tick()
+
+            if not screen.battling:
+                player.tick()
+                item.tick()
+                inventory.tick()
+                Key.tick()
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
