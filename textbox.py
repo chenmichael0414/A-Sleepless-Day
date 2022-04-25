@@ -68,6 +68,9 @@ class Textbox:
 
         return res
 
+    # The flag allows us to store when text dialogues are completed
+    # Each flag is stored in an array once the text is finished
+    # If that flag is in the array, we know that we can proceed in a cutscene/battle/etc.
     def draw(self, text, textRate=None, endCutscene=False, flag=None):
         if self.isActive:
             return
@@ -94,6 +97,10 @@ class Textbox:
 
     def isFinished(self, flag):
         return flag in self.finishedTexts
+
+    def resetFlag(self, flag):
+        if flag in self.finishedTexts:
+            self.finishedTexts.remove(flag)
 
     def drawIfIncomplete(self, text, flag):
         if not self.isFinished(flag):

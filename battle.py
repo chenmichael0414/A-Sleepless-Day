@@ -29,6 +29,15 @@ class Battle:
         self.playerYAccel     = .4
         self.playerJumpHeight = 8
 
+        self.playerHealth = 10
+
+        self.heartSheet   = pygame.image.load('./sprites/hearts.png').convert_alpha()
+        self.HEART_WIDTH  = 168
+        self.HEART_HEIGHT = 32
+
+        self.heartSprite = None
+        self.loadHeartSprite()
+
         # Enemy data
         # This enemy just exists so the enemy loop runs at least once
         # (if enemy array is empty, it won't run)
@@ -76,6 +85,18 @@ class Battle:
         # Enemies
         self.enemiesEngine()
 
+    def loadHeartSprite(self):
+        # extract the current sprite
+        rect = pygame.Rect(
+            0,
+            (10 - self.playerHealth) * self.HEART_HEIGHT,
+            self.HEART_WIDTH,
+            self.HEART_HEIGHT
+        )
+
+        self.heartSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        self.heartSprite.blit(self.heartSheet, (0, 0), rect)
+
     def playerEngine(self):
         # Player
         self.screen.drawRect(
@@ -86,6 +107,15 @@ class Battle:
                 self.playerSize, 
                 self.playerSize
             ),
+        )
+
+        # Player hearts
+        self.screen.drawSprite(
+            self.heartSprite, 
+            (
+                0,
+                0
+            )
         )
 
         if pygame.key.get_pressed()[pygame.K_d]:
@@ -125,6 +155,25 @@ class Battle:
         if self.playerY < bottomBound:
             self.playerY    = bottomBound
             self.playerYVel = 0
+
+    def takeDamage(self, damage=1):
+        self.playerHealth -= damage
+        self.loadHeartSprite()
+
+        # TODO: actually something when u die besides resetting the battle
+
+        if self.playerHealth <= 0:
+            print('hm')
+            self.reset()
+
+    def reset(self):
+        self.playerX = 0
+        self.playerY = 0
+
+        self.playerHealth = 10
+        self.loadHeartSprite()
+
+        self.bosses[self.currentBoss].reset()
 
     def enemiesEngine(self):
         self.screen.cutscene = True
@@ -187,19 +236,5 @@ class Battle:
                 'speed': random.randint(2, 4),
                 'size': 18
             })
-
-    def reset(self):
-        self.playerX = 0
-        self.playerY = 0
-
-        self.enemies = [
-            {
-                'x': self.screen.SCREEN_WIDTH + 1,
-                'y': 0,
-                'angle': 1.5,
-                'speed': 4,
-                'size': 18
-            }
-        ]
 
         

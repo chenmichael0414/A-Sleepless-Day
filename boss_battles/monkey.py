@@ -21,16 +21,14 @@ class Monkey:
         self.loadSprite()
 
         self.attacks = [
-            [ pygame.image.load('./attacks/punch.png').convert_alpha(), self.punch ],
-            [ pygame.image.load('./attacks/kick.png').convert_alpha(), self.kick ]
+            self.punch,
+            self.kick,
+            self.punchAndKick
         ]
-        self.currentAttack = 1
+        self.currentAttack = 0
 
-        self.minions = [
-
-        ]
-
-        self.spawnDelay = 40    # Number of frames until the next minion is spawned
+        self.minions = []
+        self.defeatedMinions = 0
 
         # This is so when you touch a minion, you don't take damage multiple times from the same one
         self.lastCollisionFrame = 0
@@ -50,8 +48,6 @@ class Monkey:
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.screen.PIXEL_SIZE, self.scale * self.screen.PIXEL_SIZE))
 
-        print(self.sprite)
-
     def tick(self):
         if not self.sprite:
             return
@@ -64,21 +60,23 @@ class Monkey:
             )
         )
 
-        if self.textbox.drawIfIncomplete(['oohoohooh aahahahah', 'i am going to defeat you!!!'], 'monkey 1'): return
+        if self.textbox.drawIfIncomplete(['oohoohooh aahahahah', 'i am going to defeat you!!!'], 'monkey intro'): return
 
         for minion in self.minions:
             self.screen.drawSprite(
-                self.attacks[self.currentAttack][0],
+                minion['sprite'],
                 (
                     minion['x'],
                     minion['y']
                 ),
             )
 
+            # If the minion goes off screen (therefore it is defeated)
             if minion['x'] > self.screen.SCREEN_WIDTH or minion['y'] > self.screen.SCREEN_HEIGHT:
                 self.minions.remove(minion)
+                self.defeatedMinions += 1
 
-            minionW, minionH = self.attacks[self.currentAttack][0].get_size()
+            minionW, minionH = minion['sprite'].get_size()
 
             playerRect = pygame.Rect(
                 self.battle.PLAYER_OFFSET_X + self.battle.playerX, 
@@ -90,13 +88,26 @@ class Monkey:
             enemyRect = pygame.Rect(minion['x'], minion['y'], minionW, minionH)
 
             if pygame.Rect.colliderect(playerRect, enemyRect):
-                # 50 is an arbitrary number for a delay between damage, can be tweaked
-                if self.screen.frame - self.lastCollisionFrame > 50:
-                    print('dead!')
+                # 20 is an arbitrary number for a delay between damage, can be tweaked
+                if self.screen.frame - self.lastCollisionFrame > 20:
+                    self.battle.takeDamage()
 
                 self.lastCollisionFrame = self.screen.frame
 
-        self.attacks[self.currentAttack][1]()
+        self.attacks[self.currentAttack]()
+
+    def reset(self):
+        self.loadSprite()
+
+        self.currentAttack = 0
+        self.minions = []
+        self.defeatedMinions = 0
+        self.lastCollisionFrame = 0
+
+        self.textbox.resetFlag('monkey intro')
+        self.textbox.resetFlag('monkey punch win')
+        self.textbox.resetFlag('monkey kick win')
+        self.textbox.resetFlag('monkey final win')
 
     def punch(self):
         for minion in self.minions:
@@ -106,30 +117,99 @@ class Monkey:
             minion['x'] += xSpeed
             minion['y'] += ySpeed
 
-        # If it is the current frame to draw a minion or there are no minions on the screen (meaning we want one ASAP)
-        if (len(self.minions) < 4 and self.screen.frame % self.spawnDelay == 0) or len(self.minions) == 0:
-            self.minions.append({
-                'x': 0,
-                'y': random.randint(self.battle.PLAYER_OFFSET_Y - 100, self.battle.PLAYER_OFFSET_Y)
-            })
+        if self.defeatedMinions < 20:
+            # If it is the current frame to draw a minion
+            if len(self.minions) < 4 and self.screen.frame % 40 == 0:
+                self.minions.append({
+                    'x': 0,
+                    'y': random.randint(self.battle.PLAYER_OFFSET_Y - 100, self.battle.PLAYER_OFFSET_Y),
+                    'dir': 1,
+                    'sprite': pygame.image.load('./attacks/punch.png').convert_alpha(),
+                    'type': 'punch'
+                })
+        # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
+        elif len(self.minions) == 0:
+            if self.textbox.drawIfIncomplete(['uhhh good job i guess...'], 'monkey punch win'): return
+
+            self.defeatedMinions = 0
+            self.currentAttack += 1
 
     def kick(self):
         for minion in self.minions:
-            xSpeed = 3 * minion['dir']
-            ySpeed = 3
+            xSpeed = 4 * minion['dir']
+            ySpeed = 4
 
             minion['x'] += xSpeed
             minion['y'] += ySpeed
 
-        # If it is the current frame to draw a minion or there are no minions on the screen (meaning we want one ASAP)
-        if (len(self.minions) < 10 and self.screen.frame % self.spawnDelay == 0) or len(self.minions) == 0:
-            coinflip = random.randint(0, 1)
+        if self.defeatedMinions < 40:
+            # If it is the current frame to draw a minion
+            if len(self.minions) < 8 and self.screen.frame % 20 == 0:
+                coinflip = random.randint(0, 1)
+                kick     = pygame.image.load('./attacks/kick.png').convert_alpha()
 
-            self.minions.append({
-                'x': random.randint(0, 150) if coinflip == 0 else random.randint(self.screen.SCREEN_WIDTH - 150, self.screen.SCREEN_WIDTH),
-                'y': random.randint((self.screen.SCREEN_HEIGHT / 2) - 200, (self.screen.SCREEN_HEIGHT / 2) - 50),
-                'dir': 1 if coinflip == 0 else -1
-            })
+                # Basically just generates some nice random position data
+                # Conflip determines if the kick comes from the left or right
+                self.minions.append({
+                    'x': random.randint(0, 150) if coinflip == 0 else random.randint(self.screen.SCREEN_WIDTH - 150, self.screen.SCREEN_WIDTH),
+                    'y': random.randint((self.screen.SCREEN_HEIGHT / 2) - 200, (self.screen.SCREEN_HEIGHT / 2) - 60),
+                    'dir': 1 if coinflip == 0 else -1,
+                    'sprite': pygame.transform.flip(kick, True, False) if coinflip == 0 else kick,
+                    'type': 'kick'
+                })
+        elif len(self.minions) == 0:
+            if self.textbox.drawIfIncomplete(['*really agitated monkey noises*'], 'monkey kick win'): return
+
+            self.defeatedMinions = 0
+            self.currentAttack += 1
+
+    def punchAndKick(self):
+        for minion in self.minions:
+            if minion['type'] == 'punch':
+                xSpeed = 6
+                ySpeed = 0
+
+                minion['x'] += xSpeed
+                minion['y'] += ySpeed
+            elif minion['type'] == 'kick':
+                xSpeed = 4 * minion['dir']
+                ySpeed = 4
+
+                minion['x'] += xSpeed
+                minion['y'] += ySpeed
+
+        # 0-2 is punch, 3-4 is kick
+        rng = random.randint(0, 4)
+
+        if self.defeatedMinions < 40:
+            # If it is the current frame to draw a minion
+            if len(self.minions) < 10 and self.screen.frame % 30 == 0:
+                if rng <= 2:
+                    self.minions.append({
+                        'x': 0,
+                        'y': random.randint(self.battle.PLAYER_OFFSET_Y - 100, self.battle.PLAYER_OFFSET_Y - 50),
+                        'dir': 1,
+                        'sprite': pygame.image.load('./attacks/punch.png').convert_alpha(),
+                        'type': 'punch'
+                    })
+                else:
+                    coinflip = random.randint(0, 1)
+                    kick     = pygame.image.load('./attacks/kick.png').convert_alpha()
+
+                    # Basically just generates some nice random position data
+                    # Conflip determines if the kick comes from the left or right
+                    self.minions.append({
+                        'x': random.randint(0, 150) if coinflip == 0 else random.randint(self.screen.SCREEN_WIDTH - 150, self.screen.SCREEN_WIDTH),
+                        'y': random.randint((self.screen.SCREEN_HEIGHT / 2) - 200, (self.screen.SCREEN_HEIGHT / 2) - 50),
+                        'dir': 1 if coinflip == 0 else -1,
+                        'sprite': pygame.transform.flip(kick, True, False) if coinflip == 0 else kick,
+                        'type': 'kick'
+                    })
+        elif len(self.minions) == 0:
+            if self.textbox.drawIfIncomplete(['hey u win congrats!'], 'monkey final win'): return
+
+            # self.defeatedMinions = 0
+            # self.currentAttack += 1
 
 
 
