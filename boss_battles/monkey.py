@@ -9,6 +9,7 @@ class Monkey(Boss):
             battle, 
             textbox, 
             './enemies/bosses/monkey.png',
+            250,
             [
                 self.punch,
                 self.kick,

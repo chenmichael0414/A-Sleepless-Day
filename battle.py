@@ -3,6 +3,7 @@ import math
 import random
 from key import Key
 from boss_battles.monkey import Monkey
+from boss_battles.bunny import Bunny
 
 class Battle:
     def __init__(self, screen, textbox):
@@ -52,9 +53,10 @@ class Battle:
         ]
 
         self.bosses = {
-            'MONKEY': Monkey(screen, self, textbox)
+            'monkey': Monkey(screen, self, textbox),
+            'bunny': Bunny(screen, self, textbox)
         }
-        self.currentBoss = 'MONKEY'
+        self.currentBoss = 'bunny'
 
 
     def tick(self):
@@ -139,7 +141,7 @@ class Battle:
 
             self.playerY += self.playerYVel
             self.playerYVel -= self.playerYAccel
-        elif self.mode == "NORMAL":
+        elif self.mode == "FREE MOVE":
             if pygame.key.get_pressed()[pygame.K_w]:
                 self.playerY += self.playerMoveVel
 

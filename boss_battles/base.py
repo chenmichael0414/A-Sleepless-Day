@@ -1,7 +1,7 @@
 import pygame
 
 class Boss:
-    def __init__(self, screen, battle, textbox, sheetPath, attacks):
+    def __init__(self, screen, battle, textbox, sheetPath, sheetWidth, attacks):
         self.screen = screen
         self.battle = battle
         self.textbox = textbox
@@ -12,14 +12,15 @@ class Boss:
         self.sheet = pygame.image.load(sheetPath).convert_alpha()
 
         # The width and height of each individual sprite in the sheet
-        self.SHEET_WIDTH  = 250
+        # The height is always 300, but the width is variable
+        self.SHEET_WIDTH  = sheetWidth
         self.SHEET_HEIGHT = 300
 
         self.sprite = None
         self.loadSprite()
 
         self.attacks = attacks
-        self.currentAttack = 0
+        self.currentAttack = 2
 
         self.minions = []
         self.defeatedMinions = 0
@@ -29,11 +30,16 @@ class Boss:
         self.playerCollider = PlayerBattleCollider((0, 0), self.battle.playerSize)
         self.minionColliders = {
             'punch': MinionCollider((0, 0), pygame.image.load('./attacks/punch.png').convert_alpha()),
-            'kick': MinionCollider((0, 0), pygame.image.load('./attacks/kick.png').convert_alpha())
+            'kick': MinionCollider((0, 0), pygame.image.load('./attacks/kick.png').convert_alpha()),
+            'soundwave': MinionCollider((0, 0), pygame.image.load('./attacks/soundwave.png').convert_alpha()),
+            'carrot': MinionCollider((0, 0), pygame.image.load('./attacks/carrot.png').convert_alpha()),
         }
 
         # This is so when you touch a minion, you don't take damage multiple times from the same one
         self.lastCollisionFrame = 0
+
+        # Reset the battle mode
+        self.battle.mode = "GRAVITY"
 
     # This gets overriden in the child class
     def tick(self):
@@ -82,6 +88,8 @@ class Boss:
         self.minions = []
         self.defeatedMinions = 0
         self.lastCollisionFrame = 0
+
+        self.battle.mode = "GRAVITY"
 
     def loadSprite(self):
         # extract the current sprite
