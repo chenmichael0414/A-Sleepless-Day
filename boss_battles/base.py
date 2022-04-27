@@ -1,12 +1,11 @@
 import pygame
 
 class Boss:
-    def __init__(self, screen, battle, textbox, sheetPath, sheetWidth, attacks):
+    def __init__(self, screen, battle, textbox, sheetPath, sheetWidth, attacks, minionColliders):
         self.screen = screen
         self.battle = battle
         self.textbox = textbox
 
-        self.currentFrame = 0
         self.scale = 3.5
 
         self.sheet = pygame.image.load(sheetPath).convert_alpha()
@@ -17,23 +16,18 @@ class Boss:
         self.SHEET_HEIGHT = 300
 
         self.sprite = None
-        self.loadSprite()
+        self.loadSprite(0)
 
         self.attacks = attacks
-        self.currentAttack = 2
+        self.currentAttack = 0
 
         self.minions = []
         self.defeatedMinions = 0
 
         # Create empty colliders to prepare for collision later
         # These positions will be updated later
-        self.playerCollider = PlayerBattleCollider((0, 0), self.battle.playerSize)
-        self.minionColliders = {
-            'punch': MinionCollider((0, 0), pygame.image.load('./attacks/punch.png').convert_alpha()),
-            'kick': MinionCollider((0, 0), pygame.image.load('./attacks/kick.png').convert_alpha()),
-            'soundwave': MinionCollider((0, 0), pygame.image.load('./attacks/soundwave.png').convert_alpha()),
-            'carrot': MinionCollider((0, 0), pygame.image.load('./attacks/carrot.png').convert_alpha()),
-        }
+        self.playerCollider  = PlayerBattleCollider((0, 0), self.battle.playerSize)
+        self.minionColliders = minionColliders
 
         # This is so when you touch a minion, you don't take damage multiple times from the same one
         self.lastCollisionFrame = 0
@@ -64,7 +58,7 @@ class Boss:
         )
 
         # If the minion goes off screen (therefore it is defeated)
-        if minion['x'] > self.screen.SCREEN_WIDTH or minion['y'] > self.screen.SCREEN_HEIGHT:
+        if minion['x'] < 0 or minion['x'] > self.screen.SCREEN_WIDTH or minion['y'] > self.screen.SCREEN_HEIGHT:
             self.minions.remove(minion)
             self.defeatedMinions += 1
 
@@ -75,11 +69,14 @@ class Boss:
 
         # Check if the sprites are touching
         if pygame.sprite.collide_mask(self.playerCollider, self.minionColliders[minion['type']]):
-            # 20 is an arbitrary number for a delay between damage, can be tweaked
-            if self.screen.frame - self.lastCollisionFrame > 20:
+            if self.screen.frame - self.lastCollisionFrame > self.battle.invulnerability:
                 self.battle.takeDamage()
 
             self.lastCollisionFrame = self.screen.frame
+
+        # Remove the damaged player color if enough time has passed
+        if self.screen.frame - self.lastCollisionFrame > self.battle.invulnerability:
+            self.battle.playerColor = (255, 0, 0)
 
     def reset(self):
         self.loadSprite()
@@ -89,13 +86,15 @@ class Boss:
         self.defeatedMinions = 0
         self.lastCollisionFrame = 0
 
+        self.battle.playerColor = (255, 0, 0)
+
         self.battle.mode = "GRAVITY"
 
-    def loadSprite(self):
+    def loadSprite(self, frame):
         # extract the current sprite
         rect = pygame.Rect(
-            (self.currentFrame % 2) * self.SHEET_WIDTH,           # % 2 because there are 2 sprites per row in spritesheet
-            ((self.currentFrame // 2) % 2) * self.SHEET_HEIGHT,   # // 2 % 2 to get the current column (2 columns)
+            (frame % 2) * self.SHEET_WIDTH,           # % 2 because there are 2 sprites per row in spritesheet
+            ((frame // 2) % 2) * self.SHEET_HEIGHT,   # // 2 % 2 to get the current column (2 columns)
             self.SHEET_WIDTH,
             self.SHEET_HEIGHT
         )

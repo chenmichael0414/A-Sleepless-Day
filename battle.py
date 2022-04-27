@@ -4,6 +4,9 @@ import random
 from key import Key
 from boss_battles.monkey import Monkey
 from boss_battles.bunny import Bunny
+from boss_battles.cat import Cat
+from boss_battles.mole import Mole
+from boss_battles.elephant import Elephant
 
 class Battle:
     def __init__(self, screen, textbox):
@@ -17,12 +20,13 @@ class Battle:
         self.boxLine  = 3    # box line width
 
         # Player data
-        self.playerX = 0
+        self.playerSize  = 18
+        self.playerColor = (255, 0, 0) # red
+        
+        self.playerX = (self.boxWidth - self.playerSize) / 2
         self.playerY = 0
 
-        self.playerSize = 18
-
-        self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth)   / 2 + self.boxLine + self.playerX
+        self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth)   / 2 + self.boxLine
         self.PLAYER_OFFSET_Y = (self.screen.SCREEN_HEIGHT + self.boxHeight) / 2 - self.boxLine - self.playerSize
 
         self.playerMoveVel    = 3
@@ -31,6 +35,10 @@ class Battle:
         self.playerJumpHeight = 8
 
         self.playerHealth = 10
+
+        # Amount of invulnerable frames the player has after being hit
+        # 20 is an arbitrary number for a delay between damage, can be tweaked
+        self.invulnerability = 20
 
         self.heartSheet   = pygame.image.load('./sprites/hearts.png').convert_alpha()
         self.HEART_WIDTH  = 168
@@ -54,7 +62,10 @@ class Battle:
 
         self.bosses = {
             'monkey': Monkey(screen, self, textbox),
-            'bunny': Bunny(screen, self, textbox)
+            'bunny': Bunny(screen, self, textbox),
+            'cat': Cat(screen, self, textbox),
+            'mole': Mole(screen, self, textbox),
+            'elephant': Elephant(screen, self, textbox)
         }
         self.currentBoss = 'bunny'
 
@@ -102,7 +113,7 @@ class Battle:
     def playerEngine(self):
         # Player
         self.screen.drawRect(
-            (255, 0, 0), # red
+            self.playerColor,
             (
                 self.PLAYER_OFFSET_X + self.playerX, 
                 self.PLAYER_OFFSET_Y - self.playerY, 
@@ -162,14 +173,15 @@ class Battle:
         self.playerHealth -= damage
         self.loadHeartSprite()
 
+        self.playerColor = (155, 0, 0)
+
         # TODO: actually something when u die besides resetting the battle
 
         if self.playerHealth <= 0:
-            print('hm')
             self.reset()
 
     def reset(self):
-        self.playerX = 0
+        self.playerX = (self.boxWidth - self.playerSize) / 2
         self.playerY = 0
 
         self.playerHealth = 10

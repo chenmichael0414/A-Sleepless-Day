@@ -1,6 +1,6 @@
 import random
 import pygame
-from boss_battles.base import Boss
+from boss_battles.base import Boss, MinionCollider
 
 class Monkey(Boss):
     def __init__(self, screen, battle, textbox):
@@ -14,7 +14,11 @@ class Monkey(Boss):
                 self.punch,
                 self.kick,
                 self.punchAndKick
-            ]
+            ],
+            {
+                'punch': MinionCollider((0, 0), pygame.image.load('./attacks/punch.png').convert_alpha()),
+                'kick': MinionCollider((0, 0), pygame.image.load('./attacks/kick.png').convert_alpha()),
+            }
         )
 
     def tick(self):
@@ -59,6 +63,8 @@ class Monkey(Boss):
                 })
         # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
         elif len(self.minions) == 0:
+            self.loadSprite(1)
+
             if self.textbox.drawIfIncomplete(['uhhh good job i guess...'], 'monkey punch win'): return
 
             self.defeatedMinions = 0
@@ -88,6 +94,8 @@ class Monkey(Boss):
                     'type': 'kick'
                 })
         elif len(self.minions) == 0:
+            self.loadSprite(2)
+
             if self.textbox.drawIfIncomplete(['*really agitated monkey noises*'], 'monkey kick win'): return
 
             self.defeatedMinions = 0
@@ -136,6 +144,8 @@ class Monkey(Boss):
                         'type': 'kick'
                     })
         elif len(self.minions) == 0:
+            self.loadSprite(0)
+            
             if self.textbox.drawIfIncomplete(['hey u win congrats!'], 'monkey final win'): return
 
             # self.defeatedMinions = 0

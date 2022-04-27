@@ -1,7 +1,7 @@
 import random
 import math
 import pygame
-from boss_battles.base import Boss
+from boss_battles.base import Boss, MinionCollider
 
 class Bunny(Boss):
     def __init__(self, screen, battle, textbox):
@@ -15,7 +15,11 @@ class Bunny(Boss):
                 self.soundwave,
                 self.carrot,
                 self.soundwaveAndCarrot
-            ]
+            ],
+            {
+                'soundwave': MinionCollider((0, 0), pygame.image.load('./attacks/soundwave.png').convert_alpha()),
+                'carrot': MinionCollider((0, 0), pygame.image.load('./attacks/carrot.png').convert_alpha()),
+            }
         )
 
     def tick(self):
@@ -36,6 +40,9 @@ class Bunny(Boss):
         super().reset()
 
         self.textbox.resetFlag('bunny intro')
+        self.textbox.resetFlag('bunny soundwave win')
+        self.textbox.resetFlag('bunny carrot win')
+        self.textbox.resetFlag('bunny final win')
 
     def soundwave(self):
         for minion in self.minions:
@@ -57,6 +64,8 @@ class Bunny(Boss):
                 })
         # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
         elif len(self.minions) == 0:
+            self.loadSprite(2)
+
             if self.textbox.drawIfIncomplete(['well, i like sound...', '......', '...but i love carrots!!!'], 'bunny soundwave win'): return
 
             self.defeatedMinions = 0
@@ -64,11 +73,8 @@ class Bunny(Boss):
 
     def carrot(self):
         for minion in self.minions:
-            xSpeed = 0
-            ySpeed = random.randint(2, 7)
-
-            minion['x'] += xSpeed
-            minion['y'] += ySpeed
+            minion['ySpeed'] *= minion['yAccel']
+            minion['y']      += minion['ySpeed']
 
         if self.defeatedMinions < 30:
             # If it is the current frame to draw a minion
@@ -77,23 +83,27 @@ class Bunny(Boss):
                 rightBoxCorner = (self.screen.SCREEN_WIDTH + self.battle.boxWidth) / 2
 
                 self.minions.append({
-                    'x': random.randint(leftBoxCorner, rightBoxCorner),
+                    'x': random.randint(leftBoxCorner, rightBoxCorner - 50),    # - 50 to roughly account for the width of the carrot
                     'y': 0,
+                    'ySpeed': 1,
+                    'yAccel': random.uniform(1.015, 1.03),
                     'dir': 1,
                     'sprite': pygame.image.load('./attacks/carrot.png').convert_alpha(),
                     'type': 'carrot'
                 })
         # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
         elif len(self.minions) == 0:
+            self.loadSprite(3)
+
+            # Change the mode to free move for the next phase
+            self.battle.mode = "FREE MOVE"
+
             if self.textbox.drawIfIncomplete(['NOW IM MAD!!!!!!!!'], 'bunny carrot win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
 
     def soundwaveAndCarrot(self):
-        # Change the mode to free move
-        self.battle.mode = "FREE MOVE"
-
         for minion in self.minions:
             if minion['type'] == 'soundwave':
                 xSpeed = 3
@@ -102,11 +112,8 @@ class Bunny(Boss):
                 minion['x'] += xSpeed
                 minion['y'] += ySpeed
             elif minion['type'] == 'carrot':
-                xSpeed = 0
-                ySpeed = random.randint(2, 5)
-
-                minion['x'] += xSpeed
-                minion['y'] += ySpeed
+                minion['ySpeed'] *= minion['yAccel']
+                minion['y']      += minion['ySpeed']
 
         # 0 is soundwave, 1 is carrot (50/50)
         rng = random.randint(0, 1)
@@ -130,11 +137,15 @@ class Bunny(Boss):
                     rightBoxCorner = (self.screen.SCREEN_WIDTH + self.battle.boxWidth) / 2
 
                     self.minions.append({
-                        'x': random.randint(leftBoxCorner, rightBoxCorner),
+                        'x': random.randint(leftBoxCorner, rightBoxCorner - 50),    # - 50 to roughly account for the width of the carrot
                         'y': 0,
+                        'ySpeed': 1,
+                        'yAccel': random.uniform(1.015, 1.03),
                         'dir': 1,
                         'sprite': pygame.image.load('./attacks/carrot.png').convert_alpha(),
                         'type': 'carrot'
                     })
         elif len(self.minions) == 0:
+            self.loadSprite(0)
+
             if self.textbox.drawIfIncomplete(['hey u win congrats!'], 'bunny final win'): return
