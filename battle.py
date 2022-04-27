@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from key import Key
-from boss_battles.monkey import Monkey 
+from boss_battles.monkey import Monkey
 
 class Battle:
     def __init__(self, screen, textbox):
@@ -236,5 +236,3 @@ class Battle:
                 'speed': random.randint(2, 4),
                 'size': 18
             })
-
-        

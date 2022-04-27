@@ -1,108 +1,37 @@
-import math
 import random
 import pygame
+from boss_battles.base import Boss
 
-class Monkey:
+class Monkey(Boss):
     def __init__(self, screen, battle, textbox):
-        self.screen  = screen
-        self.battle  = battle
-        self.textbox = textbox
-
-        self.currentFrame = 0
-        self.scale = 3.5
-
-        self.sheet  = pygame.image.load('./enemies/bosses/monkey.png').convert_alpha()
-
-        # The width and height of each individual sprite in the sheet
-        self.SHEET_WIDTH  = 250
-        self.SHEET_HEIGHT = 300
-
-        self.sprite = None
-        self.loadSprite()
-
-        self.attacks = [
-            self.punch,
-            self.kick,
-            self.punchAndKick
-        ]
-        self.currentAttack = 0
-
-        self.minions = []
-        self.defeatedMinions = 0
-
-        # This is so when you touch a minion, you don't take damage multiple times from the same one
-        self.lastCollisionFrame = 0
-
-    def loadSprite(self):
-        # extract the current sprite
-        rect = pygame.Rect(
-            (self.currentFrame % 2) * self.SHEET_WIDTH,           # % 2 because there are 2 sprites per row in spritesheet
-            ((self.currentFrame // 2) % 2) * self.SHEET_HEIGHT,   # // 2 % 2 to get the current column (2 columns)
-            self.SHEET_WIDTH,
-            self.SHEET_HEIGHT
+        super().__init__(
+            screen, 
+            battle, 
+            textbox, 
+            './enemies/bosses/monkey.png',
+            [
+                self.punch,
+                self.kick,
+                self.punchAndKick
+            ]
         )
-
-        self.sprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-        self.sprite.blit(self.sheet, (0, 0), rect)
-
-        # upscale the sprite
-        self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.screen.PIXEL_SIZE, self.scale * self.screen.PIXEL_SIZE))
 
     def tick(self):
         if not self.sprite:
             return
 
-        self.screen.drawSprite(
-            self.sprite, 
-            (
-                (self.screen.SCREEN_WIDTH - self.sprite.get_width()) / 2,
-                0
-            )
-        )
+        self.drawBoss()
 
         if self.textbox.drawIfIncomplete(['oohoohooh aahahahah', 'i am going to defeat you!!!'], 'monkey intro'): return
 
         for minion in self.minions:
-            self.screen.drawSprite(
-                minion['sprite'],
-                (
-                    minion['x'],
-                    minion['y']
-                ),
-            )
-
-            # If the minion goes off screen (therefore it is defeated)
-            if minion['x'] > self.screen.SCREEN_WIDTH or minion['y'] > self.screen.SCREEN_HEIGHT:
-                self.minions.remove(minion)
-                self.defeatedMinions += 1
-
-            minionW, minionH = minion['sprite'].get_size()
-
-            playerRect = pygame.Rect(
-                self.battle.PLAYER_OFFSET_X + self.battle.playerX, 
-                self.battle.PLAYER_OFFSET_Y - self.battle.playerY, 
-                self.battle.playerSize, 
-                self.battle.playerSize
-            )
-
-            enemyRect = pygame.Rect(minion['x'], minion['y'], minionW, minionH)
-
-            if pygame.Rect.colliderect(playerRect, enemyRect):
-                # 20 is an arbitrary number for a delay between damage, can be tweaked
-                if self.screen.frame - self.lastCollisionFrame > 20:
-                    self.battle.takeDamage()
-
-                self.lastCollisionFrame = self.screen.frame
+            self.drawMinion(minion)
+            self.collision(minion)
 
         self.attacks[self.currentAttack]()
 
     def reset(self):
-        self.loadSprite()
-
-        self.currentAttack = 0
-        self.minions = []
-        self.defeatedMinions = 0
-        self.lastCollisionFrame = 0
+        super().reset()
 
         self.textbox.resetFlag('monkey intro')
         self.textbox.resetFlag('monkey punch win')
@@ -210,9 +139,6 @@ class Monkey:
 
             # self.defeatedMinions = 0
             # self.currentAttack += 1
-
-
-
         
 
 
