@@ -3,6 +3,7 @@ import math
 import random
 from key import Key
 from boss_battles.monkey import Monkey 
+import os
 
 class Battle:
     def __init__(self, screen, textbox):
@@ -159,12 +160,18 @@ class Battle:
     def takeDamage(self, damage=1):
         self.playerHealth -= damage
         self.loadHeartSprite()
+        self.albertPain()
 
         # TODO: actually something when u die besides resetting the battle
 
         if self.playerHealth <= 0:
             print('hm')
             self.reset()
+
+    def albertPain(self):
+        soundList = os.listdir("./sounds")
+        pygame.mixer.Sound.play(pygame.mixer.Sound(os.path.join("sounds", soundList[random.randint(0,6)])))
+
 
     def reset(self):
         self.playerX = 0

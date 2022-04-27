@@ -12,7 +12,8 @@ from intro import cutscene
 
 if __name__ == '__main__':
     pygame.init()
-
+    pygame.mixer.init()
+    
     pygame.mouse.set_visible(False)
 
     started = False
