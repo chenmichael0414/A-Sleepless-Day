@@ -61,19 +61,15 @@ if __name__ == '__main__':
             ])
 
         if pygame.key.get_pressed()[pygame.K_c]:
-            item.clearItems() 
             screen.setRoom('CHEM', player, item)
 
         if pygame.key.get_pressed()[pygame.K_i]:
-            item.clearItems() 
             screen.setRoom('CSE', player, item)
 
         if pygame.key.get_pressed()[pygame.K_o]:
-            item.clearItems() 
             screen.setRoom('MATH', player, item)
 
         if pygame.key.get_pressed()[pygame.K_p]:
-            item.clearItems() 
             screen.setRoom('GYM', player, item)
 
         pygame.display.update()

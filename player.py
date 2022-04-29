@@ -45,12 +45,16 @@ class Player:
 
     def resetPosition(self, pos=None):
         if pos:
-            self.x = pos[0]
-            self.y = pos[1]
+            if self.screen.cameraMode == "SCROLL":
+                self.x = pos[0]  / 2
+                self.y = -pos[1] / 2
+            elif self.screen.cameraMode == "FIXED":
+                self.x = pos[0]
+                self.y = pos[1]
         else:
             if self.screen.cameraMode == "SCROLL":
-                self.x = (self.screen.ACTUAL_WIDTH - self.screen.BACKGROUND_WIDTH)   / -2
-                self.y = (self.screen.ACTUAL_HEIGHT - self.screen.BACKGROUND_HEIGHT) / -2
+                self.x = -self.screen.OFFSET_X
+                self.y = -self.screen.OFFSET_Y
             elif self.screen.cameraMode == "FIXED":
                 self.load_sprite()
                 w, h = self.sprite.get_size()
@@ -59,7 +63,18 @@ class Player:
                 self.y = self.screen.SCREEN_HEIGHT / 2 - h / 2
         
         # update the player collider after changing x and y
-        self.playerCollider.setRect((self.x, self.y))
+        if self.screen.cameraMode == "SCROLL":
+            self.playerCollider.setRect((
+                (self.screen.SCREEN_WIDTH  - self.playerCollider.size) / 2, 
+                (self.screen.SCREEN_HEIGHT - self.playerCollider.size) / 2
+            ))
+            self.borderCollider.setRect((
+                self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+            ))
+        elif self.screen.cameraMode == "FIXED":
+            self.playerCollider.setRect((self.x, self.y))
+            self.borderCollider.setRect((0, 0))
 
     def tick(self, drawingNumber=None):
         if drawingNumber != None:
@@ -117,6 +132,9 @@ class Player:
 
         if self.screen.cameraMode == "SCROLL":
             self.screen.drawSprite(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
+
+            # self.screen.drawSprite(self.borderCollider.image, (self.borderCollider.rect[0], self.borderCollider.rect[1]))
+            # self.screen.drawRect('red', self.playerCollider.rect)
         elif self.screen.cameraMode == "FIXED":
             self.screen.drawSprite(self.sprite, (self.x, self.y))
             # self.screen.drawRect('red', self.playerCollider.rect)
@@ -154,8 +172,11 @@ class Player:
                     self.x += moveFactor * dir[0] * cameraDir
                     self.y += moveFactor * dir[1] * cameraDir
 
-                    # update the player collider after changing x and y
-                    self.playerCollider.setRect((self.x, self.y))
+                    # update the player/border collider after changing x and y
+                    if self.screen.cameraMode == "SCROLL":
+                        self.borderCollider.setRect((self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y))
+                    elif self.screen.cameraMode == "FIXED":
+                        self.playerCollider.setRect((self.x, self.y))
 
                     # if the player would go out of the background or touch the border, just undo the movement
                     # since this is all done before a render, it basically looks like the player is stuck at the wall
@@ -190,5 +211,5 @@ class Player:
             if self.y > self.screen.SCREEN_HEIGHT - moveFactor: return True
             if self.y < -moveFactor: return True
 
-            # border check
-            if pygame.sprite.collide_mask(self.playerCollider, self.borderCollider): return True
+        # border check
+        if pygame.sprite.collide_mask(self.playerCollider, self.borderCollider): return True

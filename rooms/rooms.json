@@ -3,7 +3,7 @@
         "path": "chem.png",
         "borderPath": "chemBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED",
+        "mode": "SCROLL",
         "items": [
             ["block", 150, 500],
             ["block", 200, 500, ["lolxd"]]

@@ -120,6 +120,7 @@ class Screen:
                     i['y'] = i['startY']
 
         if item:
+            item.clearItems() 
             self.addSceneItems(room, item)
 
     def load(self):
@@ -184,6 +185,9 @@ class Screen:
         # Draw the background
         if not self.loading and not self.battling:
             if self.cameraMode == "SCROLL":
+                if self.border:
+                    self.display.blit(self.border, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
+
                 self.display.blit(self.bg, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
             elif self.cameraMode == "FIXED":
                 if self.border:
