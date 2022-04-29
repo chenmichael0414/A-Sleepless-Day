@@ -27,7 +27,8 @@ class Monkey(Boss):
 
         self.drawBoss()
 
-        if self.textbox.drawIfIncomplete(['oohoohooh aahahahah', 'i am going to defeat you!!!'], 'monkey intro'): return
+        if self.textbox.drawIfIncomplete(['oohoohooh aahahahah', 'i am going to defeat you!!!'], 'monkey intro'): 
+            return
 
         for minion in self.minions:
             self.drawMinion(minion)
