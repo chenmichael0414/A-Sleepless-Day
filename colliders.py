@@ -12,11 +12,8 @@ class PlayerCollider(pygame.sprite.Sprite):
     def setRect(self, pos):
         self.rect = pygame.Rect(pos + (self.size, self.size))
 
-    def update(self):
-        print('test')
-
-class BorderCollider(pygame.sprite.Sprite):
-    def __init__(self, pos, sprite, width, height):
+class ImageCollider(pygame.sprite.Sprite):
+    def __init__(self, pos, sprite, width=64, height=64):
         super().__init__()
 
         self.pos = pos
@@ -32,9 +29,15 @@ class BorderCollider(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.mask = pygame.mask.from_surface(self.image)
 
+    def setRect(self, pos):
+        self.pos  = pos
+        self.rect = self.image.get_rect(topleft=pos)
+
     def updateImage(self, sprite):
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA).convert_alpha()
-        self.image.blit(sprite, (0, 0))
+
+        if sprite is not None:
+            self.image.blit(sprite, (0, 0))
 
         self.rect = self.image.get_rect(topleft=self.pos)
         self.mask = pygame.mask.from_surface(self.image)

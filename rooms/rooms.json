@@ -7,6 +7,12 @@
         "items": [
             ["block", 150, 500],
             ["block", 200, 500, ["lolxd"]]
+        ],
+        "doors": [
+            {
+                "path": "chemDoor.png",
+                "newRoom": "GYM"
+            }
         ]
     },
     "CSE": {
@@ -19,7 +25,7 @@
         "path": "gym.png",
         "borderPath": "gymBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED"
+        "mode": "SCROLL"
     },
     "MATH": {
         "path": "math.png",

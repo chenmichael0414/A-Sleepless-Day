@@ -57,7 +57,9 @@ class Player:
 
                 self.x = self.screen.SCREEN_WIDTH  / 2 - w / 2
                 self.y = self.screen.SCREEN_HEIGHT / 2 - h / 2
-
+        
+        # update the player collider after changing x and y
+        self.playerCollider.setRect((self.x, self.y))
 
     def tick(self, drawingNumber=None):
         if drawingNumber != None:
@@ -118,7 +120,9 @@ class Player:
         elif self.screen.cameraMode == "FIXED":
             self.screen.drawSprite(self.sprite, (self.x, self.y))
             # self.screen.drawRect('red', self.playerCollider.rect)
-            # self.screen.display.blit(self.borderCollider.image, self.borderPos)
+            # self.screen.display.blit(self.borderCollider.image, (self.screen.BG_OFFSET_X, self.screen.BG_OFFSET_Y))
+            # if self.screen.doors:
+                # self.screen.display.blit(self.screen.doors[0]['sprite'], (self.screen.BG_OFFSET_X, self.screen.BG_OFFSET_Y))
 
     def move(self):
         pressed = pygame.key.get_pressed()
@@ -140,11 +144,18 @@ class Player:
                     elif self.screen.cameraMode == "FIXED":
                         cameraDir = -1
 
+                    # before we actually move, if we are on top of a door, go to the next room
+                    for door in self.screen.doors:
+                        if pygame.sprite.collide_mask(self.playerCollider, door['collider']):
+                            self.screen.setRoom(door['newRoom'], self, self.item)
+                            return
+
                     # multiply the move factor by the direction
                     self.x += moveFactor * dir[0] * cameraDir
                     self.y += moveFactor * dir[1] * cameraDir
 
-                    #spriteRect = self.sprite.get_ + self.size
+                    # update the player collider after changing x and y
+                    self.playerCollider.setRect((self.x, self.y))
 
                     # if the player would go out of the background or touch the border, just undo the movement
                     # since this is all done before a render, it basically looks like the player is stuck at the wall
@@ -180,5 +191,4 @@ class Player:
             if self.y < -moveFactor: return True
 
             # border check
-            self.playerCollider.setRect((self.x, self.y))
             if pygame.sprite.collide_mask(self.playerCollider, self.borderCollider): return True

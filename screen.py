@@ -1,6 +1,6 @@
 import pygame
 import json
-from colliders import BorderCollider
+from colliders import ImageCollider
 
 class Screen:
     def __init__(self, width=800, height=600, fps=60):
@@ -44,7 +44,7 @@ class Screen:
 
         self.rooms = json.load(open('./rooms/rooms.json'))
 
-        self.borderCollider = BorderCollider(
+        self.borderCollider = ImageCollider(
             (self.BG_OFFSET_X - self.OFFSET_X, self.BG_OFFSET_Y - self.OFFSET_Y),
             None,
             self.BACKGROUND_WIDTH, 
@@ -79,11 +79,31 @@ class Screen:
         self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
         self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
+        self.border = None
+
         if 'borderPath' in self.rooms[room]:
             self.border = pygame.image.load('./rooms/{}'.format(self.rooms[room]['borderPath'])).convert_alpha()
             self.border = pygame.transform.scale(self.border, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
-            self.borderCollider.updateImage(self.border)
+        self.borderCollider.updateImage(self.border)
+
+        self.doors = []
+
+        if 'doors' in self.rooms[room]:
+            for door in self.rooms[room]['doors']:
+                sprite = pygame.image.load('./rooms/{}'.format(door['path'])).convert_alpha()
+
+                # We always just create a new ImageCollider here because rooms can have different amounts (not just 1)
+                self.doors.append({
+                    'sprite': sprite,
+                    'newRoom': door['newRoom'],
+                    'collider': ImageCollider(
+                        (self.BG_OFFSET_X - self.OFFSET_X, self.BG_OFFSET_Y - self.OFFSET_Y),
+                        sprite,
+                        self.BACKGROUND_WIDTH, 
+                        self.BACKGROUND_HEIGHT
+                    )
+                })
 
         self.cameraMode = self.rooms[room]['mode']
 
@@ -168,6 +188,10 @@ class Screen:
             elif self.cameraMode == "FIXED":
                 if self.border:
                     self.display.blit(self.border, (self.BG_OFFSET_X, self.BG_OFFSET_Y))
+
+                if self.doors:
+                    for door in self.doors:
+                        self.display.blit(door['sprite'], (self.BG_OFFSET_X, self.BG_OFFSET_Y))
 
                 self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))                      
 

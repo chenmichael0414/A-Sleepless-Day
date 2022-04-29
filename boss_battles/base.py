@@ -1,5 +1,7 @@
 import pygame
 
+from colliders import PlayerCollider
+
 class Boss:
     def __init__(self, screen, battle, textbox, sheetPath, sheetWidth, attacks, minionColliders):
         self.screen = screen
@@ -26,7 +28,7 @@ class Boss:
 
         # Create empty colliders to prepare for collision later
         # These positions will be updated later
-        self.playerCollider  = PlayerBattleCollider((0, 0), self.battle.playerSize)
+        self.playerCollider  = PlayerCollider((0, 0), self.battle.playerSize)
         self.minionColliders = minionColliders
 
         # This is so when you touch a minion, you don't take damage multiple times from the same one
@@ -79,7 +81,7 @@ class Boss:
             self.battle.playerColor = (255, 0, 0)
 
     def reset(self):
-        self.loadSprite()
+        self.loadSprite(0)
 
         self.currentAttack = 0
         self.minions = []
@@ -104,28 +106,3 @@ class Boss:
 
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.screen.PIXEL_SIZE, self.scale * self.screen.PIXEL_SIZE))
-
-class PlayerBattleCollider(pygame.sprite.Sprite):
-    def __init__(self, pos, size):
-        super().__init__()
-
-        self.size = size
-
-        self.rect = pygame.Rect(pos + (size, size))
-        self.mask = pygame.mask.Mask((size, size), True)
-
-    def setRect(self, pos):
-        self.rect = pygame.Rect(pos + (self.size, self.size))
-
-class MinionCollider(pygame.sprite.Sprite):
-    def __init__(self, pos, sprite):
-        super().__init__()
-
-        self.image = pygame.Surface((64, 64), pygame.SRCALPHA).convert_alpha()
-        self.image.blit(sprite, (0, 0))
-
-        self.rect = self.image.get_rect(topleft=pos)
-        self.mask = pygame.mask.from_surface(self.image)
-
-    def setRect(self, pos):
-        self.rect = self.image.get_rect(topleft=pos)

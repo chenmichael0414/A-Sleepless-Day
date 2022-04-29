@@ -1,7 +1,8 @@
 import random
 import math
 import pygame
-from boss_battles.base import Boss, MinionCollider
+from boss_battles.base import Boss
+from colliders import ImageCollider
 
 class Bunny(Boss):
     def __init__(self, screen, battle, textbox):
@@ -17,8 +18,8 @@ class Bunny(Boss):
                 self.soundwaveAndCarrot
             ],
             {
-                'soundwave': MinionCollider((0, 0), pygame.image.load('./attacks/soundwave.png').convert_alpha()),
-                'carrot': MinionCollider((0, 0), pygame.image.load('./attacks/carrot.png').convert_alpha()),
+                'soundwave': ImageCollider((0, 0), pygame.image.load('./attacks/soundwave.png').convert_alpha()),
+                'carrot': ImageCollider((0, 0), pygame.image.load('./attacks/carrot.png').convert_alpha()),
             }
         )
 

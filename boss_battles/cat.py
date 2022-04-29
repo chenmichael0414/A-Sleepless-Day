@@ -1,7 +1,8 @@
 import math
 import random
 import pygame
-from boss_battles.base import Boss, MinionCollider
+from boss_battles.base import Boss
+from colliders import ImageCollider
 
 class Cat(Boss):
     def __init__(self, screen, battle, textbox):
@@ -17,8 +18,8 @@ class Cat(Boss):
                 self.hatAndFish
             ],
             {
-                'hat': MinionCollider((0, 0), pygame.image.load('./attacks/hat.png').convert_alpha()),
-                'fish': MinionCollider((0, 0), pygame.image.load('./attacks/fish.png').convert_alpha())
+                'hat': ImageCollider((0, 0), pygame.image.load('./attacks/hat.png').convert_alpha()),
+                'fish': ImageCollider((0, 0), pygame.image.load('./attacks/fish.png').convert_alpha())
             }
         )
 

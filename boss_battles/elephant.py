@@ -1,6 +1,6 @@
 import random
 import pygame
-from boss_battles.base import Boss, MinionCollider
+from boss_battles.base import Boss
 
 class Elephant(Boss):
     def __init__(self, screen, battle, textbox):

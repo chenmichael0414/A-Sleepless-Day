@@ -1,6 +1,8 @@
 import random
 import pygame
-from boss_battles.base import Boss, MinionCollider
+from boss_battles.base import Boss
+from colliders import ImageCollider
+
 
 class Monkey(Boss):
     def __init__(self, screen, battle, textbox):
@@ -16,8 +18,8 @@ class Monkey(Boss):
                 self.punchAndKick
             ],
             {
-                'punch': MinionCollider((0, 0), pygame.image.load('./attacks/punch.png').convert_alpha()),
-                'kick': MinionCollider((0, 0), pygame.image.load('./attacks/kick.png').convert_alpha()),
+                'punch': ImageCollider((0, 0), pygame.image.load('./attacks/punch.png').convert_alpha()),
+                'kick': ImageCollider((0, 0), pygame.image.load('./attacks/kick.png').convert_alpha()),
             }
         )
 
