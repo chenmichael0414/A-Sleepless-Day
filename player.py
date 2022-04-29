@@ -1,6 +1,7 @@
 import pygame
 from screen import Screen
 import math
+from colliders import PlayerCollider
 
 class Player:
     def __init__(self, screen, item):
@@ -38,12 +39,7 @@ class Player:
         # Initial PlayerCollider position doesn't matter because it is updated
         # self.screen.BG_OFFSET_X - self.screen.OFFSET_X basically sets the border position relative to the player
         self.playerCollider = PlayerCollider((0, 0), self.scale * self.pixel_size)
-        self.borderCollider = BorderCollider(
-            (self.screen.BG_OFFSET_X - self.screen.OFFSET_X, self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y),
-            self.screen.border, 
-            self.screen.BACKGROUND_WIDTH, 
-            self.screen.BACKGROUND_HEIGHT
-        )
+        self.borderCollider = self.screen.borderCollider
 
         self.resetPosition()
 
@@ -186,40 +182,3 @@ class Player:
             # border check
             self.playerCollider.setRect((self.x, self.y))
             if pygame.sprite.collide_mask(self.playerCollider, self.borderCollider): return True
-
-class PlayerCollider(pygame.sprite.Sprite):
-    def __init__(self, pos, size):
-        super().__init__()
-
-        self.size = size
-
-        self.rect = pygame.Rect(pos + (self.size, self.size))
-        self.mask = pygame.mask.Mask((self.size, self.size), True)
-
-    def setRect(self, pos):
-        self.rect = pygame.Rect(pos + (self.size, self.size))
-
-    def update(self):
-        print('test')
-
-class BorderCollider(pygame.sprite.Sprite):
-    def __init__(self, pos, sprite, width, height):
-        super().__init__()
-
-        self.pos = pos
-
-        self.width  = width
-        self.height = height
-
-        self.image = pygame.Surface((width, height), pygame.SRCALPHA).convert_alpha()
-        self.image.blit(sprite, (0, 0))
-
-        self.rect = self.image.get_rect(topleft=pos)
-        self.mask = pygame.mask.from_surface(self.image)
-
-    def updateImage(self, sprite):
-        self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA).convert_alpha()
-        self.image.blit(sprite, (0, 0))
-
-        self.rect = self.image.get_rect(topleft=self.pos)
-        self.mask = pygame.mask.from_surface(self.image)

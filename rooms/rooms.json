@@ -3,7 +3,12 @@
         "path": "chem.png",
         "borderPath": "chemBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED"
+        "mode": "FIXED",
+        "items": [
+            ["block"],
+            ["block", 200, 500, false, "self.textbox.draw(['lolxd'])"],
+            ["arrow", 300, 100, true, "self.setRoom('TEST')"]
+        ]
     },
     "CSE": {
         "path": "cse.png",

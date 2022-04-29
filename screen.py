@@ -1,7 +1,6 @@
 import pygame
 import json
-
-from player import BorderCollider
+from colliders import BorderCollider
 
 class Screen:
     def __init__(self, width=800, height=600, fps=60):
@@ -45,39 +44,30 @@ class Screen:
 
         self.rooms = json.load(open('./rooms/rooms.json'))
 
-        self.setRoom('CHEM')
+        self.borderCollider = BorderCollider(
+            (self.BG_OFFSET_X - self.OFFSET_X, self.BG_OFFSET_Y - self.OFFSET_Y),
+            None,
+            self.BACKGROUND_WIDTH, 
+            self.BACKGROUND_HEIGHT
+        )
 
         self.currScene = "CHEM"
-        self.items = {
-            "CHEM": [
-                ['block'],
-                ['block', 200, 200], 
-                ['arrow', 300, 100, True, lambda: self.setRoom('TEST')]
-            ],
-            "GYM":[
-
-            ],
-            "MATH":[
-
-            ],
-            "CSE":[
-
-            ]
-        }
+        self.setRoom(self.currScene)
 
     def addSceneItems(self, scene, item):
-        for i in self.items[scene]:
-            if len(i) ==  1:
-                item.addItem(i[0])
-            elif len(i) == 3:
-                item.addItem(i[0], x=i[1], y=i[2])
-            else:
-                item.addItem(i[0], i[1], i[2], i[3], i[4])
+        if "items" in self.rooms[self.currScene]:
+            for i in self.rooms[self.currScene]["items"]:
+                if len(i) ==  1:
+                    item.addItem(i[0])
+                elif len(i) == 3:
+                    item.addItem(i[0], x=i[1], y=i[2])
+                else:
+                    item.addItem(i[0], i[1], i[2], i[3], i[4])
 
         self.currScene = scene
 
     def itemRemove(self, i):
-        self.items[self.currScene].pop(i)
+        self.rooms[self.currScene]["items"].pop(i)
 
     def setRoom(self, room, player=None, item=None, load=True):
         if not room in self.rooms or self.frozen:
@@ -92,6 +82,8 @@ class Screen:
         if 'borderPath' in self.rooms[room]:
             self.border = pygame.image.load('./rooms/{}'.format(self.rooms[room]['borderPath'])).convert_alpha()
             self.border = pygame.transform.scale(self.border, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+
+            self.borderCollider.updateImage(self.border)
 
         self.cameraMode = self.rooms[room]['mode']
 

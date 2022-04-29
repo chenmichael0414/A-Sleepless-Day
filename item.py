@@ -16,8 +16,9 @@ class Item:
         self.active = []
 
     def addItem(self, name, x=50, y=50, arrow=False, event=None):
-        print(self.screen.OFFSET_X, self.screen.OFFSET_Y)
+        print(event)
 
+        # NOTE: item callback must be a textbox.draw() call unless it is an arrow 
         self.active.append({
             'name': name,
             'startX': x,
@@ -26,7 +27,7 @@ class Item:
             'y': y,
             'sprite': self.loadSprite(name),
             'arrow': arrow,
-            'event': (lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']) if event == None else event),
+            'event': (lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']) if event == None else exec(event)),
         })
 
     def removeItem(self, loc):
