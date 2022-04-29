@@ -15,10 +15,7 @@ class Item:
 
         self.active = []
 
-    def addItem(self, name, x=50, y=50, arrow=False, event=None):
-        print(event)
-
-        # NOTE: item callback must be a textbox.draw() call unless it is an arrow 
+    def addItem(self, name, x=50, y=50, text=None):
         self.active.append({
             'name': name,
             'startX': x,
@@ -26,8 +23,7 @@ class Item:
             'x': x,
             'y': y,
             'sprite': self.loadSprite(name),
-            'arrow': arrow,
-            'event': (lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']) if event == None else exec(event)),
+            'event': (lambda: self.textbox.draw(['you found a new item!']) if text == None else self.textbox.draw(text)),
         })
 
     def removeItem(self, loc):
@@ -56,9 +52,8 @@ class Item:
 
     def runEvent(self, item):
         item['event']()
-        print(item['arrow'])
-        if not item['arrow']:
-            self.inventory.addToInventory(item)
-            self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
-            self.screen.itemRemove(self.active.index(item))
-            self.active.remove(item)
+
+        self.inventory.addToInventory(item)
+        self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
+        self.screen.itemRemove(self.active.index(item))
+        self.active.remove(item)

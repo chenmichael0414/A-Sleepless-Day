@@ -5,9 +5,8 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            ["block"],
-            ["block", 200, 500, false, "self.textbox.draw(['lolxd'])"],
-            ["arrow", 300, 100, true, "self.setRoom('TEST')"]
+            ["block", 150, 500],
+            ["block", 200, 500, ["lolxd"]]
         ]
     },
     "CSE": {

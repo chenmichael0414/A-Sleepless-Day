@@ -62,7 +62,7 @@ class Screen:
                 elif len(i) == 3:
                     item.addItem(i[0], x=i[1], y=i[2])
                 else:
-                    item.addItem(i[0], i[1], i[2], i[3], i[4])
+                    item.addItem(i[0], i[1], i[2], i[3])
 
         self.currScene = scene
 
