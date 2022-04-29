@@ -19,7 +19,7 @@ class Screen:
 
         self.ACTUAL_WIDTH, self.ACTUAL_HEIGHT = self.display.get_size()
 
-        self.OFFSET_X = (self.ACTUAL_WIDTH - self.SCREEN_WIDTH)   / 2
+        self.OFFSET_X = (self.ACTUAL_WIDTH  - self.SCREEN_WIDTH)  / 2
         self.OFFSET_Y = (self.ACTUAL_HEIGHT - self.SCREEN_HEIGHT) / 2
 
         self.BG_OFFSET_X = (self.ACTUAL_WIDTH  - self.BACKGROUND_WIDTH)  / 2
@@ -47,7 +47,11 @@ class Screen:
 
         self.currScene = "CHEM"
         self.items = {
-            "CHEM": [['block'],['block', 200, 200], ['arrow', 300, 100, True, lambda: self.setRoom('TEST')]]
+            "CHEM": [
+                ['block'],
+                ['block', 200, 200], 
+                ['arrow', 300, 100, True, lambda: self.setRoom('TEST')]
+            ]
         }
 
     def addSceneItems(self, scene, item):
@@ -71,13 +75,17 @@ class Screen:
             self.load()
 
         self.current = room
-        self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path']))
+        self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
         self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+
+        if 'borderPath' in self.rooms[room]:
+            self.border = pygame.image.load('./rooms/{}'.format(self.rooms[room]['borderPath'])).convert_alpha()
+            self.border = pygame.transform.scale(self.border, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
         self.cameraMode = self.rooms[room]['mode']
 
         if player:
-            player.resetPosition(self.rooms[room]['pos'] if self.cameraMode == "SCROLL" else None)
+            player.resetPosition(self.rooms[room]['pos'])
 
         if item and player:
             for i in item.active:
@@ -155,7 +163,10 @@ class Screen:
             if self.cameraMode == "SCROLL":
                 self.display.blit(self.bg, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
             elif self.cameraMode == "FIXED":
-                self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))
+                if self.border:
+                    self.display.blit(self.border, (self.BG_OFFSET_X, self.BG_OFFSET_Y))
+
+                self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))                      
 
         # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)
         self.drawBorder()

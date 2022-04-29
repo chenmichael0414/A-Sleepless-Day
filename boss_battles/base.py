@@ -121,7 +121,7 @@ class MinionCollider(pygame.sprite.Sprite):
     def __init__(self, pos, sprite):
         super().__init__()
 
-        self.image = pygame.Surface((64, 64), pygame.SRCALPHA)
+        self.image = pygame.Surface((64, 64), pygame.SRCALPHA).convert_alpha()
         self.image.blit(sprite, (0, 0))
 
         self.rect = self.image.get_rect(topleft=pos)

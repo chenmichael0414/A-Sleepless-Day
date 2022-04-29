@@ -1,7 +1,8 @@
 {
     "CHEM": {
         "path": "chem.png",
-        "pos": null,
+        "borderPath": "chemBorder.png",
+        "pos": [300, 500],
         "mode": "FIXED"
     },
     "TEST": {

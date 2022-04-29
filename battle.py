@@ -68,7 +68,7 @@ class Battle:
             'mole': Mole(screen, self, textbox),
             'elephant': Elephant(screen, self, textbox)
         }
-        self.currentBoss = 'bunny'
+        self.currentBoss = 'cat'
 
 
     def tick(self):
@@ -198,62 +198,4 @@ class Battle:
 
     def enemiesEngine(self):
         self.screen.cutscene = True
-        self.bosses[self.currentBoss].tick() 
-
-
-        '''
-        for enemy in self.enemies:
-            self.screen.drawRect(
-                (0, 0, 255), # blue
-                (
-                    enemy['x'], 
-                    enemy['y'], 
-                    enemy['size'], 
-                    enemy['size']
-                ),
-            )
-
-            # self.enemyAttack1(enemy)
-            self.enemyAttack2(enemy)
-
-            if enemy['x'] > self.screen.SCREEN_WIDTH or enemy['y'] > self.screen.SCREEN_HEIGHT:
-                self.enemies.remove(enemy)
-
-            playerRect = pygame.Rect(self.PLAYER_OFFSET_X + self.playerX, self.PLAYER_OFFSET_Y - self.playerY, self.playerSize, self.playerSize)
-            enemyRect  = pygame.Rect(enemy['x'], enemy['y'], enemy['size'], enemy['size'])
-
-            if pygame.Rect.colliderect(playerRect, enemyRect):
-                self.reset()
-        '''
-        
-
-    def enemyAttack1(self, enemy):
-        xSpeed = enemy['speed'] * math.cos(enemy['angle'])
-        ySpeed = enemy['speed'] * math.sin(enemy['angle'])
-
-        enemy['x'] += xSpeed
-        enemy['y'] += ySpeed
-
-        while len(self.enemies) < 7:
-            # Angle is kinda random but at the same time pointing towards the center of the player box
-            self.enemies.append({
-                'x': random.randint(0, 400),
-                'y': 0,
-                'angle': math.atan2(self.screen.SCREEN_WIDTH / 2, self.screen.SCREEN_HEIGHT / 2) + random.uniform(-.25, .75),
-                'speed': random.randint(4, 8),
-                'size': 18
-            })
-
-    def enemyAttack2(self, enemy):
-        enemy['x'] += enemy['speed']
-        enemy['y'] += math.sin(enemy['x'] / 20) * 3
-
-        while len(self.enemies) < 5:
-            # Angle is kinda random but at the same time pointing towards the center of the player box
-            self.enemies.append({
-                'x': 0,
-                'y': random.randint(self.screen.SCREEN_HEIGHT - 51, self.screen.SCREEN_HEIGHT - 1),
-                'angle': 0,
-                'speed': random.randint(2, 4),
-                'size': 18
-            })
+        self.bosses[self.currentBoss].tick()

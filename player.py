@@ -35,6 +35,16 @@ class Player:
         self.currentFrame  = 0 # current frame of animation
         self.animationRate = 6 # after how many frames do we switch costumes
 
+        # Initial PlayerCollider position doesn't matter because it is updated
+        # self.screen.BG_OFFSET_X - self.screen.OFFSET_X basically sets the border position relative to the player
+        self.playerCollider = PlayerCollider((0, 0), self.scale * self.pixel_size)
+        self.borderCollider = BorderCollider(
+            (self.screen.BG_OFFSET_X - self.screen.OFFSET_X, self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y),
+            self.screen.border, 
+            self.screen.BACKGROUND_WIDTH, 
+            self.screen.BACKGROUND_HEIGHT
+        )
+
         self.resetPosition()
 
     def resetPosition(self, pos=None):
@@ -111,6 +121,8 @@ class Player:
             self.screen.drawSprite(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
         elif self.screen.cameraMode == "FIXED":
             self.screen.drawSprite(self.sprite, (self.x, self.y))
+            # self.screen.drawRect('red', self.playerCollider.rect)
+            # self.screen.display.blit(self.borderCollider.image, self.borderPos)
 
     def move(self):
         pressed = pygame.key.get_pressed()
@@ -138,7 +150,7 @@ class Player:
 
                     #spriteRect = self.sprite.get_ + self.size
 
-                    # if the player would go out of the background, just undo the movement
+                    # if the player would go out of the background or touch the border, just undo the movement
                     # since this is all done before a render, it basically looks like the player is stuck at the wall
                     if self.collision(moveFactor):
                         self.x -= moveFactor * dir[0] * cameraDir
@@ -168,5 +180,34 @@ class Player:
             if self.x > self.screen.SCREEN_WIDTH - moveFactor: return True
             if self.x < -moveFactor: return True
 
-            if self.y > self.screen.SCREEN_HEIGHT - moveFactor * 2: return True
+            if self.y > self.screen.SCREEN_HEIGHT - moveFactor: return True
             if self.y < -moveFactor: return True
+
+            # border check
+            self.playerCollider.setRect((self.x, self.y))
+            if pygame.sprite.collide_mask(self.playerCollider, self.borderCollider): return True
+
+class PlayerCollider(pygame.sprite.Sprite):
+    def __init__(self, pos, size):
+        super().__init__()
+
+        self.size = size
+
+        self.rect = pygame.Rect(pos + (self.size, self.size))
+        self.mask = pygame.mask.Mask((self.size, self.size), True)
+
+    def setRect(self, pos):
+        self.rect = pygame.Rect(pos + (self.size, self.size))
+
+    def update(self):
+        print('test')
+
+class BorderCollider(pygame.sprite.Sprite):
+    def __init__(self, pos, sprite, width, height):
+        super().__init__()
+
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA).convert_alpha()
+        self.image.blit(sprite, (0, 0))
+
+        self.rect = self.image.get_rect(topleft=pos)
+        self.mask = pygame.mask.from_surface(self.image)
