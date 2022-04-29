@@ -18,10 +18,10 @@ class Item:
     def addItem(self, name, x=50, y=50, arrow=False, event=None):
         self.active.append({
             'name': name,
-            'startX': x + self.screen.OFFSET_X,
-            'startY': y + self.screen.OFFSET_Y,
-            'x': x + self.screen.OFFSET_X,
-            'y': y + self.screen.OFFSET_Y,
+            'startX': x,
+            'startY': y,
+            'x': x,
+            'y': y,
             'sprite': self.loadSprite(name),
             'arrow': arrow,
             'event': (lambda: self.textbox.draw(['FUFUFUFUFUFU...', 'FUFUFUFUFUFU!!!!!!']) if event == None else event),

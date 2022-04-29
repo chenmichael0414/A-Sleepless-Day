@@ -5,6 +5,24 @@
         "pos": [300, 500],
         "mode": "FIXED"
     },
+    "CSE": {
+        "path": "cse.png",
+        "borderPath": "cseBorder.png",
+        "pos": [300, 500],
+        "mode": "FIXED"
+    },
+    "GYM": {
+        "path": "gym.png",
+        "borderPath": "gymBorder.png",
+        "pos": [300, 500],
+        "mode": "FIXED"
+    },
+    "MATH": {
+        "path": "math.png",
+        "borderPath": "mathBorder.png",
+        "pos": [300, 500],
+        "mode": "FIXED"
+    },
     "TEST": {
         "path": "chem.png",
         "pos": [40, -300],

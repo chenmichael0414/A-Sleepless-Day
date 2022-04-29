@@ -1,16 +1,18 @@
 import pygame
 import json
 
+from player import BorderCollider
+
 class Screen:
     def __init__(self, width=800, height=600, fps=60):
         self.PIXEL_SIZE       = 32
         self.PLAYER_SCALE     = 2
         self.BACKGROUND_SCALE = 6
 
-        self.BACKGROUND_HEIGHT = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
-        self.BACKGROUND_WIDTH  = self.BACKGROUND_HEIGHT * width / height
-        # self.BACKGROUND_WIDTH  = width
-        # self.BACKGROUND_HEIGHT = height
+        # self.BACKGROUND_HEIGHT = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
+        # self.BACKGROUND_WIDTH  = self.BACKGROUND_HEIGHT * width / height
+        self.BACKGROUND_WIDTH  = width
+        self.BACKGROUND_HEIGHT = height
 
         self.SCREEN_WIDTH  = width
         self.SCREEN_HEIGHT = height
@@ -51,6 +53,15 @@ class Screen:
                 ['block'],
                 ['block', 200, 200], 
                 ['arrow', 300, 100, True, lambda: self.setRoom('TEST')]
+            ],
+            "GYM":[
+
+            ],
+            "MATH":[
+
+            ],
+            "CSE":[
+
             ]
         }
 
