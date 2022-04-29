@@ -16,6 +16,8 @@ class Item:
         self.active = []
 
     def addItem(self, name, x=50, y=50, arrow=False, event=None):
+        print(self.screen.OFFSET_X, self.screen.OFFSET_Y)
+
         self.active.append({
             'name': name,
             'startX': x,
