@@ -46,8 +46,8 @@ class Player:
     def resetPosition(self, pos=None):
         if pos:
             if self.screen.cameraMode == "SCROLL":
-                self.x = pos[0]  / 2
-                self.y = -pos[1] / 2
+                self.x = pos[0] / 2
+                self.y = pos[1] / -2
             elif self.screen.cameraMode == "FIXED":
                 self.x = pos[0]
                 self.y = pos[1]
@@ -72,9 +72,19 @@ class Player:
                 self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
                 self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
             ))
+
+            for door in self.screen.doors:
+                door['collider'].setRect((
+                    self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                    self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+                ))
+            
         elif self.screen.cameraMode == "FIXED":
             self.playerCollider.setRect((self.x, self.y))
             self.borderCollider.setRect((0, 0))
+
+            for door in self.screen.doors:
+                door['collider'].setRect((0, 0))
 
     def tick(self, drawingNumber=None):
         if drawingNumber != None:
@@ -133,6 +143,8 @@ class Player:
         if self.screen.cameraMode == "SCROLL":
             self.screen.drawSprite(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
 
+            #for door in self.screen.doors:
+                #self.screen.drawSprite(door['sprite'], (door['collider'].rect[0], door['collider'].rect[1]))
             # self.screen.drawSprite(self.borderCollider.image, (self.borderCollider.rect[0], self.borderCollider.rect[1]))
             # self.screen.drawRect('red', self.playerCollider.rect)
         elif self.screen.cameraMode == "FIXED":
@@ -174,7 +186,16 @@ class Player:
 
                     # update the player/border collider after changing x and y
                     if self.screen.cameraMode == "SCROLL":
-                        self.borderCollider.setRect((self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y))
+                        self.borderCollider.setRect((
+                            self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                            self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+                        ))
+
+                        for door in self.screen.doors:
+                            door['collider'].setRect((
+                                self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                                self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+                            ))
                     elif self.screen.cameraMode == "FIXED":
                         self.playerCollider.setRect((self.x, self.y))
 

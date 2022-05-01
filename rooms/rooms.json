@@ -5,8 +5,8 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            ["block", 150, 500],
-            ["block", 200, 500, ["lolxd"]]
+            {"name": "block", "x": 150, "y": 500},
+            {"name": "block", "x": 200, "y": 500, "text": ["lolxd"]}
         ],
         "doors": [
             {

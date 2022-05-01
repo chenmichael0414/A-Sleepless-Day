@@ -50,34 +50,26 @@ class Screen:
             self.BACKGROUND_WIDTH, 
             self.BACKGROUND_HEIGHT
         )
+        
+        self.doors = []
 
-        self.currScene = "CHEM"
-        self.setRoom(self.currScene)
+        self.currentRoom = None
 
-    def addSceneItems(self, scene, item):
-        if "items" in self.rooms[self.currScene]:
-            for i in self.rooms[self.currScene]["items"]:
-                if len(i) ==  1:
-                    item.addItem(i[0])
-                elif len(i) == 3:
-                    item.addItem(i[0], x=i[1], y=i[2])
-                else:
-                    item.addItem(i[0], i[1], i[2], i[3])
-
-        self.currScene = scene
-
-    def itemRemove(self, i):
-        self.rooms[self.currScene]["items"].pop(i)
+    def removeItem(self, item):
+        if 'items' in self.rooms[self.currentRoom] and item in self.rooms[self.currentRoom]['items']:
+            self.rooms[self.currentRoom]['items'].remove(item)
 
     def setRoom(self, room, player=None, item=None, load=True):
         if not room in self.rooms or self.frozen:
             return
+
         if load:
             self.load()
 
-        self.current = room
-        self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
-        self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+        self.currentRoom = room
+
+        self.bg = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
+        self.bg = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
         self.border = None
 
@@ -108,20 +100,16 @@ class Screen:
         self.cameraMode = self.rooms[room]['mode']
 
         if player:
-            player.resetPosition(self.rooms[room]['pos'])
-
-        if item and player:
-            for i in item.active:
-                if self.cameraMode == "SCROLL":
-                    i['x'] = i['startX'] + self.rooms[room]['pos'][0]
-                    i['y'] = i['startY'] + self.rooms[room]['pos'][1]
-                elif self.cameraMode == "FIXED":
-                    i['x'] = i['startX'] 
-                    i['y'] = i['startY']
+            player.resetPosition(self.rooms[room].get('pos'))
 
         if item:
-            item.clearItems() 
-            self.addSceneItems(room, item)
+            item.setItems(self.rooms[room].get('items')) 
+
+        # If the camera is in scroll mode, update the item positions according to the starting room position
+        if self.cameraMode == "SCROLL" and item and self.rooms[room].get('pos') is not None:
+            for i in item.active:
+                i['x'] += self.rooms[room]['pos'][0] / 2
+                i['y'] -= self.rooms[room]['pos'][1] / 2
 
     def load(self):
         self.loading   = True
@@ -187,6 +175,10 @@ class Screen:
             if self.cameraMode == "SCROLL":
                 if self.border:
                     self.display.blit(self.border, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
+
+                if self.doors:
+                    for door in self.doors:
+                        self.display.blit(door['sprite'], (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
 
                 self.display.blit(self.bg, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
             elif self.cameraMode == "FIXED":
