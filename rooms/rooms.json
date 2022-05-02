@@ -5,8 +5,8 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            ["block", 150, 500],
-            ["block", 200, 500, ["lolxd"]]
+            {"name": "pie", "x": 150, "y": 500},
+            {"name": "block", "x": 200, "y": 500, "text": ["lolxd"]}
         ],
         "doors": [
             {
@@ -19,13 +19,14 @@
         "path": "cse.png",
         "borderPath": "cseBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED"
+        "mode": "FIXED",
+        "dark": true
     },
     "GYM": {
         "path": "gym.png",
         "borderPath": "gymBorder.png",
         "pos": [300, 500],
-        "mode": "SCROLL"
+        "mode": "FIXED"
     },
     "MATH": {
         "path": "math.png",

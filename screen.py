@@ -30,6 +30,10 @@ class Screen:
         self.fps = fps
         self.frame = 0
 
+        # The last frame in which the "room is too dark" event was triggered
+        # This is stored for unique textbox flag purposes
+        self.darkFrame = 0
+
         self.cameraMode = "SCROLL"
 
         self.frozen = False
@@ -50,34 +54,32 @@ class Screen:
             self.BACKGROUND_WIDTH, 
             self.BACKGROUND_HEIGHT
         )
+        
+        self.doors = []
 
-        self.currScene = "CHEM"
-        self.setRoom(self.currScene)
+        self.currentRoom = None
 
-    def addSceneItems(self, scene, item):
-        if "items" in self.rooms[self.currScene]:
-            for i in self.rooms[self.currScene]["items"]:
-                if len(i) ==  1:
-                    item.addItem(i[0])
-                elif len(i) == 3:
-                    item.addItem(i[0], x=i[1], y=i[2])
-                else:
-                    item.addItem(i[0], i[1], i[2], i[3])
+    def removeItem(self, item):
+        if 'items' in self.rooms[self.currentRoom] and item in self.rooms[self.currentRoom]['items']:
+            self.rooms[self.currentRoom]['items'].remove(item)
 
-        self.currScene = scene
-
-    def itemRemove(self, i):
-        self.rooms[self.currScene]["items"].pop(i)
-
-    def setRoom(self, room, player=None, item=None, load=True):
+    def setRoom(self, room, player, item, load=True):
         if not room in self.rooms or self.frozen:
             return
+
         if load:
             self.load()
 
-        self.current = room
-        self.bg      = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
-        self.bg      = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+        self.currentRoom = room
+
+        # Set a room to be dark if it is specified in rooms.json AND the user does not have a dark-preventing item (i.e flashlight)
+        self.dark = True if self.rooms[room].get('dark') is not None and not item.hasDarkItem() else False
+
+        if self.dark:
+            self.bg = pygame.Surface((self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+        else:
+            self.bg = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
+            self.bg = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
         self.border = None
 
@@ -108,23 +110,31 @@ class Screen:
         self.cameraMode = self.rooms[room]['mode']
 
         if player:
-            player.resetPosition(self.rooms[room]['pos'])
-
-        if item and player:
-            for i in item.active:
-                if self.cameraMode == "SCROLL":
-                    i['x'] = i['startX'] + self.rooms[room]['pos'][0]
-                    i['y'] = i['startY'] + self.rooms[room]['pos'][1]
-                elif self.cameraMode == "FIXED":
-                    i['x'] = i['startX'] 
-                    i['y'] = i['startY']
+            player.resetPosition(self.rooms[room].get('pos'))
 
         if item:
-            self.addSceneItems(room, item)
+            item.setItems(self.rooms[room].get('items')) 
+
+        # If the camera is in scroll mode, update the item positions according to the starting room position
+        if self.cameraMode == "SCROLL" and item and self.rooms[room].get('pos') is not None:
+            for i in item.active:
+                i['x'] += self.rooms[room]['pos'][0] / 2
+                i['y'] -= self.rooms[room]['pos'][1] / 2
 
     def load(self):
         self.loading   = True
         self.loadFrame = self.frame
+
+    def darkEvent(self, textbox, player, item):
+        if self.darkFrame == 0:
+            self.darkFrame = self.frame
+
+        if textbox.drawIfIncomplete(['this room is too dark to see in.', 'please come back with a light source.'], 'dark event ' + str(self.darkFrame)): return
+
+        self.darkFrame = 0
+        self.dark = False
+
+        self.setRoom('CHEM', player, item)
 
     def drawSprite(self, sprite, xy):
         x, y = xy
@@ -184,6 +194,13 @@ class Screen:
         # Draw the background
         if not self.loading and not self.battling:
             if self.cameraMode == "SCROLL":
+                if self.border:
+                    self.display.blit(self.border, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
+
+                if self.doors:
+                    for door in self.doors:
+                        self.display.blit(door['sprite'], (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
+
                 self.display.blit(self.bg, (x + self.BG_OFFSET_X, y + self.BG_OFFSET_Y))
             elif self.cameraMode == "FIXED":
                 if self.border:

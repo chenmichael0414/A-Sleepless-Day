@@ -41,16 +41,22 @@ class Player:
         self.playerCollider = PlayerCollider((0, 0), self.scale * self.pixel_size)
         self.borderCollider = self.screen.borderCollider
 
+        self.drawingNumber = None
+
         self.resetPosition()
 
     def resetPosition(self, pos=None):
         if pos:
-            self.x = pos[0]
-            self.y = pos[1]
+            if self.screen.cameraMode == "SCROLL":
+                self.x = pos[0] / 2
+                self.y = pos[1] / -2
+            elif self.screen.cameraMode == "FIXED":
+                self.x = pos[0]
+                self.y = pos[1]
         else:
             if self.screen.cameraMode == "SCROLL":
-                self.x = (self.screen.ACTUAL_WIDTH - self.screen.BACKGROUND_WIDTH)   / -2
-                self.y = (self.screen.ACTUAL_HEIGHT - self.screen.BACKGROUND_HEIGHT) / -2
+                self.x = -self.screen.OFFSET_X
+                self.y = -self.screen.OFFSET_Y
             elif self.screen.cameraMode == "FIXED":
                 self.load_sprite()
                 w, h = self.sprite.get_size()
@@ -59,14 +65,36 @@ class Player:
                 self.y = self.screen.SCREEN_HEIGHT / 2 - h / 2
         
         # update the player collider after changing x and y
-        self.playerCollider.setRect((self.x, self.y))
+        if self.screen.cameraMode == "SCROLL":
+            self.playerCollider.setRect((
+                (self.screen.SCREEN_WIDTH  - self.playerCollider.size) / 2, 
+                (self.screen.SCREEN_HEIGHT - self.playerCollider.size) / 2
+            ))
+            self.borderCollider.setRect((
+                self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+            ))
+
+            for door in self.screen.doors:
+                door['collider'].setRect((
+                    self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                    self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+                ))
+            
+        elif self.screen.cameraMode == "FIXED":
+            self.playerCollider.setRect((self.x, self.y))
+            self.borderCollider.setRect((0, 0))
+
+            for door in self.screen.doors:
+                door['collider'].setRect((0, 0))
 
     def tick(self, drawingNumber=None):
-        if drawingNumber != None:
-            self.currentFrame = drawingNumber
-            self.draw(drawingNumber)
-        else:
-            self.draw()
+        # We only want to change self.drawingNumber if the passed in argument is not None
+        # We will set self.drawingNumber to None once the player mooves again
+        if drawingNumber is not None:
+            self.drawingNumber = drawingNumber
+
+        self.draw()
 
         if not self.screen.frozen:
             if not self.screen.cutscene:
@@ -90,12 +118,15 @@ class Player:
                 if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
                     self.item.runEvent(item)
 
-    def load_sprite(self, drawingNumber = None):
+    def load_sprite(self):
         # extract the image from the spritesheet
         # cycles through the self.coords array for different animations
         # this is calculated through modulating with the animation rate
         # extracts current sprite coords from object
-        currentSprite = (self.pixel_size * (self.currentFrame % 4), self.pixel_size * (int(drawingNumber/4) if drawingNumber != None else self.coords[self.currentKey]))
+        currentSprite = (
+            self.pixel_size * ((self.drawingNumber if self.drawingNumber is not None else self.currentFrame) % 4), 
+            self.pixel_size * (self.drawingNumber // 4 if self.drawingNumber != None else self.coords[self.currentKey])
+        )
 
         newCoords = tuple(map(sum, zip(currentSprite, self.offset))) # adds the tuples together
         rect = pygame.Rect(newCoords + self.size)
@@ -108,15 +139,18 @@ class Player:
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))
 
-    def draw(self, drawingNumber=None):
-        if drawingNumber != None:
-            self.load_sprite(drawingNumber)
-        else:
-            self.load_sprite()
+    def draw(self):
+        self.load_sprite()
+
         w, h = self.sprite.get_size()
 
         if self.screen.cameraMode == "SCROLL":
             self.screen.drawSprite(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
+
+            #for door in self.screen.doors:
+                #self.screen.drawSprite(door['sprite'], (door['collider'].rect[0], door['collider'].rect[1]))
+            # self.screen.drawSprite(self.borderCollider.image, (self.borderCollider.rect[0], self.borderCollider.rect[1]))
+            # self.screen.drawRect('red', self.playerCollider.rect)
         elif self.screen.cameraMode == "FIXED":
             self.screen.drawSprite(self.sprite, (self.x, self.y))
             # self.screen.drawRect('red', self.playerCollider.rect)
@@ -154,8 +188,20 @@ class Player:
                     self.x += moveFactor * dir[0] * cameraDir
                     self.y += moveFactor * dir[1] * cameraDir
 
-                    # update the player collider after changing x and y
-                    self.playerCollider.setRect((self.x, self.y))
+                    # update the player/border collider after changing x and y
+                    if self.screen.cameraMode == "SCROLL":
+                        self.borderCollider.setRect((
+                            self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                            self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+                        ))
+
+                        for door in self.screen.doors:
+                            door['collider'].setRect((
+                                self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
+                                self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
+                            ))
+                    elif self.screen.cameraMode == "FIXED":
+                        self.playerCollider.setRect((self.x, self.y))
 
                     # if the player would go out of the background or touch the border, just undo the movement
                     # since this is all done before a render, it basically looks like the player is stuck at the wall
@@ -170,8 +216,11 @@ class Player:
 
                 break # so we can't move diagonally
         
+        # if we are moving, reset the drawing number
         # if we are not moving, make sure the character is still
-        if not isMoving:
+        if isMoving:
+            self.drawingNumber = None
+        else:
             self.currentFrame = 0
 
     def collision(self, moveFactor):
@@ -190,5 +239,5 @@ class Player:
             if self.y > self.screen.SCREEN_HEIGHT - moveFactor: return True
             if self.y < -moveFactor: return True
 
-            # border check
-            if pygame.sprite.collide_mask(self.playerCollider, self.borderCollider): return True
+        # border check
+        if pygame.sprite.collide_mask(self.playerCollider, self.borderCollider): return True
