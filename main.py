@@ -39,16 +39,20 @@ if __name__ == '__main__':
         battle.tick()
 
         if not screen.loading:
-            textbox.tick()
-
             if not screen.battling:
                 player.tick()
                 item.tick()
                 inventory.tick()
                 Key.tick()
+
+            textbox.tick()
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
+
+        # If a room is too dark, trigger the dark event
+        if not screen.loading and screen.dark: 
+            screen.darkEvent(textbox, player, item)
 
         if not started and pygame.key.get_pressed()[pygame.K_TAB]:
             cutscene(screen, textbox, player, item)

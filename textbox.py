@@ -1,13 +1,12 @@
 
 import pygame
 
-TEXTBOX_HEIGHT = 120
-
 class Textbox:
     def __init__(self, screen):
         self.screen = screen
 
         self.TEXTBOX_HEIGHT = 120
+        self.LINE_WIDTH     = 3
         
         pygame.font.init()
         self.font = pygame.font.Font('./fonts/retro.ttf', 25)
@@ -133,14 +132,14 @@ class Textbox:
         # Main white box
         self.screen.drawRect(
             (255, 255, 255), # white
-            (0, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT, self.screen.SCREEN_WIDTH, TEXTBOX_HEIGHT)
+            (0, self.screen.SCREEN_HEIGHT, self.screen.SCREEN_WIDTH, self.TEXTBOX_HEIGHT)
         )
         
         # Black border
         self.screen.drawRect(
             (0, 0, 0), # black
-            (0, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT, self.screen.SCREEN_WIDTH, TEXTBOX_HEIGHT), 
-            3
+            (-self.LINE_WIDTH, self.screen.SCREEN_HEIGHT, self.screen.SCREEN_WIDTH + (self.LINE_WIDTH * 2), self.TEXTBOX_HEIGHT), 
+            self.LINE_WIDTH
         )
         
         # Writing the text
@@ -168,7 +167,7 @@ class Textbox:
         # Render each row
         for (i, row) in enumerate(self.current):
             textsurface = self.font.render(row, False, (0, 0, 0))
-            self.screen.drawSprite(textsurface, (8, self.screen.SCREEN_HEIGHT - TEXTBOX_HEIGHT + 3 + (height * i)))
+            self.screen.drawSprite(textsurface, (8, self.screen.SCREEN_HEIGHT + 3 + (height * i)))
 
         # If we have written all characters out, display the next arrow
         if self.totalProgress >= len(message):
@@ -179,7 +178,7 @@ class Textbox:
                 self.arrowSprite, 
                 (
                     self.screen.SCREEN_WIDTH - self.arrowSprite.get_width(), 
-                    self.screen.SCREEN_HEIGHT - self.arrowSprite.get_height()
+                    self.screen.SCREEN_HEIGHT + self.TEXTBOX_HEIGHT - self.arrowSprite.get_height()
                 )
             )
 

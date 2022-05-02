@@ -30,6 +30,10 @@ class Screen:
         self.fps = fps
         self.frame = 0
 
+        # The last frame in which the "room is too dark" event was triggered
+        # This is stored for unique textbox flag purposes
+        self.darkFrame = 0
+
         self.cameraMode = "SCROLL"
 
         self.frozen = False
@@ -59,7 +63,7 @@ class Screen:
         if 'items' in self.rooms[self.currentRoom] and item in self.rooms[self.currentRoom]['items']:
             self.rooms[self.currentRoom]['items'].remove(item)
 
-    def setRoom(self, room, player=None, item=None, load=True):
+    def setRoom(self, room, player, item, load=True):
         if not room in self.rooms or self.frozen:
             return
 
@@ -68,8 +72,13 @@ class Screen:
 
         self.currentRoom = room
 
-        self.bg = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
-        self.bg = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+        self.dark = True if self.rooms[room].get('dark') is not None else False
+
+        if self.dark:
+            self.bg = pygame.Surface((self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+        else:
+            self.bg = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
+            self.bg = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
         self.border = None
 
@@ -114,6 +123,17 @@ class Screen:
     def load(self):
         self.loading   = True
         self.loadFrame = self.frame
+
+    def darkEvent(self, textbox, player, item):
+        if self.darkFrame == 0:
+            self.darkFrame = self.frame
+
+        if textbox.drawIfIncomplete(['this room is too dark to see in.', 'please come back with a light source.'], 'dark event ' + str(self.darkFrame)): return
+
+        self.darkFrame = 0
+        self.dark = False
+
+        self.setRoom('CHEM', player, item)
 
     def drawSprite(self, sprite, xy):
         x, y = xy

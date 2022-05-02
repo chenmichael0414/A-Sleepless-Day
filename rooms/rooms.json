@@ -19,7 +19,8 @@
         "path": "cse.png",
         "borderPath": "cseBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED"
+        "mode": "FIXED",
+        "dark": true
     },
     "GYM": {
         "path": "gym.png",
