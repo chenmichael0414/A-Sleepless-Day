@@ -72,7 +72,8 @@ class Screen:
 
         self.currentRoom = room
 
-        self.dark = True if self.rooms[room].get('dark') is not None else False
+        # Set a room to be dark if it is specified in rooms.json AND the user does not have a dark-preventing item (i.e flashlight)
+        self.dark = True if self.rooms[room].get('dark') is not None and not item.hasDarkItem() else False
 
         if self.dark:
             self.bg = pygame.Surface((self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))

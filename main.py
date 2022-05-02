@@ -51,7 +51,7 @@ if __name__ == '__main__':
         screen.frozen = textbox.isActive or inventory.isActive
 
         # If a room is too dark, trigger the dark event
-        if not screen.loading and screen.dark: 
+        if not screen.loading and screen.dark and not item.hasDarkItem(): 
             screen.darkEvent(textbox, player, item)
 
         if not started and pygame.key.get_pressed()[pygame.K_TAB]:

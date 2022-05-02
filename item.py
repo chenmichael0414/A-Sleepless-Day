@@ -13,6 +13,8 @@ class Item:
 
         self.triggerKey = pygame.K_SPACE
 
+        self.darkItem = 'pie'
+
         self.active = []
 
     def addItem(self, name, x=50, y=50, text=None):
@@ -72,3 +74,9 @@ class Item:
         self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
 
         self.removeItem(item)
+
+    def hasItem(self, name):
+        return self.inventory.hasItem(name)
+
+    def hasDarkItem(self):
+        return self.inventory.hasItem(self.darkItem)
