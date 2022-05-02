@@ -41,6 +41,8 @@ class Player:
         self.playerCollider = PlayerCollider((0, 0), self.scale * self.pixel_size)
         self.borderCollider = self.screen.borderCollider
 
+        self.drawingNumber = None
+
         self.resetPosition()
 
     def resetPosition(self, pos=None):
@@ -87,11 +89,12 @@ class Player:
                 door['collider'].setRect((0, 0))
 
     def tick(self, drawingNumber=None):
-        if drawingNumber != None:
-            self.currentFrame = drawingNumber
-            self.draw(drawingNumber)
-        else:
-            self.draw()
+        # We only want to change self.drawingNumber if the passed in argument is not None
+        # We will set self.drawingNumber to None once the player mooves again
+        if drawingNumber is not None:
+            self.drawingNumber = drawingNumber
+
+        self.draw()
 
         if not self.screen.frozen:
             if not self.screen.cutscene:
@@ -115,12 +118,15 @@ class Player:
                 if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
                     self.item.runEvent(item)
 
-    def load_sprite(self, drawingNumber = None):
+    def load_sprite(self):
         # extract the image from the spritesheet
         # cycles through the self.coords array for different animations
         # this is calculated through modulating with the animation rate
         # extracts current sprite coords from object
-        currentSprite = (self.pixel_size * (self.currentFrame % 4), self.pixel_size * (int(drawingNumber/4) if drawingNumber != None else self.coords[self.currentKey]))
+        currentSprite = (
+            self.pixel_size * ((self.drawingNumber if self.drawingNumber is not None else self.currentFrame) % 4), 
+            self.pixel_size * (self.drawingNumber // 4 if self.drawingNumber != None else self.coords[self.currentKey])
+        )
 
         newCoords = tuple(map(sum, zip(currentSprite, self.offset))) # adds the tuples together
         rect = pygame.Rect(newCoords + self.size)
@@ -133,11 +139,9 @@ class Player:
         # upscale the sprite
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))
 
-    def draw(self, drawingNumber=None):
-        if drawingNumber != None:
-            self.load_sprite(drawingNumber)
-        else:
-            self.load_sprite()
+    def draw(self):
+        self.load_sprite()
+
         w, h = self.sprite.get_size()
 
         if self.screen.cameraMode == "SCROLL":
@@ -212,8 +216,11 @@ class Player:
 
                 break # so we can't move diagonally
         
+        # if we are moving, reset the drawing number
         # if we are not moving, make sure the character is still
-        if not isMoving:
+        if isMoving:
+            self.drawingNumber = None
+        else:
             self.currentFrame = 0
 
     def collision(self, moveFactor):
