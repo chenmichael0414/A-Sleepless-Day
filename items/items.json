@@ -1,13 +1,40 @@
 {
-    "block": "block.png",
-    "carrots": "carrots.png",
-    "chips": "chips.png",
-    "coffee": "coffee.png",
-    "fishGun": "fishGun.png",
-    "hat": "hat.png",
-    "pie": "pie.png",
-    "speaker": "speaker.png",
-    "sunglasses": "sunglasses.png",
-    "volleyball": "volleyball.png",
-    "arrow": "arrow.png"
+    "block": {
+        "path": "block.png",
+        "boosts": {
+            "health": 1,
+            "speed": 1.8,
+            "jump": 1.4
+        }
+    },
+    "carrots": {
+        "path": "carrots.png"
+    },
+    "chips": {
+        "path": "chips.png"
+    },
+    "coffee": {
+        "path": "coffee.png"
+    },
+    "fishGun": {
+        "path": "fishGun.png"
+    },
+    "hat": {
+        "path": "hat.png"
+    },
+    "pie": {
+        "path": "pie.png",
+        "boosts": {
+            "health": 2
+        } 
+    },
+    "speaker": {
+        "path": "speaker.png"
+    },
+    "sunglasses": {
+        "path": "sunglasses.png"
+    },
+    "volleyball": {
+        "path": "volleyball.png"
+    }
 }
