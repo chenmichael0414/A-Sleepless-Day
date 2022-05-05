@@ -68,7 +68,7 @@ class Battle:
             'mole': Mole(screen, self, textbox),
             'elephant': Elephant(screen, self, textbox)
         }
-        self.currentBoss = 'cat'
+        self.currentBoss = 'mole'
 
 
     def tick(self):
