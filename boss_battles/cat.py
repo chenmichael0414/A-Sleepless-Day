@@ -44,6 +44,7 @@ class Cat(Boss):
         self.textbox.resetFlag('cat hat win')
         self.textbox.resetFlag('cat fish win')
         self.textbox.resetFlag('cat final win')
+        self.textbox.resetFlag('cat reward item')
 
     def hat(self):
         for minion in self.minions:
@@ -127,7 +128,8 @@ class Cat(Boss):
         # 0-2 is fish, 3-4 is hat
         rng = random.randint(0, 4)
 
-        if self.defeatedMinions < 40:
+        # TODO: CHANGE THIS BACK TO 40
+        if self.defeatedMinions < -1:
             # If it is the current frame to draw a minion
             if len(self.minions) < 7 and self.screen.frame % 25 == 0:
                 if rng <= 2:
@@ -159,11 +161,13 @@ class Cat(Boss):
                     })
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            
-            if self.textbox.drawIfIncomplete(['hey u win congrats!'], 'cat final win'): return
+            if self.textbox.drawIfIncomplete(['well... i guess that\'s it for me...', 'me-owwww...'], 'cat final win'): return
 
-            # self.defeatedMinions = 0
-            # self.currentAttack += 1
+            self.loadSprite(None)
+            if self.item.rewardItem('pie', 'cat reward item'): return
+
+            self.battle.end()
+            
 
 
         

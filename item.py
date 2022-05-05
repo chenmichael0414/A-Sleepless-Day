@@ -13,7 +13,7 @@ class Item:
 
         self.triggerKey = pygame.K_SPACE
 
-        self.darkItem = 'pie'   # TODO: change this to a flashlight
+        self.darkItems = self.getDarkItems()
 
         self.active = []
 
@@ -69,18 +69,55 @@ class Item:
             item['y'] += dy
 
     def runEvent(self, item):
-        item['event']()
+        if item.get('event') is not None:
+            item['event']()
 
         self.inventory.addToInventory(item)
         self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
 
         self.removeItem(item)
 
+    def getItemByName(self, name):
+        for n in self.itemData:
+            if n == name:
+                return {
+                    'name': name,
+                    'x': 0,
+                    'y': 0,
+                    'sprite': self.loadSprite(name),
+                    'event': None,
+                    'boosts': self.itemData[name].get('boosts')
+                }
+
+    def rewardItem(self, name, flag):
+        item = self.getItemByName(name)
+
+        # We assume that the user will only have one copy of this rewarded item
+        if not self.hasItem(name):
+            self.inventory.addToInventory(item)
+
+        if self.textbox.drawIfIncomplete(['congratulations!', '{} has been added to your inventory.'.format(item['name'])], flag): return True
+
+        return False
+
     def hasItem(self, name):
         return self.inventory.hasItem(name)
 
+    def getDarkItems(self):
+        res = []
+
+        for (name, item) in self.itemData.items():
+            if item.get('dark') == True:
+                res.append(name)
+
+        return res
+
     def hasDarkItem(self):
-        return self.inventory.hasItem(self.darkItem)
+        for name in self.darkItems:
+            if self.inventory.hasItem(name):
+                return True
+
+        return False
 
     # Basically, we search through each item in our inventory, seeing if they give any extra health
     # If they do, add it to the total amount of extra health and return that value once all have been added

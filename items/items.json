@@ -36,5 +36,9 @@
     },
     "volleyball": {
         "path": "volleyball.png"
+    },
+    "flashlight": {
+        "path": "flashlight.png",
+        "dark": true
     }
 }

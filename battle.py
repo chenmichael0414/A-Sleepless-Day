@@ -66,17 +66,28 @@ class Battle:
             'mole': Mole(screen, self, textbox),
             'elephant': Elephant(screen, self, textbox)
         }
-        self.currentBoss = 'cat'
+        self.currentBoss = None
 
-    def init(self):
+    def init(self, boss):
+        if boss not in self.bosses:
+            return
+
+        self.currentBoss = boss
+
         self.screen.battling = True
+        self.screen.load()
+
+        self.reset()
+
+    def end(self):
+        self.screen.battling = False
         self.screen.load()
 
         self.reset()
 
     def tick(self):
         if pygame.key.get_pressed()[pygame.K_b]:
-            self.init()
+            self.init('cat')
 
         # If the screen is loaded and we are in a battle
         if not self.screen.loading and self.screen.battling:
@@ -249,5 +260,4 @@ class Battle:
         self.bosses[self.currentBoss].reset()
 
     def enemiesEngine(self):
-        self.screen.cutscene = True
         self.bosses[self.currentBoss].tick()

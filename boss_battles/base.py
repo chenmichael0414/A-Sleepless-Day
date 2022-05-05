@@ -4,9 +4,10 @@ from colliders import PlayerCollider
 
 class Boss:
     def __init__(self, screen, battle, textbox, sheetPath, sheetWidth, attacks, minionColliders):
-        self.screen = screen
-        self.battle = battle
+        self.screen  = screen
+        self.battle  = battle
         self.textbox = textbox
+        self.item    = battle.item
 
         self.scale = 3.5
 
@@ -93,6 +94,11 @@ class Boss:
         self.battle.mode = "GRAVITY"
 
     def loadSprite(self, frame):
+        # If we want to make the cat invisible, we basically just load an empty Surface
+        if frame is None:
+            self.sprite = pygame.Surface((1, 1), pygame.SRCALPHA).convert_alpha()
+            return
+
         # extract the current sprite
         rect = pygame.Rect(
             (frame % 2) * self.SHEET_WIDTH,           # % 2 because there are 2 sprites per row in spritesheet
