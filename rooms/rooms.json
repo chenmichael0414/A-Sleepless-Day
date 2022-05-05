@@ -5,7 +5,7 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            {"name": "block", "x": 150, "y": 500},
+            {"name": "pie", "x": 150, "y": 500},
             {"name": "block", "x": 200, "y": 500, "text": ["lolxd"]}
         ],
         "doors": [

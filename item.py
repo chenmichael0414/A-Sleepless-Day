@@ -7,11 +7,13 @@ class Item:
         self.textbox   = textbox
         self.inventory = inventory
 
-        self.imagePaths = json.load(open('./items/items.json'))
+        self.itemData = json.load(open('./items/items.json'))
 
         self.scale = 2
 
         self.triggerKey = pygame.K_SPACE
+
+        self.darkItem = 'pie'   # TODO: change this to a flashlight
 
         self.active = []
 
@@ -22,6 +24,7 @@ class Item:
             'y': y,
             'sprite': self.loadSprite(name),
             'event': (lambda: self.textbox.draw(['you found a new item!']) if text == None else self.textbox.draw(text)),
+            'boosts': self.itemData[name].get('boosts')
         })
 
     def removeItem(self, item):
@@ -50,7 +53,7 @@ class Item:
 
     # basically makes it so we only have to load image sprites once
     def loadSprite(self, name):
-        img = pygame.image.load('./items/{}'.format(self.imagePaths[name])).convert_alpha()
+        img = pygame.image.load('./items/{}'.format(self.itemData[name]['path'])).convert_alpha()
         img = pygame.transform.scale(img, (self.scale * self.screen.PIXEL_SIZE, self.scale * self.screen.PIXEL_SIZE))
 
         return img
@@ -72,3 +75,38 @@ class Item:
         self.textbox.drawAppend(['{} has been added to your inventory.'.format(item['name'])])
 
         self.removeItem(item)
+
+    def hasItem(self, name):
+        return self.inventory.hasItem(name)
+
+    def hasDarkItem(self):
+        return self.inventory.hasItem(self.darkItem)
+
+    # Basically, we search through each item in our inventory, seeing if they give any extra health
+    # If they do, add it to the total amount of extra health and return that value once all have been added
+    def getExtraHealth(self):
+        totalExtraHealth = 0
+
+        for item in self.inventory.items:
+            if item.get('boosts') is not None:
+                extraHealth = item['boosts'].get('health')
+
+                if extraHealth is not None:
+                    totalExtraHealth += extraHealth
+
+        return totalExtraHealth
+
+    # Same idea as the above function, but with multipliers
+    # We multiply all of them to an initial value of 1 and return that
+    def getBoostMultipliers(self, type):
+        totalBoost = 1
+
+        for item in self.inventory.items:
+            if item.get('boosts') is not None:
+                boost = item['boosts'].get(type)
+
+                if boost is not None:
+                    totalBoost *= boost
+
+        return totalBoost
+

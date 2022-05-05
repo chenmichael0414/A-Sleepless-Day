@@ -25,6 +25,13 @@ class Inventory:
     def addToInventory(self, item):
         self.items.append(item)
 
+    def hasItem(self, name):
+        for item in self.items:
+            if item['name'] == name:
+                return True
+
+        return False
+
     def tick(self):
         # TODO: make so u cant open inventory if text is playing
         if Key.isToggled(self.displayKey):

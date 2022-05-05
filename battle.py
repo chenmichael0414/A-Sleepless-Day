@@ -10,9 +10,10 @@ from boss_battles.mole import Mole
 from boss_battles.elephant import Elephant
 
 class Battle:
-    def __init__(self, screen, textbox):
+    def __init__(self, screen, textbox, item):
         self.screen  = screen
         self.textbox = textbox
+        self.item    = item
 
         self.mode = "GRAVITY"
         
@@ -30,36 +31,33 @@ class Battle:
         self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth)   / 2 + self.boxLine
         self.PLAYER_OFFSET_Y = (self.screen.SCREEN_HEIGHT + self.boxHeight) / 2 - self.boxLine - self.playerSize
 
-        self.playerMoveVel    = 3
-        self.playerYVel       = 0
-        self.playerYAccel     = .4
-        self.playerJumpHeight = 8
+        self.initialMoveVel = 3
+        self.playerMoveVel  = 3
+
+        self.playerYVel   = 0
+        self.playerYAccel = .4
+
+        self.initialJumpHeight = 8
+        self.playerJumpHeight  = 8
 
         self.playerHealth = 10
+        self.extraHealth  = 0
 
         # Amount of invulnerable frames the player has after being hit
         # 20 is an arbitrary number for a delay between damage, can be tweaked
         self.invulnerability = 20
 
-        self.heartSheet   = pygame.image.load('./sprites/hearts.png').convert_alpha()
+        self.heartSheet      = pygame.image.load('./sprites/hearts.png').convert_alpha()
+        self.extraHeartSheet = pygame.image.load('./sprites/golden_hearts.png').convert_alpha()
+
         self.HEART_WIDTH  = 168
         self.HEART_HEIGHT = 32
+        self.EXTRA_HEART_WIDTH = 66
 
         self.heartSprite = None
         self.loadHeartSprite()
 
-        # Enemy data
-        # This enemy just exists so the enemy loop runs at least once
-        # (if enemy array is empty, it won't run)
-        self.enemies = [
-            {
-                'x': self.screen.SCREEN_WIDTH + 1,
-                'y': 0,
-                'angle': 1.5,
-                'speed': 4,
-                'size': 18
-            }
-        ]
+        self.extraHeartSprite = None
 
         self.bosses = {
             'monkey': Monkey(screen, self, textbox),
@@ -70,11 +68,15 @@ class Battle:
         }
         self.currentBoss = 'mole'
 
+    def init(self):
+        self.screen.battling = True
+        self.screen.load()
+
+        self.reset()
 
     def tick(self):
         if pygame.key.get_pressed()[pygame.K_b]:
-            self.screen.battling = True
-            self.screen.load()
+            self.init()
 
         # If the screen is loaded and we are in a battle
         if not self.screen.loading and self.screen.battling:
@@ -111,6 +113,18 @@ class Battle:
         self.heartSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         self.heartSprite.blit(self.heartSheet, (0, 0), rect)
 
+    def loadExtraHeartSprite(self):
+        # extract the current sprite
+        rect = pygame.Rect(
+            0,
+            (4 - self.extraHealth) * self.HEART_HEIGHT,
+            self.EXTRA_HEART_WIDTH,
+            self.HEART_HEIGHT
+        )
+
+        self.extraHeartSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+        self.extraHeartSprite.blit(self.extraHeartSheet, (0, 0), rect)
+
     def playerEngine(self):
         # Player
         self.screen.drawRect(
@@ -131,6 +145,16 @@ class Battle:
                 0
             )
         )
+
+        # Extra player hearts
+        if self.extraHeartSprite is not None:    
+            self.screen.drawSprite(
+                self.extraHeartSprite, 
+                (
+                    0,
+                    0
+                )
+            )
 
         if pygame.key.get_pressed()[pygame.K_d]:
             self.playerX += self.playerMoveVel
@@ -171,8 +195,26 @@ class Battle:
             self.playerYVel = 0
 
     def takeDamage(self, damage=1):
-        self.playerHealth -= damage
+        if self.extraHealth > 0:
+            self.extraHealth -= damage
+
+            # Only load the extra heart sprite if there is one to load (there isn't one for 0 extra hearts, only 1/2)
+            if self.extraHealth > 0:
+                self.loadExtraHeartSprite()
+            else:
+                # Subtract from the player health how far negative we went in extra hearts
+                # For example, if our extraHealth is -1, playerHealth will become 10 + (-1) = 10 - 1 = 9
+                self.playerHealth += self.extraHealth
+                self.extraHeartSprite = None
+        else:
+            self.playerHealth -= damage
+
+        # Only load the heart sprite if there is one to load
+        if self.playerHealth < 0:
+            self.playerHealth = 0
+        
         self.loadHeartSprite()
+
         self.albertPain()
 
         self.playerColor = (155, 0, 0)
@@ -193,6 +235,16 @@ class Battle:
 
         self.playerHealth = 10
         self.loadHeartSprite()
+
+        # Get the extra health based on inventory items
+        self.extraHealth = self.item.getExtraHealth()
+
+        if self.extraHealth > 0:
+            self.loadExtraHeartSprite()
+
+        # Get any speed or jump multipliers
+        self.playerMoveVel    = self.initialMoveVel    * self.item.getBoostMultipliers('speed')
+        self.playerJumpHeight = self.initialJumpHeight * self.item.getBoostMultipliers('jump')
 
         self.bosses[self.currentBoss].reset()
 
