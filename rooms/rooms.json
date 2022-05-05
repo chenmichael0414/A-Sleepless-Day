@@ -20,19 +20,36 @@
         "borderPath": "cseBorder.png",
         "pos": [300, 500],
         "mode": "FIXED",
-        "dark": true
+        "doors": [
+            {
+                "path": "cseDoor.png",
+                "newRoom": "CHEM"
+            }
+        ]
     },
     "GYM": {
         "path": "gym.png",
         "borderPath": "gymBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED"
+        "mode": "FIXED",
+        "doors": [
+            {
+                "path": "gymDoor.png",
+                "newRoom": "MATH"
+            }
+        ]
     },
     "MATH": {
         "path": "math.png",
         "borderPath": "mathBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED"
+        "mode": "FIXED",
+        "doors": [
+            {
+                "path": "mathDoor.png",
+                "newRoom": "CSE"
+            }
+        ]
     },
     "TEST": {
         "path": "chem.png",
