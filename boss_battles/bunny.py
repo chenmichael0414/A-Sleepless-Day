@@ -44,6 +44,7 @@ class Bunny(Boss):
         self.textbox.resetFlag('bunny soundwave win')
         self.textbox.resetFlag('bunny carrot win')
         self.textbox.resetFlag('bunny final win')
+        self.textbox.resetFlag('bunny reward item')
 
     def soundwave(self):
         for minion in self.minions:
@@ -148,5 +149,9 @@ class Bunny(Boss):
                     })
         elif len(self.minions) == 0:
             self.loadSprite(0)
+            if self.textbox.drawIfIncomplete(['time for me to hop away...'], 'bunny final win'): return
 
-            if self.textbox.drawIfIncomplete(['hey u win congrats!'], 'bunny final win'): return
+            self.loadSprite(None)
+            if self.item.rewardItem('key fragment #2', 'bunny reward item'): return
+
+            self.battle.end()

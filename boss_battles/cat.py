@@ -128,8 +128,7 @@ class Cat(Boss):
         # 0-2 is fish, 3-4 is hat
         rng = random.randint(0, 4)
 
-        # TODO: CHANGE THIS BACK TO 40
-        if self.defeatedMinions < -1:
+        if self.defeatedMinions < 40:
             # If it is the current frame to draw a minion
             if len(self.minions) < 7 and self.screen.frame % 25 == 0:
                 if rng <= 2:
@@ -164,7 +163,7 @@ class Cat(Boss):
             if self.textbox.drawIfIncomplete(['well... i guess that\'s it for me...', 'me-owwww...'], 'cat final win'): return
 
             self.loadSprite(None)
-            if self.item.rewardItem('pie', 'cat reward item'): return
+            if self.item.rewardItem('key fragment #1', 'cat reward item'): return
 
             self.battle.end()
             

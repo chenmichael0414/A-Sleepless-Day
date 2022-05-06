@@ -40,5 +40,23 @@
     "flashlight": {
         "path": "flashlight.png",
         "dark": true
+    },
+    "key": {
+        "path": "key.png"
+    },
+    "key fragment #1": {
+        "path": "key1.png"
+    },
+    "key fragment #2": {
+        "path": "key2.png"
+    },
+    "key fragment #3": {
+        "path": "key3.png"
+    },
+    "key fragment #4": {
+        "path": "key4.png"
+    },
+    "key fragment #5": {
+        "path": "key5.png"
     }
 }

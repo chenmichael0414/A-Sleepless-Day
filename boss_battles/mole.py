@@ -47,6 +47,10 @@ class Mole(Boss):
         super().reset()
 
         self.textbox.resetFlag('mole intro')
+        self.textbox.resetFlag('mole tornado win')
+        self.textbox.resetFlag('mole bolt win')
+        self.textbox.resetFlag('mole final win')
+        self.textbox.resetFlag('mole reward item')
 
     def tornado(self):
         for minion in self.minions:
@@ -244,8 +248,12 @@ class Mole(Boss):
 
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            
-            if self.textbox.drawIfIncomplete(['hey u win congrats!'], 'mole final win'): return
+            if self.textbox.drawIfIncomplete(['there\'s...', '...something in the way...'], 'mole final win'): return
+
+            self.loadSprite(None)
+            if self.item.rewardItem('key fragment #4', 'mole reward item'): return
+
+            self.battle.end()
 
 
         

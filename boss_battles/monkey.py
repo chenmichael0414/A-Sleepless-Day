@@ -45,6 +45,7 @@ class Monkey(Boss):
         self.textbox.resetFlag('monkey punch win')
         self.textbox.resetFlag('monkey kick win')
         self.textbox.resetFlag('monkey final win')
+        self.textbox.resetFlag('monkey reward item')
 
     def punch(self):
         for minion in self.minions:
@@ -148,11 +149,12 @@ class Monkey(Boss):
                     })
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            
-            if self.textbox.drawIfIncomplete(['hey u win congrats!'], 'monkey final win'): return
+            if self.textbox.drawIfIncomplete(['we know what we are...', '...but know not what we may be.'], 'monkey final win'): return
 
-            # self.defeatedMinions = 0
-            # self.currentAttack += 1
+            self.loadSprite(None)
+            if self.item.rewardItem('key fragment #3', 'monkey reward item'): return
+
+            self.battle.end()
         
 
 
