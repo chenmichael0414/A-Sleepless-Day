@@ -15,6 +15,11 @@ class Item:
 
         self.darkItems = self.getDarkItems()
 
+        # TODO: change this to include all key fragments
+        self.keyFragments = [
+            'key fragment #1'
+        ]
+
         self.active = []
 
     def addItem(self, name, x=50, y=50, text=None):
@@ -29,20 +34,7 @@ class Item:
 
     def removeItem(self, item):
         self.active.remove(item)
-
-        # We build the item to not have any miscellaneous data (sprite, event)
-        # This way, it matches exactly how the items object is constructed in rooms.json
-        temp = {
-            'name': item.get('name'),
-            'x': item.get('x'),
-            'y': item.get('y'),
-            'text': item.get('text')
-        }
-
-        # This removes any key-value pairs in which the value is None
-        # This way, if x, y, and text are None, they are simply removed
-        # https://stackoverflow.com/questions/33797126/proper-way-to-remove-keys-in-dictionary-with-none-values-in-python
-        self.screen.removeItem({k: v for k, v in temp.items() if v is not None})
+        self.screen.removeItem(item['name'])
 
     def setItems(self, items):
         self.active = []
@@ -98,10 +90,28 @@ class Item:
 
         if self.textbox.drawIfIncomplete(['congratulations!', '{} has been added to your inventory.'.format(item['name'])], flag): return True
 
+        if self.hasAllKeyFragments():
+            if self.textbox.drawIfIncomplete(['...........', 'congratulations!', 'you have all key fragments!', 'you have crafted the cypher key!'], 'craft cypher key'): return True
+            self.craftKey()
+
         return False
 
     def hasItem(self, name):
         return self.inventory.hasItem(name)
+
+    def hasAllKeyFragments(self):
+        for name in self.keyFragments:
+            if not self.hasItem(name):
+                return False
+
+        return True
+
+    def craftKey(self):
+        # Since we already checked if we have all the fragments in self.hasAllKeyFragments(), we don't have to check again
+        for name in self.keyFragments:
+            self.inventory.removeFromInventory(name)
+
+        self.inventory.addToInventory(self.getItemByName('key'))
 
     def getDarkItems(self):
         res = []

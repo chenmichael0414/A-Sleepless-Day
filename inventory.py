@@ -25,10 +25,16 @@ class Inventory:
     def addToInventory(self, item):
         self.items.append(item)
 
+    def removeFromInventory(self, name):
+        item = self.hasItem(name)
+
+        if item:
+            self.items.remove(item)
+
     def hasItem(self, name):
         for item in self.items:
             if item['name'] == name:
-                return True
+                return item
 
         return False
 

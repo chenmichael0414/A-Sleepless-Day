@@ -87,7 +87,7 @@ class Battle:
 
     def tick(self):
         if pygame.key.get_pressed()[pygame.K_b]:
-            self.init('mole')
+            self.init('cat')
 
         # If the screen is loaded and we are in a battle
         if not self.screen.loading and self.screen.battling:

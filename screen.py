@@ -59,9 +59,20 @@ class Screen:
 
         self.currentRoom = None
 
-    def removeItem(self, item):
+    # NOTE: do not call this alone, call it from item.removeItem()
+    def removeItem(self, name):
+        item = self.getItemByName(name)
+
         if 'items' in self.rooms[self.currentRoom] and item in self.rooms[self.currentRoom]['items']:
             self.rooms[self.currentRoom]['items'].remove(item)
+
+    def getItemByName(self, name):
+        if 'items' in self.rooms[self.currentRoom]:
+            for item in self.rooms[self.currentRoom]['items']:
+                if name == item['name']:
+                    return item
+
+        return None
 
     def setRoom(self, room, player, item, load=True):
         if not room in self.rooms or self.frozen:

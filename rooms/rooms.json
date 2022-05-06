@@ -5,8 +5,8 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            {"name": "flashlight", "x": 150, "y": 500},
-            {"name": "block", "x": 200, "y": 500, "text": ["lolxd"]}
+            {"name": "pie", "x": 150, "y": 500},
+            {"name": "flashlight", "x": 200, "y": 500, "text": ["lolxd"]}
         ],
         "doors": [
             {
@@ -20,6 +20,7 @@
         "borderPath": "cseBorder.png",
         "pos": [300, 500],
         "mode": "FIXED",
+        "dark": true,
         "doors": [
             {
                 "path": "cseDoor.png",

@@ -26,7 +26,6 @@ if __name__ == '__main__':
     player    = Player(screen, item)
 
     Key.addKey(inventory.displayKey)
-    Key.addKey(pygame.K_b)
 
     screen.setRoom('CHEM', player, item)
 
@@ -42,10 +41,16 @@ if __name__ == '__main__':
             if not screen.battling:
                 player.tick()
                 item.tick()
-                inventory.tick()
-                Key.tick()
 
-            textbox.tick()
+                if not textbox.isActive:
+                    inventory.tick()
+
+                    # TODO: find a better way to do this incase we need toggling elsewhere
+                    # this is because we don't want the player to be able to turn inventory on while text is running
+                    Key.tick()  
+
+            if not inventory.isActive:
+                textbox.tick()
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
