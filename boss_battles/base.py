@@ -9,7 +9,7 @@ class Boss:
         self.textbox = textbox
         self.item    = battle.item
 
-        self.scale = 3.5
+        self.scale = .4
 
         self.sheet = pygame.image.load(sheetPath).convert_alpha()
 
@@ -111,4 +111,4 @@ class Boss:
         self.sprite.blit(self.sheet, (0, 0), rect)
 
         # upscale the sprite
-        self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.screen.PIXEL_SIZE, self.scale * self.screen.PIXEL_SIZE))
+        self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.SHEET_WIDTH, self.scale * self.SHEET_HEIGHT))
