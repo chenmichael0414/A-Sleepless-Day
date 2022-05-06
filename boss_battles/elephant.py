@@ -8,8 +8,7 @@ class Elephant(Boss):
             screen, 
             battle, 
             textbox, 
-            './enemies/bosses/elephant.png',
-            250,    # fix this value
+            'elephant',
             [
                 self.attack1
             ],

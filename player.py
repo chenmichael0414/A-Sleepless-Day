@@ -4,9 +4,10 @@ import math
 from colliders import PlayerCollider
 
 class Player:
-    def __init__(self, screen, item):
+    def __init__(self, screen, item, battle):
         self.screen = screen
-        self.item = item
+        self.item   = item
+        self.battle = battle
 
         self.sheet = pygame.image.load('./sprites/albert.png').convert_alpha()
         self.sprite = None
@@ -113,10 +114,21 @@ class Player:
                 itemRect = pygame.Rect((item['x'], item['y']) + item['sprite'].get_size())
 
                 collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
-                collision2 = self.screen.cameraMode == "FIXED" and pygame.Rect.colliderect(fixedRect, itemRect)
+                collision2 = self.screen.cameraMode == "FIXED"  and pygame.Rect.colliderect(fixedRect, itemRect)
     
                 if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
                     self.item.runEvent(item)
+
+            # check for overworld boss collisions
+            # if we are touching a boss, delete it from the overworld and trigger the boss fight
+            if self.screen.boss:
+                bossRect = pygame.Rect((self.screen.boss['x'], self.screen.boss['y']) + self.screen.boss['sprite'].get_size())
+
+                collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, bossRect)
+                collision2 = self.screen.cameraMode == "FIXED"  and pygame.Rect.colliderect(fixedRect, bossRect)
+
+                if collision1 or collision2:
+                    self.screen.removeBoss(self.battle)
 
     def load_sprite(self):
         # extract the image from the spritesheet
@@ -211,6 +223,11 @@ class Player:
                     else:
                         if self.screen.cameraMode == "SCROLL":
                             self.item.updatePositions(moveFactor * dir[0] * cameraDir, moveFactor * dir[1] * cameraDir)
+                            
+                            # Update overworld boss positions
+                            if self.screen.boss:
+                                self.screen.boss['x'] += moveFactor * dir[0] * cameraDir
+                                self.screen.boss['y'] += moveFactor * dir[1] * cameraDir
 
                     self.currentFrame += 1
 

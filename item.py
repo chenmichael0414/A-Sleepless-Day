@@ -157,3 +157,16 @@ class Item:
 
         return totalBoost
 
+    def getPlayerSize(self):
+        # Arbitrary initial size
+        size = None
+
+        for item in self.inventory.items:
+            if item.get('boosts') is not None:
+                newSize = item['boosts'].get('size')
+
+                if newSize is not None and (size is None or newSize < size):
+                    size = newSize
+                
+        return size
+

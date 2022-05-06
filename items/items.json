@@ -25,7 +25,8 @@
     "pie": {
         "path": "pie.png",
         "boosts": {
-            "health": 2
+            "health": 2,
+            "size": 9
         } 
     },
     "speaker": {

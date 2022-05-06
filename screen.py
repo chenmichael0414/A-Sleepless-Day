@@ -46,7 +46,8 @@ class Screen:
         self.loadTime  = 20
         self.loadFrame = self.loadTime  # the frame in which we started the loading screen
 
-        self.rooms = json.load(open('./rooms/rooms.json'))
+        self.rooms    = json.load(open('./rooms/rooms.json'))
+        self.bossData = json.load(open('./boss_battles/bosses.json'))
 
         self.borderCollider = ImageCollider(
             (self.BG_OFFSET_X - self.OFFSET_X, self.BG_OFFSET_Y - self.OFFSET_Y),
@@ -57,7 +58,11 @@ class Screen:
         
         self.doors = []
 
-        self.currentRoom = None
+        self.boss = None
+        self.bossScale = .35
+
+        self.previousRoom = None
+        self.currentRoom  = None
 
     # NOTE: do not call this alone, call it from item.removeItem()
     def removeItem(self, name):
@@ -81,7 +86,12 @@ class Screen:
         if load:
             self.load()
 
-        self.currentRoom = room
+        # This is because the setRoom() function is sometimes triggered a few times when the room key is pressed
+        # (although the room keys will be removed once we fix all doors, they are just for debugging)
+        if room != self.currentRoom:
+            self.previousRoom = self.currentRoom
+
+        self.currentRoom  = room
 
         # Set a room to be dark if it is specified in rooms.json AND the user does not have a dark-preventing item (i.e flashlight)
         self.dark = True if self.rooms[room].get('dark') is not None and not item.hasDarkItem() else False
@@ -118,6 +128,38 @@ class Screen:
                     )
                 })
 
+        self.boss = None
+
+        if 'boss' in self.rooms[room]:
+            bossName = self.rooms[room]['boss']['name']
+            bossPos  = self.rooms[room]['boss']['pos']
+
+            # This object gives the boss data for the SPECIFIC boss, not all bosses (that is what self.bossData is)
+            bossData = self.bossData[bossName]
+
+            # Get the first sprite from the boss spritesheet
+            bossSheet = pygame.image.load('./enemies/bosses/{}'.format(bossData['path'])).convert_alpha()
+
+            rect = pygame.Rect(
+                0,
+                0,
+                bossData['sheetWidth'],         # This is extracted from the bossData object created above since it IS unique to the boss
+                self.bossData['sheetHeight']    # This is extracted from self.bossData since the sheetHeight is NOT unique to the boss
+            )
+
+            bossSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+            bossSprite.blit(bossSheet, (0, 0), rect)
+
+            # Downscale the sprite
+            bossSprite = pygame.transform.scale(bossSprite, (self.bossScale * bossData['sheetWidth'], self.bossScale * self.bossData['sheetHeight']))
+
+            self.boss = {
+                'name': bossName,
+                'sprite': bossSprite,
+                'x': bossPos[0],
+                'y': bossPos[1]
+            }
+
         self.cameraMode = self.rooms[room]['mode']
 
         if player:
@@ -126,11 +168,24 @@ class Screen:
         if item:
             item.setItems(self.rooms[room].get('items')) 
 
-        # If the camera is in scroll mode, update the item positions according to the starting room position
-        if self.cameraMode == "SCROLL" and item and self.rooms[room].get('pos') is not None:
-            for i in item.active:
-                i['x'] += self.rooms[room]['pos'][0] / 2
-                i['y'] -= self.rooms[room]['pos'][1] / 2
+        # If the camera is in scroll mode, update the item and boss positions according to the starting room position
+        if self.cameraMode == "SCROLL" and self.rooms[room].get('pos') is not None:
+            if item:
+                for i in item.active:
+                    i['x'] += self.rooms[room]['pos'][0] / 2
+                    i['y'] -= self.rooms[room]['pos'][1] / 2
+
+            if self.boss:
+                self.boss['x'] += self.rooms[room]['pos'][0] / 2
+                self.boss['y'] -= self.rooms[room]['pos'][1] / 2
+
+    def removeBoss(self, battle):
+        name = self.boss['name']
+
+        self.boss = None
+        self.rooms[self.currentRoom].pop('boss')
+
+        battle.init(name)
 
     def load(self):
         self.loading   = True
@@ -145,7 +200,10 @@ class Screen:
         self.darkFrame = 0
         self.dark = False
 
-        self.setRoom('CHEM', player, item)
+        if self.previousRoom:
+            self.setRoom(self.previousRoom, player, item)
+        else:
+            self.setRoom('CHEM', player, item)
 
     def drawSprite(self, sprite, xy):
         x, y = xy
@@ -194,7 +252,6 @@ class Screen:
             0
         )
 
-
     # Clears the screen and iterates the clock and current frame
     def tick(self, x, y):
         self.display.fill((0, 0, 0))
@@ -221,10 +278,14 @@ class Screen:
                     for door in self.doors:
                         self.display.blit(door['sprite'], (self.BG_OFFSET_X, self.BG_OFFSET_Y))
 
-                self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))                      
+                self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))      
 
-        # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)
-        self.drawBorder()
+            # draw an overworld boss that triggers the battle
+            if self.boss and not self.dark:
+                self.drawSprite(self.boss['sprite'], (self.boss['x'], self.boss['y']))                
+
+            # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)
+            self.drawBorder()
 
         self.clock.tick_busy_loop(self.fps)
         self.frame += 1

@@ -10,8 +10,7 @@ class Monkey(Boss):
             screen, 
             battle, 
             textbox, 
-            './enemies/bosses/monkey.png',
-            250,
+            'monkey',
             [
                 self.punch,
                 self.kick,

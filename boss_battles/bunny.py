@@ -10,8 +10,7 @@ class Bunny(Boss):
             screen, 
             battle, 
             textbox, 
-            './enemies/bosses/bunny.png',
-            308,
+            'bunny',
             [
                 self.soundwave,
                 self.carrot,

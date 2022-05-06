@@ -23,7 +23,7 @@ if __name__ == '__main__':
     inventory = Inventory(screen)
     item      = Item(screen, textbox, inventory)
     battle    = Battle(screen, textbox, item)
-    player    = Player(screen, item)
+    player    = Player(screen, item, battle)
 
     Key.addKey(inventory.displayKey)
 
