@@ -66,6 +66,7 @@ class Mole(Boss):
 
             minion['x'] += xSpeed
             minion['y'] += ySpeed
+            
 
         if self.defeatedMinions < 30:
             topQuarter    = (2*self.screen.SCREEN_HEIGHT - self.battle.boxHeight) / 4
