@@ -30,9 +30,9 @@ class Screen:
         self.fps = fps
         self.frame = 0
 
-        # The last frame in which the "room is too dark" event was triggered
+        # The last frame in which the "room is too dark" or "room is locked" event was triggered
         # This is stored for unique textbox flag purposes
-        self.darkFrame = 0
+        self.eventFrame = 0
 
         self.cameraMode = "SCROLL"
 
@@ -57,6 +57,9 @@ class Screen:
         )
         
         self.doors = []
+
+        self.dark   = False
+        self.locked = False
 
         self.boss = None
         self.bossScale = .35
@@ -93,10 +96,14 @@ class Screen:
 
         self.currentRoom  = room
 
-        # Set a room to be dark if it is specified in rooms.json AND the user does not have a dark-preventing item (i.e flashlight)
+        # Set a room to be dark if it is specified in rooms.json AND the player does not have a dark-preventing item (i.e flashlight)
         self.dark = True if self.rooms[room].get('dark') is not None and not item.hasDarkItem() else False
 
-        if self.dark:
+        # Set a room to be locked if it is specified in rooms.json AND the player does not have the key
+        self.locked = True if self.rooms[room].get('locked') is not None and not item.hasItem('key') else False
+
+        # If a room is dark or locked, make the background completely dark
+        if self.dark or self.locked:
             self.bg = pygame.Surface((self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
         else:
             self.bg = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
@@ -191,14 +198,14 @@ class Screen:
         self.loading   = True
         self.loadFrame = self.frame
 
-    def darkEvent(self, textbox, player, item):
-        if self.darkFrame == 0:
-            self.darkFrame = self.frame
+    def triggerEvent(self, textbox, player, item, alert):
+        if self.eventFrame == 0:
+            self.eventFrame = self.frame
 
-        if textbox.drawIfIncomplete(['this room is too dark to see in.', 'please come back with a light source.'], 'dark event ' + str(self.darkFrame)): return
+        if textbox.drawIfIncomplete(alert, 'event ' + str(self.eventFrame)): return
 
-        self.darkFrame = 0
-        self.dark = False
+        self.eventFrame = 0
+        self.frozen     = False
 
         if self.previousRoom:
             self.setRoom(self.previousRoom, player, item)
@@ -281,7 +288,7 @@ class Screen:
                 self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))      
 
             # draw an overworld boss that triggers the battle
-            if self.boss and not self.dark:
+            if self.boss and not self.dark and not self.locked:
                 self.drawSprite(self.boss['sprite'], (self.boss['x'], self.boss['y']))                
 
             # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)

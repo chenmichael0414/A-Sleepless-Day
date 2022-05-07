@@ -51,13 +51,17 @@ if __name__ == '__main__':
 
             if not inventory.isActive:
                 textbox.tick()
+
+            # If a room is too dark, trigger the dark event
+            if screen.dark and not item.hasDarkItem(): 
+                screen.triggerEvent(textbox, player, item, ['this room is too dark to see in.', 'please come back with a light source.'])
+
+            # If a room is locked, trigger the locked event
+            if screen.locked and not item.hasItem('key'):
+                screen.triggerEvent(textbox, player, item, ['this room is locked.', 'please come back with a key.'])
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
-
-        # If a room is too dark, trigger the dark event
-        if not screen.loading and screen.dark and not item.hasDarkItem(): 
-            screen.darkEvent(textbox, player, item)
 
         if not started and pygame.key.get_pressed()[pygame.K_TAB]:
             cutscene(screen, textbox, player, item)
