@@ -48,6 +48,17 @@ def cutscene(screen, textbox, player, item):
             else:
                 currScene += 1
         elif currScene == 2:
+            sprite = 8
+            screen.tick(player.x, player.y)
+            player.tick(drawingNumber=sprite)
+            pygame.display.update()
+            last = pygame.time.get_ticks()
+            while pygame.time.get_ticks() <= last + 1000:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit() 
+            currScene += 1
+        elif currScene == 3:
                 sprite = 4
                 screen.tick(player.x, player.y)
                 player.tick(drawingNumber=sprite)
