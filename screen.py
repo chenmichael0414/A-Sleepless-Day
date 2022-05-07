@@ -8,8 +8,9 @@ class Screen:
         self.PLAYER_SCALE     = 2
         self.BACKGROUND_SCALE = 6
 
-        # self.BACKGROUND_HEIGHT = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
-        # self.BACKGROUND_WIDTH  = self.BACKGROUND_HEIGHT * width / height
+        self.defaultWidth  = width
+        self.defaultHeight = height
+
         self.BACKGROUND_WIDTH  = width
         self.BACKGROUND_HEIGHT = height
 
@@ -96,6 +97,19 @@ class Screen:
 
         self.currentRoom  = room
 
+        # If a room has a specified width/height, use that
+        # Otherwise, use the default
+        if self.rooms[room].get('size'):
+            self.BACKGROUND_WIDTH  = self.rooms[room]['size'][0]
+            self.BACKGROUND_HEIGHT = self.rooms[room]['size'][1]
+        else:
+            self.BACKGROUND_WIDTH  = self.defaultWidth
+            self.BACKGROUND_HEIGHT = self.defaultHeight
+
+        # Recalculate background offset
+        self.BG_OFFSET_X = (self.ACTUAL_WIDTH  - self.BACKGROUND_WIDTH)  / 2
+        self.BG_OFFSET_Y = (self.ACTUAL_HEIGHT - self.BACKGROUND_HEIGHT) / 2
+
         # Set a room to be dark if it is specified in rooms.json AND the player does not have a dark-preventing item (i.e flashlight)
         self.dark = True if self.rooms[room].get('dark') is not None and not item.hasDarkItem() else False
 
@@ -115,13 +129,14 @@ class Screen:
             self.border = pygame.image.load('./rooms/{}'.format(self.rooms[room]['borderPath'])).convert_alpha()
             self.border = pygame.transform.scale(self.border, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
-        self.borderCollider.updateImage(self.border)
+        self.borderCollider.updateImage(self.border, self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT)
 
         self.doors = []
 
         if 'doors' in self.rooms[room]:
             for door in self.rooms[room]['doors']:
                 sprite = pygame.image.load('./rooms/{}'.format(door['path'])).convert_alpha()
+                sprite = pygame.transform.scale(sprite, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
                 # We always just create a new ImageCollider here because rooms can have different amounts (not just 1)
                 self.doors.append({
@@ -290,9 +305,6 @@ class Screen:
             # draw an overworld boss that triggers the battle
             if self.boss and not self.dark and not self.locked:
                 self.drawSprite(self.boss['sprite'], (self.boss['x'], self.boss['y']))                
-
-            # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)
-            self.drawBorder()
 
         self.clock.tick_busy_loop(self.fps)
         self.frame += 1

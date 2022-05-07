@@ -3,10 +3,11 @@
         "path": "chem.png",
         "borderPath": "chemBorder.png",
         "pos": [300, 500],
-        "mode": "FIXED",
+        "mode": "SCROLL",
+        "size": [1500, 700],
         "items": [
-            {"name": "key", "x": 150, "y": 500},
-            {"name": "flashlight", "x": 200, "y": 500, "text": ["lolxd"]}
+            {"name": "key", "x": 900, "y": 500},
+            {"name": "flashlight", "x": 100, "y": 500, "text": ["lolxd"]}
         ],
         "doors": [
             {

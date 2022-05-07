@@ -159,8 +159,8 @@ class Player:
         if self.screen.cameraMode == "SCROLL":
             self.screen.drawSprite(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
 
-            #for door in self.screen.doors:
-                #self.screen.drawSprite(door['sprite'], (door['collider'].rect[0], door['collider'].rect[1]))
+            # for door in self.screen.doors:
+                # self.screen.drawSprite(door['sprite'], (door['collider'].rect[0], door['collider'].rect[1]))
             # self.screen.drawSprite(self.borderCollider.image, (self.borderCollider.rect[0], self.borderCollider.rect[1]))
             # self.screen.drawRect('red', self.playerCollider.rect)
         elif self.screen.cameraMode == "FIXED":
