@@ -30,6 +30,15 @@ if __name__ == '__main__':
 
     screen.setRoom('HALLWAY', player, item)
 
+    # to test full inventory
+    # for i in range(0, 16):
+        # inventory.addToInventory({
+            # 'name': 'block',
+            # 'sprite': item.loadSprite('block')
+       # })
+
+    # item.rewardItem('flashlight', 'ajsidfosdaif')
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
