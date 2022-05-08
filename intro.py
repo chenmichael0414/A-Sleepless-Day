@@ -65,14 +65,22 @@ def cutscene(screen, textbox, player, item):
         elif currScene == 3:
             sprite = 8
             last = pygame.time.get_ticks()
-            while pygame.time.get_ticks() <= last + 500:
+            while pygame.time.get_ticks() <= last + 550:
                 player.simulateKey(K_d)
                 screen.tick(player.x, player.y)
                 player.tick(drawingNumber=sprite)
                 pygame.display.update()
-            screen.setRoom('CHEM', player, item)
+            currScene += 1
+        elif currScene == 4:
+            incomplete = textbox.drawIfIncomplete(['One bus ride later...'], 'cutscene3') 
+            if incomplete:
+                screen.tick(player.x, player.y)
+                textbox.tick()
+                pygame.display.update()
+                return(currScene)
             screen.cutscene = False
         return currScene
     currScene = 0
     while screen.cutscene:
         currScene = tick(currScene)
+    screen.setRoom('CHEM', player, item)
