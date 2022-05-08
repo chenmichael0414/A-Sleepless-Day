@@ -10,7 +10,7 @@ class Player:
         self.battle  = battle
         self.textbox = textbox
 
-        self.sheet = pygame.image.load('./sprites/albert.png').convert_alpha()
+        self.sheet  = pygame.image.load('./sprites/albert.png').convert_alpha()
         self.sprite = None
         self.size   = (15, 20)    # actual size of the pixel art
         self.offset = (8, 7)      # offset for selecting each sprite from the spritesheet
@@ -148,7 +148,7 @@ class Player:
                     # there is like ~1/2 second where the player can see them before the battle starts
                     if collision1 or collision2:
                         self.battle.init(boss['name'])
-                        self.screen.removeBoss(boss['name'])
+                        self.resetPosition(self.screen.spawn)
                         break
 
     def load_sprite(self):

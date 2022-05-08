@@ -80,9 +80,12 @@ class Battle:
 
         self.reset()
 
-    def end(self):
+    def end(self, removeBoss=True):
         self.screen.battling = False
         self.screen.load()
+
+        if removeBoss:
+            self.screen.removeBoss(self.currentBoss)
 
         self.reset()
 
@@ -234,7 +237,7 @@ class Battle:
         # TODO: actually something when u die besides resetting the battle
 
         if self.playerHealth <= 0:
-            self.reset()
+            self.end(removeBoss=False)
 
     def albertPain(self):
         soundList = os.listdir("./sounds")

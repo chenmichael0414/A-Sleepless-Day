@@ -1,6 +1,7 @@
 import pygame
 import sys
 
+from title import TitleScreen
 from player import Player
 from screen import Screen
 from textbox import Textbox
@@ -19,6 +20,7 @@ if __name__ == '__main__':
     started = False
 
     screen    = Screen()
+    title     = TitleScreen(screen)
     textbox   = Textbox(screen)
     inventory = Inventory(screen)
     item      = Item(screen, textbox, inventory)
@@ -43,6 +45,16 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+
+        # If the title screen is open, we restart the loop so nothing else renders
+        if title.open:
+            title.tick()
+            continue
+
+        # Runs the cutscene once the title screen is closed
+        if not started:
+            cutscene(screen, textbox, player, item, inventory)
+            started = True
 
         screen.tick(player.x, player.y)
         battle.tick()
@@ -77,6 +89,7 @@ if __name__ == '__main__':
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
 
+        '''
         if not started and pygame.key.get_pressed()[pygame.K_TAB]:
             cutscene(screen, textbox, player, item)
             started = True
@@ -87,7 +100,7 @@ if __name__ == '__main__':
                 'wow, see? you\'re already learning! you\'re amazing <3'
             ])
 
-        if pygame.key.get_pressed()[pygame.K_c]:
+         if pygame.key.get_pressed()[pygame.K_c]:
             screen.setRoom('CHEM', player, item)
 
         if pygame.key.get_pressed()[pygame.K_i]:
@@ -101,5 +114,6 @@ if __name__ == '__main__':
 
         if pygame.key.get_pressed()[pygame.K_u]:
             screen.setRoom('HALLWAY', player, item)
+        '''
 
         pygame.display.update()
