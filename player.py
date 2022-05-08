@@ -49,7 +49,7 @@ class Player:
     def resetPosition(self, pos=None):
         if pos:
             if self.screen.cameraMode == "SCROLL":
-                self.x = pos[0] / 2
+                self.x = pos[0] / -2
                 self.y = pos[1] / -2
             elif self.screen.cameraMode == "FIXED":
                 self.x = pos[0]
@@ -81,7 +81,6 @@ class Player:
                     self.x + self.screen.BG_OFFSET_X - self.screen.OFFSET_X, 
                     self.y + self.screen.BG_OFFSET_Y - self.screen.OFFSET_Y
                 ))
-            
         elif self.screen.cameraMode == "FIXED":
             self.playerCollider.setRect((self.x, self.y))
             self.borderCollider.setRect((0, 0))
@@ -90,6 +89,7 @@ class Player:
                 door['collider'].setRect((0, 0))
 
     def tick(self, drawingNumber=None):
+        # print(self.x, self.y)
         # We only want to change self.drawingNumber if the passed in argument is not None
         # We will set self.drawingNumber to None once the player mooves again
         if drawingNumber is not None:
@@ -159,8 +159,8 @@ class Player:
         if self.screen.cameraMode == "SCROLL":
             self.screen.drawSprite(self.sprite, (self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2))
 
-            #for door in self.screen.doors:
-                #self.screen.drawSprite(door['sprite'], (door['collider'].rect[0], door['collider'].rect[1]))
+            # for door in self.screen.doors:
+                # self.screen.drawSprite(door['sprite'], (door['collider'].rect[0], door['collider'].rect[1]))
             # self.screen.drawSprite(self.borderCollider.image, (self.borderCollider.rect[0], self.borderCollider.rect[1]))
             # self.screen.drawRect('red', self.playerCollider.rect)
         elif self.screen.cameraMode == "FIXED":
@@ -193,12 +193,6 @@ class Player:
                     elif self.screen.cameraMode == "FIXED":
                         cameraDir = -1
 
-                    # before we actually move, if we are on top of a door, go to the next room
-                    for door in self.screen.doors:
-                        if pygame.sprite.collide_mask(self.playerCollider, door['collider']):
-                            self.screen.setRoom(door['newRoom'], self, self.item)
-                            return
-
                     # multiply the move factor by the direction
                     self.x += moveFactor * dir[0] * cameraDir
                     self.y += moveFactor * dir[1] * cameraDir
@@ -217,6 +211,16 @@ class Player:
                             ))
                     elif self.screen.cameraMode == "FIXED":
                         self.playerCollider.setRect((self.x, self.y))
+
+                    # after we move, if we are on top of a door, revert the movement and go to the next room
+                    for door in self.screen.doors:
+                        if pygame.sprite.collide_mask(self.playerCollider, door['collider']):
+                            self.x -= moveFactor * dir[0] * cameraDir
+                            self.y -= moveFactor * dir[1] * cameraDir
+
+                            self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'] or None)
+
+                            return
 
                     # if the player would go out of the background or touch the border, just undo the movement
                     # since this is all done before a render, it basically looks like the player is stuck at the wall

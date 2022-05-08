@@ -40,7 +40,9 @@ if __name__ == '__main__':
         if not screen.loading:
             if not screen.battling:
                 player.tick()
-                item.tick()
+
+                if not screen.isEvent:
+                    item.tick()
 
                 if not textbox.isActive:
                     inventory.tick()
@@ -49,6 +51,12 @@ if __name__ == '__main__':
                     # this is because we don't want the player to be able to turn inventory on while text is running
                     Key.tick()  
 
+        # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)
+        # this is done after everything else is drawn EXCEPT textbox so this is the top layer (besides textbox)
+        # this is because the textbox is drawn on top of the border at the bottom of the screen
+        screen.drawBorder()
+
+        if not screen.loading:
             if not inventory.isActive:
                 textbox.tick()
 

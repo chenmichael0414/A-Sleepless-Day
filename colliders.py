@@ -33,8 +33,9 @@ class ImageCollider(pygame.sprite.Sprite):
         self.pos  = pos
         self.rect = self.image.get_rect(topleft=pos)
 
-    def updateImage(self, sprite):
-        self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA).convert_alpha()
+    def updateImage(self, sprite, width=None, height=None):
+        # If there is no width/height passed in, use self.width/self.height instead
+        self.image = pygame.Surface((width or self.width, height or self.height), pygame.SRCALPHA).convert_alpha()
 
         if sprite is not None:
             self.image.blit(sprite, (0, 0))

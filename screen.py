@@ -8,8 +8,9 @@ class Screen:
         self.PLAYER_SCALE     = 2
         self.BACKGROUND_SCALE = 6
 
-        # self.BACKGROUND_HEIGHT = self.PIXEL_SIZE * self.PLAYER_SCALE * self.BACKGROUND_SCALE * 2
-        # self.BACKGROUND_WIDTH  = self.BACKGROUND_HEIGHT * width / height
+        self.defaultWidth  = width
+        self.defaultHeight = height
+
         self.BACKGROUND_WIDTH  = width
         self.BACKGROUND_HEIGHT = height
 
@@ -58,14 +59,18 @@ class Screen:
         
         self.doors = []
 
-        self.dark   = False
-        self.locked = False
+        self.dark    = False
+        self.locked  = False
+        self.isEvent = False
 
         self.boss = None
         self.bossScale = .35
 
         self.previousRoom = None
         self.currentRoom  = None
+
+        self.previousPos    = None
+        self.previousCamera = None
 
     # NOTE: do not call this alone, call it from item.removeItem()
     def removeItem(self, name):
@@ -82,7 +87,7 @@ class Screen:
 
         return None
 
-    def setRoom(self, room, player, item, load=True):
+    def setRoom(self, room, player, item, pos=None, load=True):
         if not room in self.rooms or self.frozen:
             return
 
@@ -96,6 +101,19 @@ class Screen:
 
         self.currentRoom  = room
 
+        # If a room has a specified width/height, use that
+        # Otherwise, use the default
+        if self.rooms[room].get('size'):
+            self.BACKGROUND_WIDTH  = self.rooms[room]['size'][0]
+            self.BACKGROUND_HEIGHT = self.rooms[room]['size'][1]
+        else:
+            self.BACKGROUND_WIDTH  = self.defaultWidth
+            self.BACKGROUND_HEIGHT = self.defaultHeight
+
+        # Recalculate background offset
+        self.BG_OFFSET_X = (self.ACTUAL_WIDTH  - self.BACKGROUND_WIDTH)  / 2
+        self.BG_OFFSET_Y = (self.ACTUAL_HEIGHT - self.BACKGROUND_HEIGHT) / 2
+
         # Set a room to be dark if it is specified in rooms.json AND the player does not have a dark-preventing item (i.e flashlight)
         self.dark = True if self.rooms[room].get('dark') is not None and not item.hasDarkItem() else False
 
@@ -105,9 +123,13 @@ class Screen:
         # If a room is dark or locked, make the background completely dark
         if self.dark or self.locked:
             self.bg = pygame.Surface((self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+
+            self.isEvent = True
         else:
             self.bg = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
             self.bg = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+
+            self.isEvent = False
 
         self.border = None
 
@@ -115,18 +137,20 @@ class Screen:
             self.border = pygame.image.load('./rooms/{}'.format(self.rooms[room]['borderPath'])).convert_alpha()
             self.border = pygame.transform.scale(self.border, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
-        self.borderCollider.updateImage(self.border)
+        self.borderCollider.updateImage(self.border, self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT)
 
         self.doors = []
 
         if 'doors' in self.rooms[room]:
             for door in self.rooms[room]['doors']:
                 sprite = pygame.image.load('./rooms/{}'.format(door['path'])).convert_alpha()
+                sprite = pygame.transform.scale(sprite, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
                 # We always just create a new ImageCollider here because rooms can have different amounts (not just 1)
                 self.doors.append({
                     'sprite': sprite,
                     'newRoom': door['newRoom'],
+                    'newPos': door.get('newPos'),
                     'collider': ImageCollider(
                         (self.BG_OFFSET_X - self.OFFSET_X, self.BG_OFFSET_Y - self.OFFSET_Y),
                         sprite,
@@ -167,24 +191,40 @@ class Screen:
                 'y': bossPos[1]
             }
 
-        self.cameraMode = self.rooms[room]['mode']
+        self.previousCamera = self.cameraMode
+        self.cameraMode     = self.rooms[room]['mode']
 
         if player:
-            player.resetPosition(self.rooms[room].get('pos'))
+            # Set the previous position (which is used if the triggerEvent() function is called)
+            if self.previousCamera == "SCROLL":
+                # We have to multiply by -2 here because the player starting position is divided by -2 in scroll mode
+                # See player.resetPosition() for more info
+                self.previousPos = (player.x * -2, player.y * -2)
+            elif self.previousCamera == "FIXED":
+                self.previousPos = (player.x, player.y)
+
+            # If an event is triggered, we want to just spawn the player in the middle of the screen
+            if self.isEvent:
+                player.resetPosition()
+            else:
+                player.resetPosition(pos or self.rooms[room].get('pos'))
 
         if item:
             item.setItems(self.rooms[room].get('items')) 
 
         # If the camera is in scroll mode, update the item and boss positions according to the starting room position
-        if self.cameraMode == "SCROLL" and self.rooms[room].get('pos') is not None:
+        if self.cameraMode == "SCROLL" and (pos is not None or self.rooms[room].get('pos') is not None):
+            p = pos or self.rooms[room].get('pos')
+
             if item:
                 for i in item.active:
-                    i['x'] += self.rooms[room]['pos'][0] / 2
-                    i['y'] -= self.rooms[room]['pos'][1] / 2
+                    pass
+                    i['x'] -= p[0] / 2
+                    i['y'] -= p[1] / 2
 
             if self.boss:
-                self.boss['x'] += self.rooms[room]['pos'][0] / 2
-                self.boss['y'] -= self.rooms[room]['pos'][1] / 2
+                self.boss['x'] -= p[0] / 2
+                self.boss['y'] -= p[1] / 2
 
     def removeBoss(self, battle):
         name = self.boss['name']
@@ -208,7 +248,7 @@ class Screen:
         self.frozen     = False
 
         if self.previousRoom:
-            self.setRoom(self.previousRoom, player, item)
+            self.setRoom(self.previousRoom, player, item, pos=self.previousPos)
         else:
             self.setRoom('CHEM', player, item)
 
@@ -288,11 +328,8 @@ class Screen:
                 self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))      
 
             # draw an overworld boss that triggers the battle
-            if self.boss and not self.dark and not self.locked:
+            if self.boss and not self.isEvent:
                 self.drawSprite(self.boss['sprite'], (self.boss['x'], self.boss['y']))                
-
-            # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)
-            self.drawBorder()
 
         self.clock.tick_busy_loop(self.fps)
         self.frame += 1
