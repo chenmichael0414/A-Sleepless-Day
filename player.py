@@ -170,7 +170,10 @@ class Player:
             # if self.screen.doors:
                 # self.screen.display.blit(self.screen.doors[0]['sprite'], (self.screen.BG_OFFSET_X, self.screen.BG_OFFSET_Y))
 
-    def move(self):
+    def simulateKey(self, simKey):
+        self.move(simKey)
+
+    def move(self, simKey=None):
         pressed = pygame.key.get_pressed()
 
         moveFactor = self.size[0] * 3 # multiply the actual width of the sprite by a factor
@@ -178,7 +181,7 @@ class Player:
         isMoving = False
 
         for key, dir in self.moveKeys.items():
-            if pressed[key]:
+            if pressed[key] or simKey == key:
                 self.currentKey = key
                 isMoving = True
 
