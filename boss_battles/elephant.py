@@ -265,7 +265,7 @@ class Elephant(Boss):
             if self.textbox.drawIfIncomplete(['perhaps it\'s time to retire...'], 'elephant final win'): return
 
             self.loadSprite(None)
-            if self.item.rewardItem('key fragment #4', 'elephant reward item'): return
+            if self.item.rewardItem('key fragment #5', 'elephant reward item'): return
 
             self.battle.end()
 
