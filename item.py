@@ -15,7 +15,10 @@ class Item:
 
         # TODO: change this to include all key fragments
         self.keyFragments = [
-            'key fragment #1'
+            'key fragment #1',
+            'key fragment #2',
+            'key fragment #3',
+            'key fragment #4'
         ]
 
         self.active = []
@@ -49,8 +52,10 @@ class Item:
         return img
 
     def tick(self):
-        for item in self.active:
-            self.screen.drawSprite(item['sprite'], (item['x'], item['y']))
+        # We only want to draw items if all bosses in the current room have been defeated
+        if self.screen.bosses is None:
+            for item in self.active:
+                self.screen.drawSprite(item['sprite'], (item['x'], item['y']))
 
     # basically makes it so each item stays in a fixed position as the camera scrolls
     def updatePositions(self, dx, dy):

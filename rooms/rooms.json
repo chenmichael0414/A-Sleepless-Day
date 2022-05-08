@@ -1,17 +1,59 @@
 {
+    "HALLWAY": {
+        "path": "hallway.png",
+        "borderPath": "hallwayBorder.png",
+        "mode": "SCROLL",
+        "size": [2000, 600],
+        "items": [
+            {"name": "flashlight", "x": -600, "y": 530, "text": ["i see the light!"]}
+        ],
+        "doors": [
+            {
+                "path": "hallwayDoor1.png",
+                "newRoom": "CHEM",
+                "newPos": [25, 500]
+            },
+            {
+                "path": "hallwayDoor2.png",
+                "newRoom": "CSE",
+                "newPos": [240, 480]
+            },
+            {
+                "path": "hallwayDoor3.png",
+                "newRoom": "GYM",
+                "newPos": [240, 480]
+            },
+            {
+                "path": "hallwayDoor4.png",
+                "newRoom": "MATH",
+                "newPos": [240, 480]
+            },
+            {
+                "path": "hallwayDoor5.png",
+                "newRoom": "FINALE",
+                "newPos": [700, 500]
+            }
+        ]
+    },
     "CHEM": {
         "path": "chem.png",
         "borderPath": "chemBorder.png",
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            {"name": "key", "x": 200, "y": 500},
-            {"name": "flashlight", "x": 100, "y": 500, "text": ["lolxd"]}
+            {"name": "hat", "x": 435, "y": 500, "text": ["well, i guess the cat had an extra..."]}
         ],
         "doors": [
             {
                 "path": "chemDoor.png",
-                "newRoom": "CSE"
+                "newRoom": "HALLWAY",
+                "newPos": [945, 180]
+            }
+        ],
+        "bosses": [
+            {
+                "name": "cat",
+                "pos": [390, 300]
             }
         ]
     },
@@ -20,27 +62,47 @@
         "borderPath": "cseBorder.png",
         "pos": [300, 500],
         "mode": "FIXED",
-        "dark": true,
+        "items": [
+            {"name": "carrots", "x": 660, "y": 140, "text": ["these look a bit old...", "whatever!"]},
+            {"name": "chips", "x": 20, "y": 140, "text": ["monkeys eat chips..?"]}
+        ],
         "doors": [
             {
                 "path": "cseDoor.png",
-                "newRoom": "CHEM"
+                "newRoom": "HALLWAY",
+                "newPos": [675, 180]
             }
         ],
-        "boss": {
-            "name": "monkey",
-            "pos": [0, 20]
-        }
+        "bosses": [
+            {
+                "name": "monkey",
+                "pos": [0, 20]
+            },
+            {
+                "name": "bunny",
+                "pos": [660, 350]
+            }
+        ]
     },
     "GYM": {
         "path": "gym.png",
         "borderPath": "gymBorder.png",
         "pos": [500, 500],
         "mode": "FIXED",
+        "items": [
+            {"name": "coffee", "x": 500, "y": 100, "text": ["for when you're extra extra tired!"]}
+        ],
         "doors": [
             {
                 "path": "gymDoor.png",
-                "newRoom": "MATH"
+                "newRoom": "HALLWAY",
+                "newPos": [-675, 180]
+            }
+        ],
+        "bosses": [
+            {
+                "name": "mole",
+                "pos": [0, 20]
             }
         ]
     },
@@ -49,17 +111,28 @@
         "borderPath": "mathBorder.png",
         "pos": [40, 100],
         "mode": "FIXED",
+        "dark": true,
+        "items": [
+            {"name": "pie", "x": 500, "y": 100, "text": ["this is some delicious key lime pie!"]}
+        ],
         "doors": [
             {
                 "path": "mathDoor.png",
-                "newRoom": "CSE"
+                "newRoom": "HALLWAY",
+                "newPos": [-945, 180]
+            }
+        ],
+        "bosses": [
+            {
+                "name": "mole",
+                "pos": [0, 20]
             }
         ]
     },
-    "TEST": {
-        "path": "chem.png",
-        "pos": [40, -300],
-        "mode": "SCROLL"
+    "FINALE": {
+        "path": "bedroom.png",
+        "mode": "FIXED",
+        "locked": true
     },
     "SUNRISE1": {
         "path": "sunrise1.png",

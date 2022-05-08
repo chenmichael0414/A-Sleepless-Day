@@ -52,16 +52,12 @@ class Player:
 
     def resetPosition(self, pos=None):
         if pos:
-            if self.screen.cameraMode == "SCROLL":
-                self.x = pos[0] / -2
-                self.y = pos[1] / -2
-            elif self.screen.cameraMode == "FIXED":
-                self.x = pos[0]
-                self.y = pos[1]
+            self.x = pos[0]
+            self.y = pos[1]
         else:
             if self.screen.cameraMode == "SCROLL":
-                self.x = -self.screen.OFFSET_X
-                self.y = -self.screen.OFFSET_Y
+                self.x = 0
+                self.y = 0
             elif self.screen.cameraMode == "FIXED":
                 self.load_sprite()
                 w, h = self.sprite.get_size()
@@ -93,7 +89,7 @@ class Player:
                 door['collider'].setRect((0, 0))
 
     def tick(self, drawingNumber=None):
-        # print(self.x, self.y)
+        # print((self.x, self.y))
         # We only want to change self.drawingNumber if the passed in argument is not None
         # We will set self.drawingNumber to None once the player mooves again
         if drawingNumber is not None:
@@ -113,17 +109,21 @@ class Player:
 
             # checks for item collisions
             # if we are touching an item and press the space key, pick it up and trigger the event
-            for item in self.item.active:
-                if item['sprite'] is None:
-                    return
+            # however, if a boss is in the room currently, we know no items are showing on the ground
+            # therefore, only check for item collisions if there is no boss 
+            # otherwise, the player can pick up invisible items
+            if self.screen.bosses is None:
+                for item in self.item.active:
+                    if item['sprite'] is None:
+                        return
 
-                itemRect = pygame.Rect((item['x'], item['y']) + item['sprite'].get_size())
+                    itemRect = pygame.Rect((item['x'], item['y']) + item['sprite'].get_size())
 
-                collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
-                collision2 = self.screen.cameraMode == "FIXED"  and pygame.Rect.colliderect(fixedRect, itemRect)
-    
-                if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
-                    self.item.runEvent(item)
+                    collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, itemRect)
+                    collision2 = self.screen.cameraMode == "FIXED"  and pygame.Rect.colliderect(fixedRect, itemRect)
+        
+                    if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
+                        self.item.runEvent(item)
 
             # checks for door collision
             # if we are on top of a door and touching the door key, go to the next room
@@ -133,18 +133,23 @@ class Player:
                     if self.screen.rooms[door['newRoom']].get('locked') == True and not self.item.hasItem('key'):
                         self.textbox.draw(['this room is locked.', 'please come back with a key.'])
                     else:
-                        self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'] or None)
+                        self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'])
 
             # check for overworld boss collisions
             # if we are touching a boss, delete it from the overworld and trigger the boss fight
-            if self.screen.boss:
-                bossRect = pygame.Rect((self.screen.boss['x'], self.screen.boss['y']) + self.screen.boss['sprite'].get_size())
+            if self.screen.bosses:
+                for boss in self.screen.bosses:
+                    bossRect = pygame.Rect((boss['x'], boss['y']) + boss['sprite'].get_size())
 
-                collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, bossRect)
-                collision2 = self.screen.cameraMode == "FIXED"  and pygame.Rect.colliderect(fixedRect, bossRect)
+                    collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, bossRect)
+                    collision2 = self.screen.cameraMode == "FIXED"  and pygame.Rect.colliderect(fixedRect, bossRect)
 
-                if collision1 or collision2:
-                    self.screen.removeBoss(self.battle)
+                    # TODO: make it so the player can't see the overworld items when transitioning into battle mode
+                    # there is like ~1/2 second where the player can see them before the battle starts
+                    if collision1 or collision2:
+                        self.battle.init(boss['name'])
+                        self.screen.removeBoss(boss['name'])
+                        break
 
     def load_sprite(self):
         # extract the image from the spritesheet
@@ -257,9 +262,10 @@ class Player:
                             self.item.updatePositions(moveFactor * dir[0] * cameraDir, moveFactor * dir[1] * cameraDir)
                             
                             # Update overworld boss positions
-                            if self.screen.boss:
-                                self.screen.boss['x'] += moveFactor * dir[0] * cameraDir
-                                self.screen.boss['y'] += moveFactor * dir[1] * cameraDir
+                            if self.screen.bosses:
+                                for boss in self.screen.boss:
+                                    boss['x'] += moveFactor * dir[0] * cameraDir
+                                    boss['y'] += moveFactor * dir[1] * cameraDir
 
                     self.currentFrame += 1
 

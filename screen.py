@@ -62,14 +62,13 @@ class Screen:
         self.dark    = False
         self.isEvent = False
 
-        self.boss = None
-        self.bossScale = .35
+        self.bosses = None
+        self.bossScale = .5
 
         self.previousRoom = None
         self.currentRoom  = None
 
-        self.previousPos    = None
-        self.previousCamera = None
+        self.previousPos = None
 
     # NOTE: do not call this alone, call it from item.removeItem()
     def removeItem(self, name):
@@ -155,49 +154,46 @@ class Screen:
                     )
                 })
 
-        self.boss = None
+        self.bosses = None
 
-        if 'boss' in self.rooms[room]:
-            bossName = self.rooms[room]['boss']['name']
-            bossPos  = self.rooms[room]['boss']['pos']
+        if 'bosses' in self.rooms[room] and len(self.rooms[room]['bosses']) > 0:
+            self.bosses = []
 
-            # This object gives the boss data for the SPECIFIC boss, not all bosses (that is what self.bossData is)
-            bossData = self.bossData[bossName]
+            for boss in self.rooms[room]['bosses']:
+                bossName = boss['name']
+                bossPos  = boss['pos']
 
-            # Get the first sprite from the boss spritesheet
-            bossSheet = pygame.image.load('./enemies/bosses/{}'.format(bossData['path'])).convert_alpha()
+                # This object gives the boss data for the SPECIFIC boss, not all bosses (that is what self.bossData is)
+                bossData = self.bossData[bossName]
 
-            rect = pygame.Rect(
-                0,
-                0,
-                bossData['sheetWidth'],         # This is extracted from the bossData object created above since it IS unique to the boss
-                self.bossData['sheetHeight']    # This is extracted from self.bossData since the sheetHeight is NOT unique to the boss
-            )
+                # Get the first sprite from the boss spritesheet
+                bossSheet = pygame.image.load('./enemies/bosses/{}'.format(bossData['path'])).convert_alpha()
 
-            bossSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
-            bossSprite.blit(bossSheet, (0, 0), rect)
+                rect = pygame.Rect(
+                    0,
+                    0,
+                    bossData['sheetWidth'],         # This is extracted from the bossData object created above since it IS unique to the boss
+                    self.bossData['sheetHeight']    # This is extracted from self.bossData since the sheetHeight is NOT unique to the boss
+                )
 
-            # Downscale the sprite
-            bossSprite = pygame.transform.scale(bossSprite, (self.bossScale * bossData['sheetWidth'], self.bossScale * self.bossData['sheetHeight']))
+                bossSprite = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
+                bossSprite.blit(bossSheet, (0, 0), rect)
 
-            self.boss = {
-                'name': bossName,
-                'sprite': bossSprite,
-                'x': bossPos[0],
-                'y': bossPos[1]
-            }
+                # Downscale the sprite
+                bossSprite = pygame.transform.scale(bossSprite, (self.bossScale * bossData['sheetWidth'], self.bossScale * self.bossData['sheetHeight']))
 
-        self.previousCamera = self.cameraMode
-        self.cameraMode     = self.rooms[room]['mode']
+                self.bosses.append({
+                    'name': bossName,
+                    'sprite': bossSprite,
+                    'x': bossPos[0],
+                    'y': bossPos[1]
+                })
+
+        self.cameraMode = self.rooms[room]['mode']
 
         if player:
-            # Set the previous position (which is used if the triggerEvent() function is called)
-            if self.previousCamera == "SCROLL":
-                # We have to multiply by -2 here because the player starting position is divided by -2 in scroll mode
-                # See player.resetPosition() for more info
-                self.previousPos = (player.x * -2, player.y * -2)
-            elif self.previousCamera == "FIXED":
-                self.previousPos = (player.x, player.y)
+            # Store the previous position for position resetting
+            self.previousPos = (player.x, player.y)
 
             # If an event is triggered, we want to just spawn the player in the middle of the screen
             if self.isEvent:
@@ -214,21 +210,35 @@ class Screen:
 
             if item:
                 for i in item.active:
-                    pass
-                    i['x'] -= p[0] / 2
-                    i['y'] -= p[1] / 2
+                    i['x'] += p[0]
+                    i['y'] += p[1]
 
-            if self.boss:
-                self.boss['x'] -= p[0] / 2
-                self.boss['y'] -= p[1] / 2
+            if self.bosses:
+                for boss in self.bosses:
+                    self.boss['x'] += p[0]
+                    self.boss['y'] += p[1]
 
-    def removeBoss(self, battle):
-        name = self.boss['name']
+    def removeBoss(self, name):
+        if self.rooms[self.currentRoom].get('bosses') is None:
+            return
 
-        self.boss = None
-        self.rooms[self.currentRoom].pop('boss')
+        # Remove the boss both from the JSON data and the self.bosses (overworld) data
+        self.removeBossByName(self.rooms[self.currentRoom]['bosses'], name)
+        self.removeBossByName(self.bosses, name)
 
-        battle.init(name)
+        # If all bosses are deleted, delete it from the room data object and self.bosses
+        if len(self.bosses) == 0:
+            self.rooms[self.currentRoom].pop('bosses')
+            self.bosses = None
+
+    def removeBossByName(self, bossData, name):
+        if bossData is None:
+            return
+
+        for boss in bossData:
+            if boss['name'] == name:
+                bossData.remove(boss)
+                return
 
     def load(self):
         self.loading   = True
@@ -302,7 +312,8 @@ class Screen:
         if self.frame - self.loadFrame >= self.loadTime:    # if it has been 50 or more frames since we started the loading screen
             self.loading = False
 
-        # Draw the background
+        # Draw the background, doors, and border
+        # This changes slightly based on the camera mode
         if not self.loading and not self.battling:
             if self.cameraMode == "SCROLL":
                 if self.border:
@@ -324,8 +335,9 @@ class Screen:
                 self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))      
 
             # draw an overworld boss that triggers the battle
-            if self.boss and not self.isEvent:
-                self.drawSprite(self.boss['sprite'], (self.boss['x'], self.boss['y']))                
+            if self.bosses and not self.isEvent:
+                for boss in self.bosses:
+                    self.drawSprite(boss['sprite'], (boss['x'], boss['y']))                
 
         self.clock.tick_busy_loop(self.fps)
         self.frame += 1
