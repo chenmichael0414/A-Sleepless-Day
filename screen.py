@@ -59,14 +59,18 @@ class Screen:
         
         self.doors = []
 
-        self.dark   = False
-        self.locked = False
+        self.dark    = False
+        self.locked  = False
+        self.isEvent = False
 
         self.boss = None
         self.bossScale = .35
 
         self.previousRoom = None
         self.currentRoom  = None
+
+        self.previousPos    = None
+        self.previousCamera = None
 
     # NOTE: do not call this alone, call it from item.removeItem()
     def removeItem(self, name):
@@ -119,9 +123,13 @@ class Screen:
         # If a room is dark or locked, make the background completely dark
         if self.dark or self.locked:
             self.bg = pygame.Surface((self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+
+            self.isEvent = True
         else:
             self.bg = pygame.image.load('./rooms/{}'.format(self.rooms[room]['path'])).convert_alpha()
             self.bg = pygame.transform.scale(self.bg, (self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
+
+            self.isEvent = False
 
         self.border = None
 
@@ -183,10 +191,23 @@ class Screen:
                 'y': bossPos[1]
             }
 
-        self.cameraMode = self.rooms[room]['mode']
+        self.previousCamera = self.cameraMode
+        self.cameraMode     = self.rooms[room]['mode']
 
         if player:
-            player.resetPosition(pos or self.rooms[room].get('pos'))
+            # Set the previous position (which is used if the triggerEvent() function is called)
+            if self.previousCamera == "SCROLL":
+                # We have to multiply by -2 here because the player starting position is divided by -2 in scroll mode
+                # See player.resetPosition() for more info
+                self.previousPos = (player.x * -2, player.y * -2)
+            elif self.previousCamera == "FIXED":
+                self.previousPos = (player.x, player.y)
+
+            # If an event is triggered, we want to just spawn the player in the middle of the screen
+            if self.isEvent:
+                player.resetPosition()
+            else:
+                player.resetPosition(pos or self.rooms[room].get('pos'))
 
         if item:
             item.setItems(self.rooms[room].get('items')) 
@@ -227,7 +248,7 @@ class Screen:
         self.frozen     = False
 
         if self.previousRoom:
-            self.setRoom(self.previousRoom, player, item)
+            self.setRoom(self.previousRoom, player, item, pos=self.previousPos)
         else:
             self.setRoom('CHEM', player, item)
 

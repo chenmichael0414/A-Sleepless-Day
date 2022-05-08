@@ -40,7 +40,9 @@ if __name__ == '__main__':
         if not screen.loading:
             if not screen.battling:
                 player.tick()
-                item.tick()
+
+                if not screen.isEvent:
+                    item.tick()
 
                 if not textbox.isActive:
                     inventory.tick()
