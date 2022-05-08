@@ -8,12 +8,12 @@ class Mole(Boss):
         self.count = 0
         self.change = 0
         self.yMemory = 0
+
         super().__init__(
             screen, 
             battle, 
             textbox, 
-            './enemies/bosses/mole.png',
-            519,
+            'mole',
             [
                 self.tornado,
                 self.bolts,

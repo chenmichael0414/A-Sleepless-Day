@@ -10,8 +10,7 @@ class Cat(Boss):
             screen, 
             battle, 
             textbox, 
-            './enemies/bosses/cat.png',
-            245,
+            'cat',
             [
                 self.hat,
                 self.fish,

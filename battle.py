@@ -22,6 +22,7 @@ class Battle:
         self.boxLine  = 3    # box line width
 
         # Player data
+        self.initialSize = 18
         self.playerSize  = 18
         self.playerColor = (255, 0, 0) # red
         
@@ -241,8 +242,14 @@ class Battle:
 
 
     def reset(self):
+        # Get the player size
+        self.playerSize = self.item.getPlayerSize() or self.initialSize
+
         self.playerX = (self.boxWidth - self.playerSize) / 2
         self.playerY = 0
+
+        # Reset the player offset Y since it relies on the player size
+        self.PLAYER_OFFSET_Y = (self.screen.SCREEN_HEIGHT + self.boxHeight) / 2 - self.boxLine - self.playerSize
 
         self.playerHealth = 10
         self.loadHeartSprite()

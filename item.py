@@ -13,8 +13,6 @@ class Item:
 
         self.triggerKey = pygame.K_SPACE
 
-        self.darkItems = self.getDarkItems()
-
         # TODO: change this to include all key fragments
         self.keyFragments = [
             'key fragment #1'
@@ -113,22 +111,6 @@ class Item:
 
         self.inventory.addToInventory(self.getItemByName('key'))
 
-    def getDarkItems(self):
-        res = []
-
-        for (name, item) in self.itemData.items():
-            if item.get('dark') == True:
-                res.append(name)
-
-        return res
-
-    def hasDarkItem(self):
-        for name in self.darkItems:
-            if self.inventory.hasItem(name):
-                return True
-
-        return False
-
     # Basically, we search through each item in our inventory, seeing if they give any extra health
     # If they do, add it to the total amount of extra health and return that value once all have been added
     def getExtraHealth(self):
@@ -156,4 +138,17 @@ class Item:
                     totalBoost *= boost
 
         return totalBoost
+
+    def getPlayerSize(self):
+        # Arbitrary initial size
+        size = None
+
+        for item in self.inventory.items:
+            if item.get('boosts') is not None:
+                newSize = item['boosts'].get('size')
+
+                if newSize is not None and (size is None or newSize < size):
+                    size = newSize
+                
+        return size
 

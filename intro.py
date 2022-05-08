@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 import sys
 from screen import Screen
 import player
@@ -10,16 +11,18 @@ def cutscene(screen, textbox, player, item):
     backgrounds = ['SUNRISE1', 'SUNRISE2', 'SUNRISE3', 'BEDROOM']
     
     def tick(currScene):
+        # exit game
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
 
+        # first scene: sunrise
         if currScene == 0:
             sprite = 2
             for i in range(len(backgrounds)):
                 screen.setRoom(backgrounds[i], player, item, load=(True if i == 0 else False))
                 if i == 3:
-                    player.resetPosition(pos=[screen.SCREEN_WIDTH*4/5, screen.SCREEN_HEIGHT*63/100])
+                    player.resetPosition(pos=[screen.SCREEN_WIDTH*3/5, screen.SCREEN_HEIGHT*63/100])
                     player.tick(drawingNumber=sprite)
                 screen.tick(player.x, player.y)
                 pygame.display.update()
@@ -36,9 +39,10 @@ def cutscene(screen, textbox, player, item):
 
                     pygame.display.update()
             currScene += 1
+        # second scene: albert finishes post lab
         elif currScene == 1:
             sprite = 2
-            incomplete = textbox.drawIfIncomplete(['*Yawn.* I finally finished my post lab. Time for me to hit the hay.'], 'cutscene1') 
+            incomplete = textbox.drawIfIncomplete(['*Yawn.* I finally finished my pre-lab. Time for me to hit the hay.'], 'cutscene1') 
             if incomplete:
                 screen.tick(player.x, player.y)
                 textbox.tick()
@@ -47,14 +51,28 @@ def cutscene(screen, textbox, player, item):
                 return(currScene)
             else:
                 currScene += 1
+        # albert notices it's 6:00 am and runs to catch the bus
         elif currScene == 2:
-                sprite = 4
+            sprite = 8
+            incomplete = textbox.drawIfIncomplete(['OH SHOOT! IT\'S ALREADY 6:00 AM?!?', 'I\'M GONNA BE LATE TO SCHOOL!'], 'cutscene2') 
+            if incomplete:
+                screen.tick(player.x, player.y)
+                textbox.tick()
+                player.tick(drawingNumber=sprite)
+                pygame.display.update()
+                return(currScene)
+            currScene += 1
+        elif currScene == 3:
+            sprite = 8
+            last = pygame.time.get_ticks()
+            while pygame.time.get_ticks() <= last + 500:
+                player.simulateKey(K_d)
                 screen.tick(player.x, player.y)
                 player.tick(drawingNumber=sprite)
                 pygame.display.update()
-                screen.cutscene = False
+            screen.setRoom('CHEM', player, item)
+            screen.cutscene = False
         return currScene
-    
     currScene = 0
     while screen.cutscene:
         currScene = tick(currScene)

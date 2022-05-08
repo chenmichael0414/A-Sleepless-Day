@@ -1,0 +1,23 @@
+{
+    "sheetHeight": 300,
+    "monkey": {
+        "sheetWidth": 250,
+        "path": "monkey.png"
+    },
+    "mole": {
+        "sheetWidth": 519,
+        "path": "mole.png"
+    },
+    "elephant": {
+        "sheetWidth": 471,
+        "path": "elephant.png"
+    },
+    "bunny": {
+        "sheetWidth": 308,
+        "path": "bunny.png"
+    },
+    "cat": {
+        "sheetWidth": 245,
+        "path": "cat.png"
+    }
+}

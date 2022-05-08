@@ -20,8 +20,7 @@ class Elephant(Boss):
             screen, 
             battle, 
             textbox, 
-            './enemies/bosses/elephant.png',
-            471,    # fix this value
+            'elephant',
             [
                 self.words,
                 self.batstache

@@ -39,7 +39,6 @@ class Inventory:
         return False
 
     def tick(self):
-        # TODO: make so u cant open inventory if text is playing
         if Key.isToggled(self.displayKey):
             self.isActive = True
             self.display()

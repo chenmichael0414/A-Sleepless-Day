@@ -23,7 +23,7 @@ if __name__ == '__main__':
     inventory = Inventory(screen)
     item      = Item(screen, textbox, inventory)
     battle    = Battle(screen, textbox, item)
-    player    = Player(screen, item)
+    player    = Player(screen, item, battle, textbox)
 
     Key.addKey(inventory.displayKey)
     Key.addKey(pygame.K_b)
@@ -41,18 +41,32 @@ if __name__ == '__main__':
         if not screen.loading: 
             if not screen.battling:
                 player.tick()
-                item.tick()
-                inventory.tick()
-                Key.tick()
 
-            textbox.tick()
+                if not screen.isEvent:
+                    item.tick()
+
+                if not textbox.isActive:
+                    inventory.tick()
+
+                    # TODO: find a better way to do this incase we need toggling elsewhere
+                    # this is because we don't want the player to be able to turn inventory on while text is running
+                    Key.tick()  
+
+        # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)
+        # this is done after everything else is drawn EXCEPT textbox so this is the top layer (besides textbox)
+        # this is because the textbox is drawn on top of the border at the bottom of the screen
+        screen.drawBorder()
+
+        if not screen.loading:
+            if not inventory.isActive:
+                textbox.tick()
+
+            # If a room is too dark, trigger the dark event
+            if screen.dark and not item.hasItem('flashlight'): 
+                screen.triggerEvent(textbox, player, item, ['this room is too dark to see in.', 'please come back with a light source.'])
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
-
-        # If a room is too dark, trigger the dark event
-        if not screen.loading and screen.dark and not item.hasDarkItem(): 
-            screen.darkEvent(textbox, player, item)
 
         if not started and pygame.key.get_pressed()[pygame.K_TAB]:
             cutscene(screen, textbox, player, item)

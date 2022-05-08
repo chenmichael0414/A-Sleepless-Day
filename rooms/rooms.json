@@ -5,13 +5,13 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            {"name": "pie", "x": 150, "y": 500},
-            {"name": "flashlight", "x": 200, "y": 500, "text": ["lolxd"]}
+            {"name": "key", "x": 200, "y": 500},
+            {"name": "flashlight", "x": 100, "y": 500, "text": ["lolxd"]}
         ],
         "doors": [
             {
                 "path": "chemDoor.png",
-                "newRoom": "GYM"
+                "newRoom": "CSE"
             }
         ]
     },
@@ -26,12 +26,16 @@
                 "path": "cseDoor.png",
                 "newRoom": "CHEM"
             }
-        ]
+        ],
+        "boss": {
+            "name": "monkey",
+            "pos": [0, 20]
+        }
     },
     "GYM": {
         "path": "gym.png",
         "borderPath": "gymBorder.png",
-        "pos": [300, 500],
+        "pos": [500, 500],
         "mode": "FIXED",
         "doors": [
             {
@@ -43,7 +47,7 @@
     "MATH": {
         "path": "math.png",
         "borderPath": "mathBorder.png",
-        "pos": [300, 500],
+        "pos": [40, 100],
         "mode": "FIXED",
         "doors": [
             {

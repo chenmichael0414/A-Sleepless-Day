@@ -1,22 +1,26 @@
 import pygame
+import json
 
 from colliders import PlayerCollider
 
 class Boss:
-    def __init__(self, screen, battle, textbox, sheetPath, sheetWidth, attacks, minionColliders):
+    def __init__(self, screen, battle, textbox, name, attacks, minionColliders):
         self.screen  = screen
         self.battle  = battle
         self.textbox = textbox
         self.item    = battle.item
 
+        self.data     = json.load(open('./boss_battles/bosses.json'))
+        self.bossData = self.data[name]
+
         self.scale = .4
 
-        self.sheet = pygame.image.load(sheetPath).convert_alpha()
+        self.sheet = pygame.image.load('./enemies/bosses/{}'.format(self.bossData['path'])).convert_alpha()
 
         # The width and height of each individual sprite in the sheet
         # The height is always 300, but the width is variable
-        self.SHEET_WIDTH  = sheetWidth
-        self.SHEET_HEIGHT = 300
+        self.SHEET_WIDTH  = self.bossData['sheetWidth']
+        self.SHEET_HEIGHT = self.data['sheetHeight']
 
         self.sprite = None
         self.loadSprite(0)
