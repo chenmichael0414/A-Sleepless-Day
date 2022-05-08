@@ -38,6 +38,13 @@ class Inventory:
 
         return False
 
+    def isFull(self):
+        # If alll the inventory slots are taken, return true
+        if len(self.items) >= self.boxGrid[0] * self.boxGrid[1]:
+            return True
+        else:
+            return False
+
     def tick(self):
         if Key.isToggled(self.displayKey):
             self.isActive = True

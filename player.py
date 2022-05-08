@@ -10,7 +10,7 @@ class Player:
         self.battle  = battle
         self.textbox = textbox
 
-        self.sheet = pygame.image.load('./sprites/albert.png').convert_alpha()
+        self.sheet  = pygame.image.load('./sprites/albert.png').convert_alpha()
         self.sprite = None
         self.size   = (15, 20)    # actual size of the pixel art
         self.offset = (8, 7)      # offset for selecting each sprite from the spritesheet
@@ -25,7 +25,7 @@ class Player:
         self.currentKey = pygame.K_a
 
         # key to trigger entering door
-        self.doorKey = pygame.K_n
+        self.doorKey = pygame.K_LSHIFT
 
         self.pixel_size = screen.PIXEL_SIZE
         self.scale = screen.PLAYER_SCALE
@@ -107,12 +107,12 @@ class Player:
 
             pressed = pygame.key.get_pressed()
 
-            # checks for item collisions
-            # if we are touching an item and press the space key, pick it up and trigger the event
-            # however, if a boss is in the room currently, we know no items are showing on the ground
-            # therefore, only check for item collisions if there is no boss 
-            # otherwise, the player can pick up invisible items
             if self.screen.bosses is None:
+                # checks for item collisions
+                # if we are touching an item and press the space key, pick it up and trigger the event
+                # however, if a boss is in the room currently, we know no items are showing on the ground
+                # therefore, only check for item collisions if there is no boss 
+                # otherwise, the player can pick up invisible items
                 for item in self.item.active:
                     if item['sprite'] is None:
                         return
@@ -125,15 +125,16 @@ class Player:
                     if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
                         self.item.runEvent(item)
 
-            # checks for door collision
-            # if we are on top of a door and touching the door key, go to the next room
-            for door in self.screen.doors:
-                if pygame.sprite.collide_mask(self.playerCollider, door['collider']) and pressed[self.doorKey]:
-                    # if the room is locked and the player doesn't have the key, don't proceed
-                    if self.screen.rooms[door['newRoom']].get('locked') == True and not self.item.hasItem('key'):
-                        self.textbox.draw(['this room is locked.', 'please come back with a key.'])
-                    else:
-                        self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'])
+                # checks for door collision
+                # if we are on top of a door and touching the door key, go to the next room
+                # we only want to let the player leave rooms if all bosses are defeated
+                for door in self.screen.doors:
+                    if pygame.sprite.collide_mask(self.playerCollider, door['collider']) and pressed[self.doorKey]:
+                        # if the room is locked and the player doesn't have the key, don't proceed
+                        if self.screen.rooms[door['newRoom']].get('locked') == True and not self.item.hasItem('key'):
+                            self.textbox.draw(['this room is locked.', 'please come back with a key.'])
+                        else:
+                            self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'])
 
             # check for overworld boss collisions
             # if we are touching a boss, delete it from the overworld and trigger the boss fight
@@ -148,7 +149,7 @@ class Player:
                     # there is like ~1/2 second where the player can see them before the battle starts
                     if collision1 or collision2:
                         self.battle.init(boss['name'])
-                        self.screen.removeBoss(boss['name'])
+                        self.resetPosition(self.screen.spawn)
                         break
 
     def load_sprite(self):
