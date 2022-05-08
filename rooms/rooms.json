@@ -4,8 +4,9 @@
         "borderPath": "hallwayBorder.png",
         "mode": "SCROLL",
         "size": [2000, 600],
+        "pos": [0, 200],
         "items": [
-            {"name": "flashlight", "x": -600, "y": 530, "text": ["i see the light!"]}
+            {"name": "flashlight", "x": -600, "y": 230, "text": ["i see the light!"]}
         ],
         "doors": [
             {
