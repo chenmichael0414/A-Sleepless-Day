@@ -28,7 +28,7 @@ if __name__ == '__main__':
     Key.addKey(inventory.displayKey)
     Key.addKey(pygame.K_b)
 
-    screen.setRoom('CHEM', player, item)
+    screen.setRoom('HALLWAY', player, item)
 
     while True:
         for event in pygame.event.get():
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
             # If a room is too dark, trigger the dark event
             if screen.dark and not item.hasItem('flashlight'): 
-                screen.triggerEvent(textbox, player, item, ['this room is too dark to see in.', 'please come back with a light source.'])
+                screen.triggerEvent(textbox, player, item, ['this room is too dark to see in.', 'please come back with a light source.', '(hint: bottom left!)'])
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
@@ -89,5 +89,8 @@ if __name__ == '__main__':
 
         if pygame.key.get_pressed()[pygame.K_p]:
             screen.setRoom('GYM', player, item)
+
+        if pygame.key.get_pressed()[pygame.K_u]:
+            screen.setRoom('HALLWAY', player, item)
 
         pygame.display.update()
