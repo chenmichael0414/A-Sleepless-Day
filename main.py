@@ -26,6 +26,7 @@ if __name__ == '__main__':
     player    = Player(screen, item, battle, textbox)
 
     Key.addKey(inventory.displayKey)
+    Key.addKey(pygame.K_b)
 
     screen.setRoom('HALLWAY', player, item)
 
@@ -37,7 +38,7 @@ if __name__ == '__main__':
         screen.tick(player.x, player.y)
         battle.tick()
 
-        if not screen.loading:
+        if not screen.loading: 
             if not screen.battling:
                 player.tick()
 
