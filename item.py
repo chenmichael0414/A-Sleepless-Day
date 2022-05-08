@@ -64,6 +64,10 @@ class Item:
             item['y'] += dy
 
     def runEvent(self, item):
+        if self.inventory.isFull():
+            self.textbox.draw(['sorry, your inventory is full.'])
+            return
+
         if item.get('event') is not None:
             item['event']()
 
@@ -85,6 +89,11 @@ class Item:
                 }
 
     def rewardItem(self, name, flag):
+        # Only reward the item if the inventory is empty
+        if self.inventory.isFull():
+            self.textbox.draw(['sorry, your inventory is full.'])
+            return
+
         item = self.getItemByName(name)
 
         # We assume that the user will only have one copy of this rewarded item
