@@ -70,6 +70,10 @@ class Screen:
 
         self.previousPos = None
 
+        # Spawn position of the player when setRoom is called
+        # This is mainly stored for when the player loses a boss fight, he goes back to where he originally spawned in the room
+        self.spawn = None
+
     # NOTE: do not call this alone, call it from item.removeItem()
     def removeItem(self, name):
         item = self.getItemByName(name)
@@ -204,19 +208,19 @@ class Screen:
         if item:
             item.setItems(self.rooms[room].get('items')) 
 
-        # If the camera is in scroll mode, update the item and boss positions according to the starting room position
-        if self.cameraMode == "SCROLL" and (pos is not None or self.rooms[room].get('pos') is not None):
-            p = pos or self.rooms[room].get('pos')
+        self.spawn = pos or self.rooms[room].get('pos')
 
+        # If the camera is in scroll mode, update the item and boss positions according to the starting room position
+        if self.cameraMode == "SCROLL" and self.spawn is not None:
             if item:
                 for i in item.active:
-                    i['x'] += p[0]
-                    i['y'] += p[1]
+                    i['x'] += self.spawn[0]
+                    i['y'] += self.spawn[1]
 
             if self.bosses:
                 for boss in self.bosses:
-                    self.boss['x'] += p[0]
-                    self.boss['y'] += p[1]
+                    self.boss['x'] += self.spawn[0]
+                    self.boss['y'] += self.spawn[1]
 
     def removeBoss(self, name):
         if self.rooms[self.currentRoom].get('bosses') is None:
