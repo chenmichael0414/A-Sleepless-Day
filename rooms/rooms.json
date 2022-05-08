@@ -2,7 +2,7 @@
     "CHEM": {
         "path": "chem.png",
         "borderPath": "chemBorder.png",
-        "pos": [300, 500],
+        "pos": [-100, 350],
         "mode": "SCROLL",
         "size": [1500, 700],
         "items": [
@@ -53,7 +53,7 @@
     "MATH": {
         "path": "math.png",
         "borderPath": "mathBorder.png",
-        "pos": [300, 500],
+        "pos": [40, 100],
         "mode": "FIXED",
         "doors": [
             {
