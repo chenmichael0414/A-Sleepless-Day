@@ -49,7 +49,7 @@ class Player:
     def resetPosition(self, pos=None):
         if pos:
             if self.screen.cameraMode == "SCROLL":
-                self.x = pos[0] / 2
+                self.x = pos[0] / -2
                 self.y = pos[1] / -2
             elif self.screen.cameraMode == "FIXED":
                 self.x = pos[0]
@@ -193,7 +193,7 @@ class Player:
                     # before we actually move, if we are on top of a door, go to the next room
                     for door in self.screen.doors:
                         if pygame.sprite.collide_mask(self.playerCollider, door['collider']):
-                            self.screen.setRoom(door['newRoom'], self, self.item)
+                            self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'] or None)
                             return
 
                     # multiply the move factor by the direction

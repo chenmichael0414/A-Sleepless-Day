@@ -83,7 +83,7 @@ class Screen:
 
         return None
 
-    def setRoom(self, room, player, item, load=True):
+    def setRoom(self, room, player, item, pos=None, load=True):
         if not room in self.rooms or self.frozen:
             return
 
@@ -142,6 +142,7 @@ class Screen:
                 self.doors.append({
                     'sprite': sprite,
                     'newRoom': door['newRoom'],
+                    'newPos': door.get('newPos'),
                     'collider': ImageCollider(
                         (self.BG_OFFSET_X - self.OFFSET_X, self.BG_OFFSET_Y - self.OFFSET_Y),
                         sprite,
@@ -185,21 +186,24 @@ class Screen:
         self.cameraMode = self.rooms[room]['mode']
 
         if player:
-            player.resetPosition(self.rooms[room].get('pos'))
+            player.resetPosition(pos or self.rooms[room].get('pos'))
 
         if item:
             item.setItems(self.rooms[room].get('items')) 
 
         # If the camera is in scroll mode, update the item and boss positions according to the starting room position
-        if self.cameraMode == "SCROLL" and self.rooms[room].get('pos') is not None:
+        if self.cameraMode == "SCROLL" and (pos is not None or self.rooms[room].get('pos') is not None):
+            p = pos or self.rooms[room].get('pos')
+
             if item:
                 for i in item.active:
-                    i['x'] += self.rooms[room]['pos'][0] / 2
-                    i['y'] -= self.rooms[room]['pos'][1] / 2
+                    pass
+                    i['x'] -= p[0] / 2
+                    i['y'] -= p[1] / 2
 
             if self.boss:
-                self.boss['x'] += self.rooms[room]['pos'][0] / 2
-                self.boss['y'] -= self.rooms[room]['pos'][1] / 2
+                self.boss['x'] -= p[0] / 2
+                self.boss['y'] -= p[1] / 2
 
     def removeBoss(self, battle):
         name = self.boss['name']

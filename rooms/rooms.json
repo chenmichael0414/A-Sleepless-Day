@@ -12,7 +12,8 @@
         "doors": [
             {
                 "path": "chemDoor.png",
-                "newRoom": "GYM"
+                "newRoom": "GYM",
+                "newPos": [0, 500]
             }
         ]
     },
@@ -36,19 +37,14 @@
     "GYM": {
         "path": "gym.png",
         "borderPath": "gymBorder.png",
-        "pos": [300, 500],
+        "pos": [500, 500],
         "mode": "FIXED",
-        "dark": true,
         "doors": [
             {
                 "path": "gymDoor.png",
                 "newRoom": "MATH"
             }
-        ],
-        "boss": {
-            "name": "mole",
-            "pos": [0, 20]
-        }
+        ]
     },
     "MATH": {
         "path": "math.png",
