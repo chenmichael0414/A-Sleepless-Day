@@ -60,7 +60,6 @@ class Screen:
         self.doors = []
 
         self.dark    = False
-        self.locked  = False
         self.isEvent = False
 
         self.boss = None
@@ -115,13 +114,10 @@ class Screen:
         self.BG_OFFSET_Y = (self.ACTUAL_HEIGHT - self.BACKGROUND_HEIGHT) / 2
 
         # Set a room to be dark if it is specified in rooms.json AND the player does not have a dark-preventing item (i.e flashlight)
-        self.dark = True if self.rooms[room].get('dark') is not None and not item.hasDarkItem() else False
-
-        # Set a room to be locked if it is specified in rooms.json AND the player does not have the key
-        self.locked = True if self.rooms[room].get('locked') is not None and not item.hasItem('key') else False
+        self.dark = True if self.rooms[room].get('dark') == True and not item.hasItem('flashlight') else False
 
         # If a room is dark or locked, make the background completely dark
-        if self.dark or self.locked:
+        if self.dark:
             self.bg = pygame.Surface((self.BACKGROUND_WIDTH, self.BACKGROUND_HEIGHT))
 
             self.isEvent = True

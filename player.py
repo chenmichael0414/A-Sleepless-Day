@@ -4,10 +4,11 @@ import math
 from colliders import PlayerCollider
 
 class Player:
-    def __init__(self, screen, item, battle):
-        self.screen = screen
-        self.item   = item
-        self.battle = battle
+    def __init__(self, screen, item, battle, textbox):
+        self.screen  = screen
+        self.item    = item
+        self.battle  = battle
+        self.textbox = textbox
 
         self.sheet = pygame.image.load('./sprites/albert.png').convert_alpha()
         self.sprite = None
@@ -22,6 +23,9 @@ class Player:
             pygame.K_s: (0, -1)
         }
         self.currentKey = pygame.K_a
+
+        # key to trigger entering door
+        self.doorKey = pygame.K_n
 
         self.pixel_size = screen.PIXEL_SIZE
         self.scale = screen.PLAYER_SCALE
@@ -105,6 +109,8 @@ class Player:
             scrollRect = pygame.Rect(self.screen.SCREEN_WIDTH / 2 - w / 2, self.screen.SCREEN_HEIGHT / 2 - h / 2, w, h)
             fixedRect  = pygame.Rect(self.x, self.y, w, h)
 
+            pressed = pygame.key.get_pressed()
+
             # checks for item collisions
             # if we are touching an item and press the space key, pick it up and trigger the event
             for item in self.item.active:
@@ -118,6 +124,16 @@ class Player:
     
                 if (collision1 or collision2) and pygame.key.get_pressed()[self.item.triggerKey]:
                     self.item.runEvent(item)
+
+            # checks for door collision
+            # if we are on top of a door and touching the door key, go to the next room
+            for door in self.screen.doors:
+                if pygame.sprite.collide_mask(self.playerCollider, door['collider']) and pressed[self.doorKey]:
+                    # if the room is locked and the player doesn't have the key, don't proceed
+                    if self.screen.rooms[door['newRoom']].get('locked') == True and not self.item.hasItem('key'):
+                        self.textbox.draw(['this room is locked.', 'please come back with a key.'])
+                    else:
+                        self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'] or None)
 
             # check for overworld boss collisions
             # if we are touching a boss, delete it from the overworld and trigger the boss fight
@@ -165,10 +181,11 @@ class Player:
             # self.screen.drawRect('red', self.playerCollider.rect)
         elif self.screen.cameraMode == "FIXED":
             self.screen.drawSprite(self.sprite, (self.x, self.y))
-            # self.screen.drawRect('red', self.playerCollider.rect)
+            
+            #self.screen.drawRect('red', self.playerCollider.rect)
             # self.screen.display.blit(self.borderCollider.image, (self.screen.BG_OFFSET_X, self.screen.BG_OFFSET_Y))
-            # if self.screen.doors:
-                # self.screen.display.blit(self.screen.doors[0]['sprite'], (self.screen.BG_OFFSET_X, self.screen.BG_OFFSET_Y))
+            #if self.screen.doors:
+                #self.screen.display.blit(self.screen.doors[0]['sprite'], (self.screen.BG_OFFSET_X, self.screen.BG_OFFSET_Y))
 
     def simulateKey(self, simKey):
         self.move(simKey)
@@ -212,21 +229,29 @@ class Player:
                     elif self.screen.cameraMode == "FIXED":
                         self.playerCollider.setRect((self.x, self.y))
 
-                    # after we move, if we are on top of a door, revert the movement and go to the next room
-                    for door in self.screen.doors:
-                        if pygame.sprite.collide_mask(self.playerCollider, door['collider']):
-                            self.x -= moveFactor * dir[0] * cameraDir
-                            self.y -= moveFactor * dir[1] * cameraDir
-
-                            self.screen.setRoom(door['newRoom'], self, self.item, pos=door['newPos'] or None)
-
-                            return
-
-                    # if the player would go out of the background or touch the border, just undo the movement
+                    # if the player would go out of the background or touch the border, just undo the movement and collider changes
                     # since this is all done before a render, it basically looks like the player is stuck at the wall
                     if self.collision(moveFactor):
                         self.x -= moveFactor * dir[0] * cameraDir
                         self.y -= moveFactor * dir[1] * cameraDir
+
+                        # update the player/border collider
+                        if self.screen.cameraMode == "SCROLL":
+                            self.borderCollider.changeRect((
+                                -moveFactor * dir[0] * cameraDir,
+                                -moveFactor * dir[1] * cameraDir
+                            ))
+
+                            for door in self.screen.doors:
+                                door['collider'].changeRect((
+                                    -moveFactor * dir[0] * cameraDir,
+                                    -moveFactor * dir[1] * cameraDir
+                                ))
+                        elif self.screen.cameraMode == "FIXED":
+                            self.playerCollider.changeRect((
+                                -moveFactor * dir[0] * cameraDir,
+                                -moveFactor * dir[1] * cameraDir
+                            ))
                     else:
                         if self.screen.cameraMode == "SCROLL":
                             self.item.updatePositions(moveFactor * dir[0] * cameraDir, moveFactor * dir[1] * cameraDir)

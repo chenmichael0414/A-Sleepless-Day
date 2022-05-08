@@ -23,7 +23,7 @@ if __name__ == '__main__':
     inventory = Inventory(screen)
     item      = Item(screen, textbox, inventory)
     battle    = Battle(screen, textbox, item)
-    player    = Player(screen, item, battle)
+    player    = Player(screen, item, battle, textbox)
 
     Key.addKey(inventory.displayKey)
 
@@ -61,12 +61,8 @@ if __name__ == '__main__':
                 textbox.tick()
 
             # If a room is too dark, trigger the dark event
-            if screen.dark and not item.hasDarkItem(): 
+            if screen.dark and not item.hasItem('flashlight'): 
                 screen.triggerEvent(textbox, player, item, ['this room is too dark to see in.', 'please come back with a light source.'])
-
-            # If a room is locked, trigger the locked event
-            if screen.locked and not item.hasItem('key'):
-                screen.triggerEvent(textbox, player, item, ['this room is locked.', 'please come back with a key.'])
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive

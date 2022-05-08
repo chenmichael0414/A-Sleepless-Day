@@ -39,8 +39,7 @@
         "path": "volleyball.png"
     },
     "flashlight": {
-        "path": "flashlight.png",
-        "dark": true
+        "path": "flashlight.png"
     },
     "key": {
         "path": "key.png"

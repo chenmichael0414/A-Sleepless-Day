@@ -20,7 +20,7 @@
         "borderPath": "cseBorder.png",
         "pos": [300, 500],
         "mode": "FIXED",
-        "locked": true,
+        "dark": true,
         "doors": [
             {
                 "path": "cseDoor.png",
