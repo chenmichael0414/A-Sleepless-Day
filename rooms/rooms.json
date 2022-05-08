@@ -2,11 +2,10 @@
     "CHEM": {
         "path": "chem.png",
         "borderPath": "chemBorder.png",
-        "pos": [-100, 350],
-        "mode": "SCROLL",
-        "size": [1500, 700],
+        "pos": [300, 500],
+        "mode": "FIXED",
         "items": [
-            {"name": "key", "x": 900, "y": 500},
+            {"name": "key", "x": 200, "y": 500},
             {"name": "flashlight", "x": 100, "y": 500, "text": ["lolxd"]}
         ],
         "doors": [
