@@ -328,7 +328,7 @@ class Screen:
                 self.display.blit(self.bg, (self.BG_OFFSET_X, self.BG_OFFSET_Y))      
 
             # draw an overworld boss that triggers the battle
-            if self.boss and not self.dark and not self.locked:
+            if self.boss and not self.isEvent:
                 self.drawSprite(self.boss['sprite'], (self.boss['x'], self.boss['y']))                
 
         self.clock.tick_busy_loop(self.fps)
