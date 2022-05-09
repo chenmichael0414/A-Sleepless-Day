@@ -104,7 +104,7 @@ def cutscene(screen, textbox, player, item, inventory):
             incomplete = textbox.drawIfIncomplete([
                 'welcome to albert\'s sleepless day!',
                 'controls: wasd to move, {doorKey} to open doors, {itemKey} to pick up items, and {inventoryKey} to open inventory.'.format(doorKey=pygame.key.name(player.doorKey), itemKey=pygame.key.name(item.triggerKey), inventoryKey=pygame.key.name(inventory.displayKey)),
-                'defeat the 5 cypher stickers to craft the cypher key and escape to freedom!',
+                'defeat the five cypher stickers to craft the cypher key and escape to freedom!',
                 'good luck...'
             ], 'cutscene4') 
             if incomplete:
