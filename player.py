@@ -153,8 +153,6 @@ class Player:
                     collision1 = self.screen.cameraMode == "SCROLL" and pygame.Rect.colliderect(scrollRect, bossRect)
                     collision2 = self.screen.cameraMode == "FIXED"  and pygame.Rect.colliderect(fixedRect, bossRect)
 
-                    # TODO: make it so the player can't see the overworld items when transitioning into battle mode
-                    # there is like ~1/2 second where the player can see them before the battle starts
                     if collision1 or collision2:
                         self.battle.init(boss['name'])
                         self.resetPosition(self.screen.spawn)

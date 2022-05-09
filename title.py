@@ -16,7 +16,6 @@ class TitleScreen:
         
         self.startKey = pygame.K_RETURN
 
-        # TODO: change this to our cover art
         self.coverArt = [
             pygame.image.load('./sprites/title1.png').convert_alpha(),
             pygame.image.load('./sprites/title2.png').convert_alpha()

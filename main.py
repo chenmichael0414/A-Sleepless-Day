@@ -84,9 +84,6 @@ if __name__ == '__main__':
 
                 if not textbox.isActive:
                     inventory.tick()
-
-                    # TODO: find a better way to do this incase we need toggling elsewhere
-                    # this is because we don't want the player to be able to turn inventory on while text is running
                     Key.tick()  
 
         # covers screen with black rectangles so it appears to be the actual screen width and screen height (i.e 800x600)

@@ -55,6 +55,8 @@ class Mole(Boss):
 
         self.attacks[self.currentAttack]()
 
+    # This resets all the important flags for the boss
+    # This is for text dialogue purposes
     def reset(self):
         super().reset()
 
@@ -64,7 +66,9 @@ class Mole(Boss):
         self.textbox.resetFlag('mole final win')
         self.textbox.resetFlag('mole reward item')
 
+    # First attack
     def tornado(self):
+        # Move the minions based on their random speed
         for minion in self.minions:
             xSpeed = random.randint(0,4)
             # Speed can only be a factor of 3, making it much more jittery in it's movements
@@ -104,8 +108,9 @@ class Mole(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
-
+    # Second attack
     def bolts(self):
+        # Move the minions based on their type
         # bolts for left diagnol, right diagnol, and vertical
         for minion in self.minions:
             if minion['type'] == 'bolt1':
@@ -177,7 +182,9 @@ class Mole(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
                     
+    # Final attack
     def tornadoBolts(self):
+        # Move the minions based on their type
         for minion in self.minions:
             if minion['type'] == 'bolt1':
                 xSpeed = -4

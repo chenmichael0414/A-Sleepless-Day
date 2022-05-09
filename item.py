@@ -21,7 +21,6 @@ class Item:
 
         self.triggerKey = pygame.K_SPACE
 
-        # TODO: change this to include all key fragments
         self.keyFragments = [
             'key fragment #1',
             'key fragment #2',

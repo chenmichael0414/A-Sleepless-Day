@@ -61,6 +61,8 @@ class Elephant(Boss):
 
         self.attacks[self.currentAttack]()
 
+    # This resets all the important flags for the boss
+    # This is for text dialogue purposes
     def reset(self):
         super().reset()
 
@@ -70,7 +72,9 @@ class Elephant(Boss):
         self.textbox.resetFlag('elephant final win')
         self.textbox.resetFlag('elephant reward item')
 
+    # First attack
     def words(self):
+        # Move the minions after a certain amount of frames based on their type
         for minion in self.minions:
             # This word will come from the left slowly, before speeding to the right
             if minion['type']=='word1':
@@ -143,8 +147,9 @@ class Elephant(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
-
+    # Second attack
     def batstache(self):
+        # Move the minions based on their type
         for minion in self.minions:
             
             # The batstache will alternate between moving randomly and pausing
@@ -192,7 +197,9 @@ class Elephant(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
+    # Final attack
     def wordsBatstache(self):
+        # Move the minions based on their type at specific intervals
         for minion in self.minions:
             # these if statements decide how the minion will move depending on what sprite it is
             if minion['type']=='word1':
