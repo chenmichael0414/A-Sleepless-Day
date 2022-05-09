@@ -1,3 +1,11 @@
+'''
+Project: Choose Your Own Adventure Game
+Team Members: Michael Chen, Kevin Guan, Preston Meek
+Due Date: 5/9/2022
+Task Description: Design a school-appropriate program that will let users move through rooms based on user input 
+and get descriptions of each room.
+'''
+
 import pygame
 import sys
 
@@ -58,6 +66,11 @@ if __name__ == '__main__':
             started = True
             sprite = 0
             player.tick(drawingNumber=sprite)
+            textbox.draw([
+                'Is that a cowboy cat??',
+                'I must be hallucinating due to my poor time management skills.',
+                'If I can just make it home and take a nap, everything will go back to normal.',
+            ]) 
 
         screen.tick(player.x, player.y)
         battle.tick()
