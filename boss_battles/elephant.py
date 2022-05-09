@@ -5,6 +5,7 @@ from colliders import ImageCollider
 
 class Elephant(Boss):
     def __init__(self, screen, battle, textbox):
+        # List containing full batstache animation frames
         self.batstacheDict = [
             ['batstache1', pygame.image.load('./attacks/batstache1.png').convert_alpha()],
             ['batstache1', pygame.image.load('./attacks/batstache1.png').convert_alpha()],
@@ -63,7 +64,7 @@ class Elephant(Boss):
 
     def words(self):
         for minion in self.minions:
-
+            # This word will come from the left slowly, before speeding to the right
             if minion['type']=='word1':
                 if self.screen.frame % 20 == 0:
                     if minion['dir']==1:
@@ -77,6 +78,7 @@ class Elephant(Boss):
                     else:
                         minion['speed'][0] = 25
                         minion['speed'][1] = 0
+            # This word will come from the top slowly, before speeding to the bottom
             else:
                 if self.screen.frame % 50 == 0:
                     if minion['dir']==1:
@@ -94,7 +96,8 @@ class Elephant(Boss):
             minion['x'] += minion['speed'][0]
             minion['y'] += minion['speed'][1]
         if self.defeatedMinions < 30:
-            # If it is the current frame to draw a minion
+            #  1st word
+            #  If it is the current frame to draw a minion
             if len(self.minions) < 10 and self.screen.frame % 60 == 0:
                 bottomBoxCorner = (self.screen.SCREEN_HEIGHT + self.battle.boxHeight) / 2
                 self.minions.append({
@@ -106,6 +109,7 @@ class Elephant(Boss):
                         'animation': 0,
                         'speed': [random.randint(1,4),random.randint(-2,0)]
                 })
+            #  2nd word
             if len(self.minions) < 10 and self.screen.frame % 150 == 0:
                 leftBoxCorner  = (self.screen.SCREEN_WIDTH - self.battle.boxWidth) / 2
                 rightBoxCorner = (self.screen.SCREEN_WIDTH + self.battle.boxWidth) / 2
@@ -119,11 +123,12 @@ class Elephant(Boss):
                         'speed': [random.randint(-1,1),0]
                 })
 
-
+        # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
         elif len(self.minions) == 0:
             self.loadSprite(1)
 
             if self.textbox.drawIfIncomplete(['Words may not hurt you, but my hoard of batstaches will!'], 'elephant words win'): 
+                # Change the mode to free move for the next phase
                 self.battle.mode = "FREE MOVE"
                 return
 
@@ -133,7 +138,8 @@ class Elephant(Boss):
 
     def batstache(self):
         for minion in self.minions:
-
+            
+            # The batstache will alternate between moving randomly and pausing
             if self.screen.frame % 30 == 0:
                 if minion['dir']==1:
                     minion['speed'][0] = random.randint(1,4)
@@ -147,6 +153,7 @@ class Elephant(Boss):
 
             minion['x'] += minion['speed'][0]
             minion['y'] += minion['speed'][1]
+            # Cycles through the batstache sprites every 4 frames
             if self.screen.frame % 4 == 0:
                 minion['sprite'] = self.batstacheDict[minion['animation']][1]
                 minion['type'] = self.batstacheDict[minion['animation']][0]
@@ -168,7 +175,7 @@ class Elephant(Boss):
                         'animation': 0,
                         'speed': [random.randint(1,4),random.randint(-5,5)]
                 })
-
+        # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
         elif len(self.minions) == 0:
             self.loadSprite(2)
 
@@ -176,9 +183,10 @@ class Elephant(Boss):
 
             self.defeatedMinions = 0
             self.currentAttack += 1
+
     def wordsBatstache(self):
         for minion in self.minions:
-
+            # these if statements decide how the minion will move depending on what sprite it is
             if minion['type']=='word1':
                 if self.screen.frame % 20 == 0:
                     if minion['dir']==1:
@@ -225,6 +233,7 @@ class Elephant(Boss):
             minion['y'] += minion['speed'][1]
 
         if self.defeatedMinions < 45:
+            # Multiple if statements used to individually track each type of minion
             # If it is the current frame to draw a minion
             if len(self.minions) < 20 and self.screen.frame % 60 == 0:
                 bottomBoxCorner = (self.screen.SCREEN_HEIGHT + self.battle.boxHeight) / 2
@@ -260,6 +269,7 @@ class Elephant(Boss):
                         'animation': 0,
                         'speed': [random.randint(1,4),random.randint(-5,5)]
                 })
+        # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
         elif len(self.minions) == 0:
             self.loadSprite(0)
             if self.textbox.drawIfIncomplete(['perhaps it\'s time to retire...'], 'elephant final win'): return
