@@ -36,7 +36,7 @@ class Monkey(Boss):
 
         self.drawBoss()
 
-        if self.textbox.drawIfIncomplete(['oohoohooh aahahahah', 'i am going to defeat you!!!'], 'monkey intro'): 
+        if self.textbox.drawIfIncomplete(['Oohoohooh aahahahah', 'I\'ve trained for 500 years! You\'ll never defeat me!'], 'monkey intro'): 
             return
 
         for minion in self.minions:
@@ -76,7 +76,7 @@ class Monkey(Boss):
         elif len(self.minions) == 0:
             self.loadSprite(1)
 
-            if self.textbox.drawIfIncomplete(['uhhh good job i guess...'], 'monkey punch win'): return
+            if self.textbox.drawIfIncomplete(['You\'re no match for the monkey master!'], 'monkey punch win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -107,7 +107,7 @@ class Monkey(Boss):
         elif len(self.minions) == 0:
             self.loadSprite(2)
 
-            if self.textbox.drawIfIncomplete(['*really agitated monkey noises*'], 'monkey kick win'): return
+            if self.textbox.drawIfIncomplete(['*agitated monkey noises*'], 'monkey kick win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -156,7 +156,7 @@ class Monkey(Boss):
                     })
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            if self.textbox.drawIfIncomplete(['we know what we are...', '...but know not what we may be.'], 'monkey final win'): return
+            if self.textbox.drawIfIncomplete(['Impressive... Stop by my dojo some time...'], 'monkey final win'): return
 
             self.loadSprite(None)
             if self.item.rewardItem('key fragment #3', 'monkey reward item'): return

@@ -36,7 +36,7 @@ class Cat(Boss):
 
         self.drawBoss()
 
-        if self.textbox.drawIfIncomplete(['meooooowwww', 'me..*ooowww* is what you\'re going to say when i defeat you!'], 'cat intro'): return
+        if self.textbox.drawIfIncomplete(['Meow.', 'This town ain\'t big enough for the two of us.'], 'cat intro'): return
 
         for minion in self.minions:
             self.drawMinion(minion)
@@ -82,7 +82,7 @@ class Cat(Boss):
             # Change the mode to free move for the next phase
             self.battle.mode = "FREE MOVE"
 
-            if self.textbox.drawIfIncomplete(['you know, i\'m a little hungry...'], 'cat hat win'): return
+            if self.textbox.drawIfIncomplete(['I hope you like fish...'], 'cat hat win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -114,7 +114,7 @@ class Cat(Boss):
         elif len(self.minions) == 0:
             self.loadSprite(3)
 
-            if self.textbox.drawIfIncomplete(['AAAAHHHH!!!! *meow :3*'], 'cat fish win'): return
+            if self.textbox.drawIfIncomplete(['It\'s hiiigh noon.'], 'cat fish win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -167,7 +167,7 @@ class Cat(Boss):
                     })
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            if self.textbox.drawIfIncomplete(['well... i guess that\'s it for me...', 'me-owwww...'], 'cat final win'): return
+            if self.textbox.drawIfIncomplete(['You win this round.', 'Meow.'], 'cat final win'): return
 
             self.loadSprite(None)
             if self.item.rewardItem('key fragment #1', 'cat reward item'): return

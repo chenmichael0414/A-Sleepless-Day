@@ -6,7 +6,7 @@
         "size": [2000, 600],
         "pos": [0, 200],
         "items": [
-            {"name": "flashlight", "x": -600, "y": 230, "text": ["i see the light!"]}
+            {"name": "flashlight", "x": -600, "y": 230, "text": ["A flashlight.", "Will guide you in your darkest hour."]}
         ],
         "doors": [
             {
@@ -32,7 +32,8 @@
             {
                 "path": "hallwayDoor5.png",
                 "newRoom": "FINALE",
-                "newPos": [700, 500]
+                "newPos": [700, 500],
+                "locked": true
             }
         ]
     },
@@ -42,7 +43,7 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            {"name": "hat", "x": 435, "y": 500, "text": ["well, i guess the cat had an extra..."]}
+            {"name": "hat", "x": 435, "y": 500, "text": ["The cat left his hat behind. Yeehaw!", "Grants you a jump boost."]}
         ],
         "doors": [
             {
@@ -64,8 +65,8 @@
         "pos": [300, 500],
         "mode": "FIXED",
         "items": [
-            {"name": "carrots", "x": 660, "y": 140, "text": ["these look a bit old...", "whatever!"]},
-            {"name": "chips", "x": 20, "y": 140, "text": ["monkeys eat chips..?"]}
+            {"name": "carrots", "x": 660, "y": 140, "text": ["These carrots are allegedly good for your eyesight.", "Grants you extra health."]},
+            {"name": "chips", "x": 20, "y": 140, "text": ["Monkeys eat chips..?", "Maybe it's only a martial arts monkey thing.", "Grants you extra health."]}
         ],
         "doors": [
             {
@@ -91,7 +92,7 @@
         "pos": [500, 500],
         "mode": "FIXED",
         "items": [
-            {"name": "coffee", "x": 500, "y": 100, "text": ["for when you're extra extra tired!"]}
+            {"name": "coffee", "x": 500, "y": 100, "text": ["Nothing like a good old cup o' joe.", "Grants you a speed boost."]}
         ],
         "doors": [
             {
@@ -114,7 +115,7 @@
         "mode": "FIXED",
         "dark": true,
         "items": [
-            {"name": "pie", "x": 500, "y": 100, "text": ["this is some delicious key lime pie!"]}
+            {"name": "pie", "x": 500, "y": 100, "text": ["Some delicious key lime pie. Grants you extra health."]}
         ],
         "doors": [
             {

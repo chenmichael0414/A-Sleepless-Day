@@ -8,6 +8,7 @@ and get descriptions of each room.
 
 import pygame
 
+# these classes allow for pixel-perfect collisions, ignoring transparent pixels
 class PlayerCollider(pygame.sprite.Sprite):
     def __init__(self, pos, size):
         super().__init__()

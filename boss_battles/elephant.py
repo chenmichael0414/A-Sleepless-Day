@@ -51,7 +51,7 @@ class Elephant(Boss):
 
         self.drawBoss()
 
-        if self.textbox.drawIfIncomplete(['Face my expansive vocabulary!'], 'elephant intro'): 
+        if self.textbox.drawIfIncomplete(['I\m far too sophisticated to lose to the likes of you!', 'Face my expansive vocabulary!'], 'elephant intro'): 
             return
 
 
@@ -135,7 +135,7 @@ class Elephant(Boss):
         elif len(self.minions) == 0:
             self.loadSprite(1)
 
-            if self.textbox.drawIfIncomplete(['Words may not hurt you, but my hoard of batstaches will!'], 'elephant words win'): 
+            if self.textbox.drawIfIncomplete(['Words may not hurt you, but my exquisite gentleman\'s mustache will be your downfall!'], 'elephant words win'): 
                 # Change the mode to free move for the next phase
                 self.battle.mode = "FREE MOVE"
                 return
@@ -187,7 +187,7 @@ class Elephant(Boss):
         elif len(self.minions) == 0:
             self.loadSprite(2)
 
-            if self.textbox.drawIfIncomplete(['That\'s it, you sir are done for now!'], 'elephant mustache win'): return
+            if self.textbox.drawIfIncomplete(['I\'m going into overtime now.'], 'elephant mustache win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -280,7 +280,7 @@ class Elephant(Boss):
         # If we have defeated enough minions to proceed and all of the minions have despawned, proceed
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            if self.textbox.drawIfIncomplete(['perhaps it\'s time to retire...'], 'elephant final win'): return
+            if self.textbox.drawIfIncomplete(['How uncivilized of me...'], 'elephant final win'): return
 
             self.loadSprite(None)
             if self.item.rewardItem('key fragment #5', 'elephant reward item'): return

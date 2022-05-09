@@ -44,7 +44,7 @@ class Mole(Boss):
 
         self.drawBoss()
 
-        if self.textbox.drawIfIncomplete(['I am the fastest mole alive!', 'Feel the wind beneath my feet!'], 'mole intro'): 
+        if self.textbox.drawIfIncomplete(['I\'m the fastest mole alive!', 'Get out of my way or I\'ll run you over!'], 'mole intro'): 
             # Change the mode to free move for the entire phase
             self.battle.mode = "FREE MOVE"
             return
@@ -99,7 +99,7 @@ class Mole(Boss):
         elif len(self.minions) == 0:
             self.loadSprite(1)
 
-            if self.textbox.drawIfIncomplete(['Now face the wrath of my lightning!!'], 'mole tornado win'): return
+            if self.textbox.drawIfIncomplete(['Can\'t stop, won\'t stop!'], 'mole tornado win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -270,7 +270,7 @@ class Mole(Boss):
 
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            if self.textbox.drawIfIncomplete(['there\'s...', '...something in the way...'], 'mole final win'): return
+            if self.textbox.drawIfIncomplete(['Guess I\'m not fast enough...'], 'mole final win'): return
 
             self.loadSprite(None)
             if self.item.rewardItem('key fragment #4', 'mole reward item'): return

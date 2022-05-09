@@ -36,7 +36,7 @@ class Bunny(Boss):
 
         self.drawBoss()
 
-        if self.textbox.drawIfIncomplete(['ahaahahah im a bunny or something', 'nom nom'], 'bunny intro'): return
+        if self.textbox.drawIfIncomplete(['Yo, DJ Bunny\'s about to show you what\'s up.', 'Give yourself to the rhythm.'], 'bunny intro'): return
 
         for minion in self.minions:
             self.drawMinion(minion)
@@ -75,7 +75,7 @@ class Bunny(Boss):
         elif len(self.minions) == 0:
             self.loadSprite(2)
 
-            if self.textbox.drawIfIncomplete(['well, i like sound...', '......', '...but i love carrots!!!'], 'bunny soundwave win'): return
+            if self.textbox.drawIfIncomplete(['I hear carrots are good for your eyes.'], 'bunny soundwave win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -107,7 +107,7 @@ class Bunny(Boss):
             # Change the mode to free move for the next phase
             self.battle.mode = "FREE MOVE"
 
-            if self.textbox.drawIfIncomplete(['NOW IM MAD!!!!!!!!'], 'bunny carrot win'): return
+            if self.textbox.drawIfIncomplete(['I could do this all day.'], 'bunny carrot win'): return
 
             self.defeatedMinions = 0
             self.currentAttack += 1
@@ -156,7 +156,7 @@ class Bunny(Boss):
                     })
         elif len(self.minions) == 0:
             self.loadSprite(0)
-            if self.textbox.drawIfIncomplete(['time for me to hop away...'], 'bunny final win'): return
+            if self.textbox.drawIfIncomplete(['You\'re killing my vibe, man.'], 'bunny final win'): return
 
             self.loadSprite(None)
             if self.item.rewardItem('key fragment #2', 'bunny reward item'): return
