@@ -32,8 +32,7 @@
             {
                 "path": "hallwayDoor5.png",
                 "newRoom": "FINALE",
-                "newPos": [700, 500],
-                "locked": true
+                "newPos": [700, 500]
             }
         ]
     },
@@ -133,7 +132,8 @@
     },
     "FINALE": {
         "path": "bedroom2.png",
-        "mode": "FIXED"
+        "mode": "FIXED",
+        "locked": true
     },
     "SUNRISE1": {
         "path": "sunrise1.png",
