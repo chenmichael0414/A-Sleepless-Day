@@ -10,6 +10,7 @@ from inventory import Inventory
 from battle import Battle
 from key import Key
 from intro import cutscene
+from outro import ending
 
 if __name__ == '__main__':
     pygame.init()
@@ -55,6 +56,8 @@ if __name__ == '__main__':
         if not started:
             cutscene(screen, textbox, player, item, inventory)
             started = True
+            sprite = 0
+            player.tick(drawingNumber=sprite)
 
         screen.tick(player.x, player.y)
         battle.tick()
@@ -88,6 +91,13 @@ if __name__ == '__main__':
             
         # Freeze the screen if a textbox is open or if the inventory is open
         screen.frozen = textbox.isActive or inventory.isActive
+
+        if screen.currentRoom == "FINALE":
+            ending(screen, textbox, player, item, inventory)
+            screen.setRoom('HALLWAY', player, item)
+            title.open = True
+            started = False
+            continue
 
         '''
         if not started and pygame.key.get_pressed()[pygame.K_TAB]:

@@ -166,4 +166,3 @@ class Item:
                     size = newSize
                 
         return size
-
