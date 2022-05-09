@@ -123,7 +123,7 @@ def cutscene(screen, textbox, player, item, inventory):
         # albert enters the school  
         elif currScene == 5:
             screen.setRoom('HALLWAY', player, item, load=False)
-            autoMove(K_s, 150)
+            autoMove(K_s, 250)
             sprite = 12
             screen.tick(player.x, player.y)
             player.tick(drawingNumber=sprite)
@@ -144,7 +144,7 @@ def cutscene(screen, textbox, player, item, inventory):
         # albert goes to chem
         elif currScene == 7:
             autoMove(K_a, 1990)
-            autoMove(K_w, 150)
+            autoMove(K_w, 250)
             sprite = 17
             screen.tick(player.x, player.y)
             player.tick(drawingNumber=sprite)
