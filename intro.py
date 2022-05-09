@@ -10,6 +10,14 @@ def cutscene(screen, textbox, player, item, inventory):
     item.setItems(None)
     backgrounds = ['SUNRISE1', 'SUNRISE2', 'SUNRISE3', 'BEDROOM']
     
+    def autoMove(key, duration):
+        last = pygame.time.get_ticks()
+        while pygame.time.get_ticks() <= last + duration:
+            player.simulateKey(key)
+            screen.tick(player.x, player.y)
+            player.tick()
+            pygame.display.update()
+
     def tick(currScene):
         # exit game
         for event in pygame.event.get():
@@ -68,7 +76,7 @@ def cutscene(screen, textbox, player, item, inventory):
             while pygame.time.get_ticks() <= last + 550:
                 player.simulateKey(K_d)
                 screen.tick(player.x, player.y)
-                player.tick(drawingNumber=sprite)
+                player.tick()
                 pygame.display.update()
             currScene += 1
         elif currScene == 4:
@@ -78,15 +86,33 @@ def cutscene(screen, textbox, player, item, inventory):
                 textbox.tick()
                 pygame.display.update()
                 return(currScene)
-            screen.cutscene = False
-
+            currScene += 1
+        elif currScene == 5:
+            screen.setRoom('HALLWAY', player, item, load=False)
+            currScene += 1
+        elif currScene == 6:
+            autoMove(K_s, 150)
+            autoMove(K_a, 1990)
+            autoMove(K_w, 150)
+            sprite = 17
+            screen.tick(player.x, player.y)
+            player.tick(drawingNumber=sprite)
+            pygame.display.update()
+            currScene += 1
+        elif currScene == 7:
             # Instructions
-            textbox.draw([
+            incomplete = textbox.drawIfIncomplete([
                 'welcome to albert\'s sleepless day!',
                 'controls: wasd to move, {doorKey} to open doors, {itemKey} to pick up items, and {inventoryKey} to open inventory.'.format(doorKey=pygame.key.name(player.doorKey), itemKey=pygame.key.name(item.triggerKey), inventoryKey=pygame.key.name(inventory.displayKey)),
                 'defeat the 5 cypher stickers to craft the cypher key and escape to freedom!',
                 'good luck...'
-            ])
+            ], 'cutscene4') 
+            if incomplete:
+                screen.tick(player.x, player.y)
+                textbox.tick()
+                pygame.display.update()
+                return(currScene)
+            screen.cutscene = False
         return currScene
     currScene = 0
     while screen.cutscene:

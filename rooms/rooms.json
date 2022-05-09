@@ -131,9 +131,8 @@
         ]
     },
     "FINALE": {
-        "path": "bedroom.png",
-        "mode": "FIXED",
-        "locked": true
+        "path": "bedroom2.png",
+        "mode": "FIXED"
     },
     "SUNRISE1": {
         "path": "sunrise1.png",

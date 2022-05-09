@@ -173,6 +173,8 @@ class Player:
         self.sprite = pygame.transform.scale(self.sprite, (self.scale * self.pixel_size, self.scale * self.pixel_size))
 
     def draw(self):
+        if self.screen.loading == True:
+            return
         self.load_sprite()
 
         w, h = self.sprite.get_size()
