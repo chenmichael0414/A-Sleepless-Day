@@ -242,8 +242,6 @@ class Battle:
 
         self.playerColor = (155, 0, 0)
 
-        # TODO: actually something when u die besides resetting the battle
-
         if self.playerHealth <= 0:
             self.end(removeBoss=False)
 

@@ -44,6 +44,8 @@ class Cat(Boss):
 
         self.attacks[self.currentAttack]()
 
+    # This resets all the important flags for the boss
+    # This is for text dialogue purposes
     def reset(self):
         super().reset()
 
@@ -53,7 +55,9 @@ class Cat(Boss):
         self.textbox.resetFlag('cat final win')
         self.textbox.resetFlag('cat reward item')
 
+    # First attack
     def hat(self):
+        # Move the minions trigonometrically (sin or cos)
         for minion in self.minions:
             xSpeed = 4 * minion['dir']
             ySpeed = 5 * minion['trig'](self.screen.frame / 15)
@@ -87,7 +91,9 @@ class Cat(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
+    # Second attack
     def fish(self):
+        # Move the minions parabolically
         for minion in self.minions:
             # Parabolic motion
             minion['x'] += minion['xSpeed'] * minion['dir']
@@ -119,7 +125,9 @@ class Cat(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
+    # Final attack
     def hatAndFish(self):
+        # Move the minions trigonometrically/parabolically based on their type
         for minion in self.minions:
             if minion['type'] == 'hat':
                 xSpeed = 4 * minion['dir']

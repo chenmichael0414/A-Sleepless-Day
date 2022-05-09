@@ -45,6 +45,8 @@ class Monkey(Boss):
 
         self.attacks[self.currentAttack]()
 
+    # This resets all the important flags for the boss
+    # This is for text dialogue purposes
     def reset(self):
         super().reset()
 
@@ -54,7 +56,9 @@ class Monkey(Boss):
         self.textbox.resetFlag('monkey final win')
         self.textbox.resetFlag('monkey reward item')
 
+    # First attack
     def punch(self):
+        # Move the minions by their speed
         for minion in self.minions:
             xSpeed = 6
             ySpeed = 0
@@ -81,7 +85,9 @@ class Monkey(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
+    # Second attack
     def kick(self):
+        # Move the minions by their speed
         for minion in self.minions:
             xSpeed = 4 * minion['dir']
             ySpeed = 4
@@ -112,7 +118,9 @@ class Monkey(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
+    # Final attack
     def punchAndKick(self):
+        # Move the minions according to their type
         for minion in self.minions:
             if minion['type'] == 'punch':
                 xSpeed = 6

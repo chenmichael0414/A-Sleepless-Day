@@ -44,6 +44,8 @@ class Bunny(Boss):
 
         self.attacks[self.currentAttack]()
 
+    # This resets all the important flags for the boss
+    # This is for text dialogue purposes
     def reset(self):
         super().reset()
 
@@ -53,7 +55,9 @@ class Bunny(Boss):
         self.textbox.resetFlag('bunny final win')
         self.textbox.resetFlag('bunny reward item')
 
+    # First attack
     def soundwave(self):
+        # Move the minions based on the sin function
         for minion in self.minions:
             xSpeed = 6
             ySpeed = 3 * math.sin(self.screen.frame)
@@ -80,7 +84,9 @@ class Bunny(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
+    # Second attack
     def carrot(self):
+        # Move the minions based on their acceleration and speed
         for minion in self.minions:
             minion['ySpeed'] *= minion['yAccel']
             minion['y']      += minion['ySpeed']
@@ -112,7 +118,9 @@ class Bunny(Boss):
             self.defeatedMinions = 0
             self.currentAttack += 1
 
+    # Final attack
     def soundwaveAndCarrot(self):
+        # Move the minions according to their type
         for minion in self.minions:
             if minion['type'] == 'soundwave':
                 xSpeed = 3
