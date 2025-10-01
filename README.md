@@ -1,4 +1,4 @@
-# Project: Choose Your Own Adventure Game
+# Project: A Sleepless Day
 # Team Members: Michael Chen, Kevin Guan, Preston Meek
-# Due Date: 5/9/2022
-# Task Description: Design a school-appropriate program that will let users move through rooms based on user input and get descriptions of each room.
+# Description:
+A Sleepless Day is a 2D bullet-hell adventure game that follows a young schoolboy trying to get out of school while haunted by eerie monsters blocking his path. It’s left ambiguous whether the creatures are real or the result of his sleep-deprived mind, creating a tense, dreamlike journey.
