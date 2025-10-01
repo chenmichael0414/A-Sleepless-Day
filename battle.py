@@ -37,8 +37,8 @@ class Battle:
         self.playerX = (self.boxWidth - self.playerSize) / 2
         self.playerY = 0
 
-        self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth)   / 2 + self.boxLine
-        self.PLAYER_OFFSET_Y = (self.screen.SCREEN_HEIGHT + self.boxHeight) / 2 - self.boxLine - self.playerSize
+        self.PLAYER_OFFSET_X = (self.screen.SCREEN_WIDTH - self.boxWidth)   // 2 + self.boxLine
+        self.PLAYER_OFFSET_Y = int((self.screen.SCREEN_HEIGHT + self.boxHeight) // 2 - self.boxLine - self.playerSize)
 
         self.initialMoveVel = 3
         self.playerMoveVel  = 3
@@ -258,7 +258,7 @@ class Battle:
         self.playerY = 0
 
         # Reset the player offset Y since it relies on the player size
-        self.PLAYER_OFFSET_Y = (self.screen.SCREEN_HEIGHT + self.boxHeight) / 2 - self.boxLine - self.playerSize
+        self.PLAYER_OFFSET_Y = int((self.screen.SCREEN_HEIGHT + self.boxHeight) // 2 - self.boxLine - self.playerSize)
 
         self.playerHealth = 10
         self.loadHeartSprite()

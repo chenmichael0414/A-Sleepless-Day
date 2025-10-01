@@ -60,7 +60,7 @@ class Cat(Boss):
         # Move the minions trigonometrically (sin or cos)
         for minion in self.minions:
             xSpeed = 4 * minion['dir']
-            ySpeed = 5 * minion['trig'](self.screen.frame / 15)
+            ySpeed = 5 * minion['trig'](self.screen.frame // 15)
 
             minion['x'] += xSpeed
             minion['y'] += ySpeed
@@ -73,7 +73,7 @@ class Cat(Boss):
 
                 self.minions.append({
                     'x': 0 if coinflip == 0 else self.screen.SCREEN_WIDTH,
-                    'y': random.randint(self.battle.PLAYER_OFFSET_Y - 100, self.battle.PLAYER_OFFSET_Y),
+                    'y': random.randint(int(self.battle.PLAYER_OFFSET_Y) - 100, int(self.battle.PLAYER_OFFSET_Y)),
                     'dir': 1 if coinflip == 0 else -1,
                     'sprite': pygame.image.load('./attacks/hat.png').convert_alpha(),
                     'trig': (lambda x: math.sin(x)) if coinflip2 == 0 else (lambda x: math.cos(x)),  # Changes the trig function for movement
@@ -97,13 +97,13 @@ class Cat(Boss):
         for minion in self.minions:
             # Parabolic motion
             minion['x'] += minion['xSpeed'] * minion['dir']
-            minion['y'] = ((minion['x'] - (self.screen.SCREEN_WIDTH / 2)) ** 2) * .001 + minion['yOffset']
+            minion['y'] = ((minion['x'] - (self.screen.SCREEN_WIDTH // 2)) ** 2) * .001 + minion['yOffset']
 
         if self.defeatedMinions < 10: #10
             # If it is the current frame to draw a minion
             if len(self.minions) < 4 and self.screen.frame % 40 == 0:
                 coinflip = random.randint(0, 1)
-                yOffset  = random.randint(self.screen.SCREEN_HEIGHT / 2 - 200, self.screen.SCREEN_HEIGHT / 2 + 140)
+                yOffset  = random.randint(int(self.screen.SCREEN_HEIGHT // 2) - 200, int(self.screen.SCREEN_HEIGHT // 2) + 140)
 
                 fish = pygame.image.load('./attacks/fish.png').convert_alpha()
 
@@ -111,7 +111,7 @@ class Cat(Boss):
                     'x': 0 if coinflip == 0 else self.screen.SCREEN_WIDTH,
                     'xSpeed': random.randint(3, 5),
                     'yOffset': yOffset,
-                    'y': (self.screen.SCREEN_WIDTH / 2) ** 2 * .001 + yOffset,
+                    'y': (self.screen.SCREEN_WIDTH // 2) ** 2 * .001 + yOffset,
                     'dir': 1 if coinflip == 0 else -1,
                     'sprite': pygame.transform.flip(fish, True, False) if coinflip == 0 else fish,
                     'type': 'fish'
@@ -131,14 +131,14 @@ class Cat(Boss):
         for minion in self.minions:
             if minion['type'] == 'hat':
                 xSpeed = 4 * minion['dir']
-                ySpeed = 5 * minion['trig'](self.screen.frame / 15)
+                ySpeed = 5 * minion['trig'](self.screen.frame // 15)
 
                 minion['x'] += xSpeed
                 minion['y'] += ySpeed
             elif minion['type'] == 'fish':
                 # Parabolic motion
                 minion['x'] += minion['xSpeed'] * minion['dir']
-                minion['y'] = ((minion['x'] - (self.screen.SCREEN_WIDTH / 2)) ** 2) * .001 + minion['yOffset']
+                minion['y'] = ((minion['x'] - (self.screen.SCREEN_WIDTH // 2)) ** 2) * .001 + minion['yOffset']
 
         # 0-2 is fish, 3-4 is hat
         rng = random.randint(0, 4)
@@ -148,7 +148,7 @@ class Cat(Boss):
             if len(self.minions) < 7 and self.screen.frame % 25 == 0:
                 if rng <= 2:
                     coinflip = random.randint(0, 1)
-                    yOffset  = random.randint(self.screen.SCREEN_HEIGHT / 2 - 200, self.screen.SCREEN_HEIGHT / 2 + 140)
+                    yOffset  = random.randint(self.screen.SCREEN_HEIGHT // 2 - 200, self.screen.SCREEN_HEIGHT // 2 + 140)
 
                     fish = pygame.image.load('./attacks/fish.png').convert_alpha()
 
@@ -156,7 +156,7 @@ class Cat(Boss):
                         'x': 0 if coinflip == 0 else self.screen.SCREEN_WIDTH,
                         'xSpeed': random.randint(3, 5),
                         'yOffset': yOffset,
-                        'y': (self.screen.SCREEN_WIDTH / 2) ** 2 * .001 + yOffset,
+                        'y': (self.screen.SCREEN_WIDTH // 2) ** 2 * .001 + yOffset,
                         'dir': 1 if coinflip == 0 else -1,
                         'sprite': pygame.transform.flip(fish, True, False) if coinflip == 0 else fish,
                         'type': 'fish'
